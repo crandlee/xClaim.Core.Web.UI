@@ -1,0 +1,12 @@
+/*Color scheme
+#206c7f, #e5faff, #40d9ff, #737d7f, #38bddf, #647299*/
+
+div.panel-heading {
+   font-size: x-large; 
+}
+
+.loading-message {
+    text-align:center;
+    font-size:1.2em;
+    margin-top:20px;
+}

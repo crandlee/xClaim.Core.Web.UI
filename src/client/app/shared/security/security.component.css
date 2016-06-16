@@ -1,0 +1,58 @@
+#login-menu {
+    margin-right:10px;
+}
+
+.spinner {
+    margin-top: -4px;
+    margin-left: 5px;
+    height: 30px;
+    width: 30px;
+}
+
+:host ul > li {
+    font-size: 1.1em;
+}
+
+:host .refresh-time {
+    margin-top: -5px; 
+    margin-bottom: 0px;
+    font-size: 0.6em;
+}
+
+:host .refresh-access {
+    padding-bottom: 3px;
+}
+
+:host .refresh-warn {
+    animation-duration: 1000ms;
+    animation-name: blink;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+@keyframes blink {
+   from {
+      color: #FFFFFF;
+   }
+   to {
+      color: #FF8888;
+   }
+ }
+
+ @-webkit-keyframes blink {
+   from {
+      color: #FFFFFF;
+   }
+   to {
+      color: #FF8888;
+   }
+ }
+  
+@-moz-keyframes blink {
+   from {
+      color: #FFFFFF;
+   }
+   to {
+      color: #FF8888;
+   }
+ }

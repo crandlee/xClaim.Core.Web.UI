@@ -1,0 +1,54 @@
+<div class="filter-container" [offClick]="onOutsideClick(self)" id="filterContainer" >
+    <div class="filter-header" id="filterHeader" (click)="onFilterClick(self)()"><i id="filterLink" class="glyphicon glyphicon-filter"></i>{{summaryText}}</div>
+    <div class="filter-body animate-show" [ngClass]="{'hide-class':!filterOptions.filterVisible}">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="panel-group" id="filterPanel">
+                    <div class="panel-heading clearfix">
+                        <div class="inline pull-left">
+                            Filter:
+                        </div>                                                
+                        <div class="btn-toolbar inline pull-right">
+                            <a class="btn btn-primary btn-sm" href="#" (click)="resetFilter($event)">Reset Filter</a>
+                            <a class="btn btn-primary btn-sm" href="#" (click)="applyFilter($event)">Apply Filter</a>
+                        </div>
+                    </div>
+                    <!--All Filters-->
+                    <accordion [closeOthers]="false" class="col-xs-12">
+                        <accordion-group heading="User Information" [isOpen]="true" [isDisabled]="false">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-4 form-label filter-label">User Name:</div>
+                                    <div class="col-sm-8">
+                                        <input class="form-control input-sm" placeholder="User Name" #userName [(ngModel)]="toServerFilter.UserName" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4 form-label filter-label">Full Name:</div>
+                                    <div class="col-sm-8">
+                                        <input class="form-control input-sm" placeholder="Full Name" [(ngModel)]="toServerFilter.FullName" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4 form-label filter-label">Email:</div>
+                                    <div class="col-sm-8">
+                                        <input class="form-control input-sm" placeholder="Email" [(ngModel)]="toServerFilter.Email" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4 form-label filter-label">Status:</div>
+                                    <div class="col-sm-8">
+                                        <select class="form-control input-sm" [(ngModel)]="toServerFilter.Status">
+                                            <option *ngFor="let status of toClientFilter.Statuses" [value]="status.Value">{{status.Name}}</option>
+                                        </select>
+                                    </div>
+                                </div>                    
+                            </div>
+                        </accordion-group>
+                    </accordion>
+                    <!--<div class="col-xs-12 filter-divider"></div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

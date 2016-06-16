@@ -1,0 +1,126 @@
+:host .filter-container {
+    margin-bottom: 5px;
+}
+
+:host .filter-header {
+    cursor: pointer;
+}
+
+    :host .filter-header i {
+        padding-right: 5px;
+        font-size: 1.2em;
+    }
+
+:host .filter-body {
+    position: absolute;
+    width: 500px;
+    z-index: 10;
+}
+
+:host .filter-show-image {
+    padding-right: 5px;
+}
+
+:host .filter-main-panel {
+    border: 1px solid #EEE;
+    background-color: #FAFAFA;
+    padding: 7px;
+    border-radius: 10px;
+}
+
+:host .panel-heading {
+    cursor: pointer;
+    font-size: 1.0em;
+    font-weight: bold;
+    padding-top: 5px;
+    padding-bottom: 6px;
+}
+
+:host .filter-label {
+    font-size: 0.9em;
+    transform: translate(0, 50%);
+}
+
+:host .list-group-item input[type="checkbox"] {
+    margin-right: 5px;
+    transform: translate(0, 5%);
+}
+
+:host accordion-group.panel-open > .panel-default > .panel-heading:after {
+    /* symbol for "opening" panels */
+    font-family: 'Glyphicons Halflings';
+    /* essential for enabling glyphicon */
+    content: "\e114";
+    /* adjust as needed, taken from bootstrap.css */
+    float: right;
+    position: relative;
+    bottom: 23px;
+    font-size: 15pt;
+    /* adjust as needed */
+    color: grey;
+    transform: translate(20%, 25%);
+    /* adjust as needed */
+}
+
+:host accordion-group:not(.panel-open) > .panel-default > .panel-heading:after {
+    /* symbol for "collapsed" panels */
+    font-family: 'Glyphicons Halflings';
+    /* essential for enabling glyphicon */
+    content: "\e079";
+    /* adjust as needed, taken from bootstrap.css */
+    float: right;
+    position: relative;
+    bottom: 23px;
+    font-size: 15pt;
+    /* adjust as needed */
+    color: grey;
+    transform: translate(20%, 25%);
+    /* adjust as needed, taken from bootstrap.css */
+}
+
+
+:host .animate-show:not(.hide-class) {
+    line-height: 20px;
+    opacity: 1;
+    padding: 10px;
+    background-color: #F9F9F9;
+    border-radius: 10px;
+    -webkit-box-shadow: 4px 4px 5px 0px rgba(50, 50, 50, 0.59);
+    -moz-box-shadow: 4px 4px 5px 0px rgba(50, 50, 50, 0.59);
+    box-shadow: 4px 4px 5px 0px rgba(50, 50, 50, 0.59);
+    transition: all linear 0.2s;
+    z-index: 1000;
+}
+
+:host .animate-show.hide-class {
+    line-height: 0;
+    opacity: 0;
+    padding: 0 10px;
+    transition: all linear 0.2s;
+    z-index: -1;
+}
+
+:host .filter-divider {
+    border: 1px solid #DADADA;
+    margin-bottom: 12px;
+    margin-top: 4px;
+}
+
+:host .panel-title .badge {
+    margin-top: -3px;
+}
+
+:host .filter-container .list-group {
+        overflow-y: scroll; 
+        overflow-x: hidden; 
+        height: 150px; 
+        width:100%;
+}
+
+:host .panel-body {
+    padding: 7px;
+}
+
+:host .form-control {
+    padding: 3px;
+}

@@ -1,0 +1,21 @@
+<table class="table table-striped table-bordered table-hover dataTable"
+        role="grid" style="width: 100%;">
+    <thead>
+    <tr role="row">
+    <th *ngFor="let column of columns" data-html="true" style="cursor: pointer;" [class]="getColumnClass(column)" [ngTableSorting]="config" [column]="column" (sortChanged)="changeSortEvent($event)">
+        {{column.title}}
+        <i *ngIf="config && column.sort" class="pull-right fa"
+        [ngClass]="{'fa-chevron-down': column.sort === 'desc', 'fa-chevron-up': column.sort === 'asc'}"></i>
+    </th>
+    </tr>
+    </thead>
+    <tbody>      
+    <tr [attr.id]="getRowTooltip(row)" *ngFor="let row of rows">
+    <td *ngFor="let column of columns">
+        <span style="display:inline-block; width:100%" *ngIf="!column.deleteRow && !column.editRow">{{getData(row, column.name)}}</span>
+        <span style="display:inline-block; width:100%; cursor: pointer;" *ngIf="column.editRow" (click)="onEditClick($event, row, column)"><i class="fa fa-edit"></i></span>
+        <span style="display:inline-block; width:100%; cursor: pointer;" *ngIf="column.deleteRow" (click)="onDeleteClick($event, row, column)"><i class="fa fa-remove"></i></span>          
+    </td>
+    </tr>
+    </tbody>
+</table>

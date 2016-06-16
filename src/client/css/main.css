@@ -1,0 +1,101 @@
+body {
+  min-height: 600px;
+  padding-top: 70px;
+}
+
+.loading-message {
+    text-align:center;
+    font-size:1.2em;
+    margin-top:20px;
+}
+
+
+/*Color scheme
+#206c7f, #e5faff, #40d9ff, #737d7f, #38bddf, #647299*/
+
+div.panel-heading {
+   font-size: x-large; 
+}
+
+.loading-message {
+    text-align:center;
+    font-size:1.2em;
+    margin-top:20px;
+}
+
+/*Page header styles*/
+
+.navbar-inverse h1 {
+    margin-left: 10px;
+    color: #FFFFFF;
+    margin-top: 8px;
+}
+
+.navbar-inverse h2 {
+    margin-left: 10px;
+    color: #FFFFFF;
+    margin-top: 12px;
+}
+
+.navbar-inverse h3 {
+    margin-left: 10px;    
+    color: #FFFFFF;
+    margin-top: 16px;
+}
+
+.navbar-inverse h4 {
+    margin-left: 10px;    
+    color: #FFFFFF;
+    margin-top: 20px;
+}
+
+.center {
+    text-align: center
+}
+
+.edit-panel {
+    background: #ecf0f1;
+    color: #206c7f;
+    min-height: 200px;
+    padding: 10px;
+}
+
+
+/*Edit form styles*/
+
+.ng-valid[required] {
+  border-left: 5px solid #42A948; /* green */
+}
+
+.ng-invalid {
+  border-left: 5px solid #a94442; /* red */
+}
+
+/* List styles */
+.list-header {
+    float: left;
+    padding: 19.5px 15px;
+    font-size: 19px;
+    height: 60px;
+    line-height: 1;
+    color: #FFFFFF;
+}
+
+.list-header-button-bar {
+    margin-right:10px;
+}
+
+.row-count-tag {
+    position:fixed; 
+    min-width:80px; 
+    top:95%; 
+    left:87%; 
+    z-index: 1000;  
+    background: #000000;
+    color: #FFFFFF;
+    border-radius: 4px;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 1.0em;
+    text-align: center;
+}

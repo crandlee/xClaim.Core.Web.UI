@@ -1,0 +1,22 @@
+:host .table-hover tbody tr:hover td, .table-hover tbody tr:hover th 
+{ 
+    color: #FFFFFF; 
+    background-color: #647299;
+}
+
+:host .tooltip-custom {
+    display:inline-block; 
+    text-align:left;
+}
+
+:host .tooltip-arrow-custom {
+    display:inline-block
+}
+
+:host .tooltip-inner-custom {
+    display:inline-block; 
+    max-width: 600px; 
+    text-align:left;
+    color: #FFFFFF; 
+    background-color: #647299;
+}

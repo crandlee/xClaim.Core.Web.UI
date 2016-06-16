@@ -1,0 +1,28 @@
+<div class="container-fluid" (click)="$event.preventDefault()">
+    <div class="navbar-header">
+        
+        <button type="button" class="navbar-toggle collapsed" (click)="isCollapsed = !isCollapsed" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#" (click)="navigateToRoute('/')">
+            <div>
+                <span>xClaim <span *ngIf="loggedIn">({{userName}})</span></span>
+                <img src="images/core/loadingSpinner.gif" [ngClass]="{ invisible: !isBusy, spinner: true }" alt="Loading..." />
+            </div>
+        </a>
+    </div>
+    <div class="collapse navbar-collapse" [collapse]="isCollapsed">
+        <ul class="nav navbar-nav">
+            <li><a href="#" (click)="navigateToRoute('/')">Home</a></li>            
+        </ul> <!-- navbar-nav -->
+        <ul class="nav navbar-nav navbar-right" id="login-menu">
+            <li *ngIf="loggedIn"><a href="#" (click)='navigateToRoute("/UserProfile")'>My User Information</a></li>
+            <li *ngIf="!loggedIn"><a href="#" (click)='login()'>Login</a></li>
+            <li *ngIf="loggedIn"><a href="#" [ngClass]="{'refresh-warn':(refreshMinutesLeft < 3)}" (click)='login()' class="refresh-access">Refresh Access <div class="refresh-time">({{refreshMinutesLeft}} minutes left)</div></a></li>
+            <li *ngIf="loggedIn"><a href="#" (click)='logout()'>Logout</a></li>
+        </ul>            
+    </div> <!-- navbar-collapse -->
+</div>
