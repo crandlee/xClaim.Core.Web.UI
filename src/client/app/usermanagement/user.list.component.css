@@ -8,3 +8,6 @@
     cursor: pointer;
 }
 
+:host .list-new-button {
+    margin-right: 5px;
+}
