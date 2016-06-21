@@ -144,7 +144,18 @@ export class UserService implements IDataService<IUserProfile, IUserProfileViewM
         var trace = this.baseService.classTrace("saveUserProfile");
         trace(TraceMethodPosition.Entry);                
         var obs = this.baseService.postData<IUserProfile, IUserProfile>(this.toModel(vm), 
-            this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error saving the user profile"), 'user').map(m => this.toViewModel(m));        
+            this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error saving the user profile"), 'userprofile')
+                .map(m => this.toViewModel(m));        
+        trace(TraceMethodPosition.Exit)
+        return obs;
+    }
+
+    public saveUser(vm: IUserProfileViewModel): Observable<IUserProfileViewModel> {
+        var trace = this.baseService.classTrace("saveUser");
+        trace(TraceMethodPosition.Entry);                
+        var obs = this.baseService.postData<IUserProfile, IUserProfile>(this.toModel(vm), 
+            this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error saving the user profile"), 'user')
+                .map(m => this.toViewModel(m));        
         trace(TraceMethodPosition.Exit)
         return obs;
     }
@@ -153,7 +164,8 @@ export class UserService implements IDataService<IUserProfile, IUserProfileViewM
         var trace = this.baseService.classTrace("saveUserClaim");
         trace(TraceMethodPosition.Entry);   
         var obs = this.baseService.postData<IUserClaim, IUserClaim>(this.viewModelToUserClaim(vm), 
-            this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error saving the user claim"), 'userclaim').map(m => this.userClaimToViewModel(m));        
+            this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error saving the user claim"), 'userclaim')
+                .map(m => this.userClaimToViewModel(m));        
         trace(TraceMethodPosition.Exit)
         return obs;
     }

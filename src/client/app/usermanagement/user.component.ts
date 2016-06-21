@@ -115,7 +115,7 @@ export class UserComponent extends XCoreBaseComponent  {
         var trace = this.classTrace("onSubmit");
         trace(TraceMethodPosition.Entry);
         
-        this.userService.saveUserProfile(this.userProfile).subscribe(up => {
+        this.userService.saveUser(this.userProfile).subscribe(up => {
             trace(TraceMethodPosition.Callback);
             this.userProfile = up;
             this.baseService.loggingService.success("User successfully saved");
