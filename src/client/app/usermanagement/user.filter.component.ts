@@ -7,9 +7,10 @@ import { IUsersToClientFilter } from './user.service';
 import { OffClickDirective } from '../shared/off-click/off-click.directive';
 
 @Component({
+    moduleId: module.id,
     selector: "userfilter",
-    styleUrls: ['app/usermanagement/user.filter.component.css'],
-    templateUrl: 'app/usermanagement/user.filter.component.html',
+    styleUrls: ['user.filter.component.css'],
+    templateUrl: 'user.filter.component.html',
     providers: [],
     directives: [ACCORDION_DIRECTIVES, OffClickDirective]
 })

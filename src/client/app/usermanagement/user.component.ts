@@ -16,7 +16,8 @@ import { UserClaimsComponent } from './user.claims.component';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
 
 @Component({
-    templateUrl: 'app/usermanagement/user.component.html',
+    moduleId: module.id,
+    templateUrl: 'user.component.html',
     providers: [UserService, UserProfileValidationService],
     directives: [ValidationComponent, UiSwitchComponent, UserClaimsComponent]
 })

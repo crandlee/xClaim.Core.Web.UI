@@ -14,9 +14,10 @@ import { OrderByPipe } from '../shared/pipe/orderby.pipe';
 
 
 @Component({
+    moduleId: module.id,
     selector: 'user-claims',
-    styleUrls: ['app/usermanagement/user.claims.component.css'],
-    templateUrl: 'app/usermanagement/user.claims.component.html',
+    styleUrls: ['user.claims.component.css'],
+    templateUrl: 'user.claims.component.html',
     providers: [UserService, ClaimDefinitionsService],
     directives: [NgTableComponent],
     pipes: [OrderByPipe]

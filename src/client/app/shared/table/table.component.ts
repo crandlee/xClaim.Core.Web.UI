@@ -1,14 +1,18 @@
+///<reference path="../../../../../typings/jquery/jquery.d.ts" />
+///<reference path="../../../../../typings/bootstrap/bootstrap.d.ts"/>
+
 import {Component, EventEmitter, Input, Output, ViewContainerRef} from '@angular/core';
 import {CORE_DIRECTIVES, NgClass} from '@angular/common';
 import {NgTableSortingDirective} from './table.sorting.directive';
 import {Modal, BS_MODAL_PROVIDERS} from 'angular2-modal/plugins/bootstrap/index';
-
-declare var $: any;
+import 'jquery';
+import 'bootstrap';
 
 @Component({
+  moduleId: module.id,
   selector: 'ng-table',
-  styleUrls: ['app/shared/table/table.component.css'],
-  templateUrl: 'app/shared/table/table.component.html',
+  styleUrls: ['table.component.css'],
+  templateUrl: 'table.component.html',
   directives: [NgTableSortingDirective, NgClass, CORE_DIRECTIVES],
   viewProviders: [...BS_MODAL_PROVIDERS]
 })
@@ -55,7 +59,7 @@ export class NgTableComponent {
   public getRowTooltip(row: INgTableRow): string {
     var id = "R" + row.Id;
     if (!this.tooltipTemplate) return id;
-    $('#' + id).tooltip({
+    jQuery('#' + id).tooltip({
       delay: { show: 500, hide: 10 },
       placement: 'top',
       html: true,

@@ -4,10 +4,11 @@ import { ACCORDION_DIRECTIVES } from 'ng2-bootstrap';
 import * as _ from 'lodash';
 
 @Component({
-    templateUrl: 'app/welcome/welcome.component.html',
+    moduleId: module.id,
+    templateUrl: 'welcome.component.html',
     directives: [ACCORDION_DIRECTIVES],
     providers: [],
-    styleUrls: ['app/welcome/welcome.component.css']
+    styleUrls: ['welcome.component.css']
 })
 export class WelcomeComponent extends XCoreBaseComponent {
 

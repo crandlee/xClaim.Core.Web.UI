@@ -17,8 +17,9 @@ import { TraceMethodPosition } from '../shared/logging/logging.service';
 
 
 @Component({
-    styleUrls: ['app/usermanagement/user.list.component.css'],
-    templateUrl: 'app/usermanagement/user.list.component.html',
+    moduleId: module.id,    
+    styleUrls: ['user.list.component.css'],
+    templateUrl: 'user.list.component.html',
     providers: [UserService, UserFilterService],
     directives: [NgTableComponent, UserFilterComponent]
 })

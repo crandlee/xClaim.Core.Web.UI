@@ -8,12 +8,12 @@ import { ToastyService, ToastyConfig, Toasty, ToastOptions, ToastData, SecurityC
 import { Http } from '@angular/http';
 import { Router } from '@angular/router';
 
-declare var $:any;
 
 @Component({
+    moduleId: module.id,
     selector: 'xcore-app',
-    templateUrl: 'app/app.component.html',
-    styles: ['app/app.component.css'],
+    templateUrl: 'app.component.html',
+    styles: ['app.component.css'],
     providers: [],
     directives: [Toasty, OffClickDirective, SecurityComponent, ROUTER_DIRECTIVES]
 })

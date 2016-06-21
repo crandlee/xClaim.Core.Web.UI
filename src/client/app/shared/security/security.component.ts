@@ -8,9 +8,10 @@ import { BaseService } from '../service/base.service';
 
 import { XCoreBaseComponent } from '../component/base.component';
 @Component({
+    moduleId: module.id,
     selector: 'xcore-security',
-    templateUrl: 'app/shared/security/security.component.html',
-    styleUrls: ['app/shared/security/security.component.css'],
+    templateUrl: 'security.component.html',
+    styleUrls: ['security.component.css'],
     directives: [CollapseDirective, DROPDOWN_DIRECTIVES, CORE_DIRECTIVES],
     providers: []
 })
@@ -65,6 +66,10 @@ export class SecurityComponent extends XCoreBaseComponent  {
         
         this.baseService.loggingService.debug(`Retrieved ${this.baseService.hubService.HubData.ApiEndpoints.length} api endpoints and ${this.baseService.hubService.HubData.MenuItems.length} menu items from the hub`);                
         this.hubData = this.baseService.hubService.HubData;
+        if (!this.hubData.Scopes) {
+            this.baseService.loggingService.warn("No applications are available to load.  Please check with the system administrator for further access");
+            return;    
+        }
         if (this.hubData.Scopes !== this.baseService.appSettings.HubScopes 
             && this.baseService.securityService.getCurrentScopes() == this.baseService.appSettings.HubScopes) {                
             //Now that hub has returned data, request new authorization with requested scopes

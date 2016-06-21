@@ -2,14 +2,13 @@ import {Injectable} from '@angular/core';
 
 @Injectable()
 export class AppSettings {
-    
-    constructor() { }
-    
-    public get IdentityServerEndpoint(): string { return 'https://www.localidentity.com:10000'};
-    //public get IdentityServerEndpoint(): string { return 'http://localhost:5000'};   
+
+    //public get IdentityServerEndpoint(): string { return 'https://www.localidentity.com:10000'};
+    public get IdentityServerEndpoint(): string { return 'https://acltsec1.aCl.local'};   
     public get ApiRedirectOnLogin(): string { return `${window.location.protocol}//${window.location.host}`};
     public get ApiRedirectOnLogout():  string { return `${window.location.protocol}//${window.location.host}`};
-    public get HubApiEndpoint(): string { return 'http://localhost:5000/api' };
+    //public get HubApiEndpoint(): string { return 'http://localhost:5000/api' };
+    public get HubApiEndpoint(): string { return 'http://aclweb1:10000/api' };
     public get HubRoute(): string { return 'Hub'};
     public get ApiClientId(): string { return 'xclaim.web.api' };
     public get HubScopes(): string { return 'openid profile xclaim.hub'};

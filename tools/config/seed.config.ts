@@ -399,6 +399,7 @@ export class SeedConfig {
         defaultExtension: 'js'
       },
       'lodash': {
+        main: 'lodash.js',
         defaultExtension: 'js'
       },
       'angular2-cookie': {
@@ -406,8 +407,29 @@ export class SeedConfig {
         defaultExtension: 'js'
       },
       'ng2-bootstrap': {
+        main: 'ng2-bootstrap.js',
         defaultExtension: 'js'
-      }                                          
+      },
+      'angular2-ui-switch': {
+        main: 'index.js',
+        defaultExtension: 'js'
+      },
+      'moment': {
+        main: 'moment.js',
+        defaultExtension: 'js'
+      },
+      'angular2-modal': {
+        main: 'index.js',
+        defaultExtension: 'js'
+      },
+      'bootstrap': {
+        main: 'dist/js/bootstrap.min.js',
+        defaultExtension: 'js'
+      },
+      'jquery': {
+        main: 'dist/jquery.min.js',
+        defaultExtension: 'js'
+      }                        
     }
   };
 

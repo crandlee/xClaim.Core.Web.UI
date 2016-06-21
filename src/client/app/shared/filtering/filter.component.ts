@@ -8,8 +8,9 @@ import { ACCORDION_DIRECTIVES } from 'ng2-bootstrap/ng2-bootstrap';
 import { TraceMethodPosition } from '../logging/logging.service';
 
 @Component({
-    styleUrls: ['app/shared/filtering/filter.component.css'],
-    templateUrl: 'app/shared/filtering/filter.component.html',
+    moduleId: module.id,
+    styleUrls: ['filter.component.css'],
+    templateUrl: 'filter.component.html',
     providers: [FilterService],
     directives: [ACCORDION_DIRECTIVES]
 })
@@ -138,7 +139,6 @@ export abstract class FilterComponent<TFilterToServer, TFilterToClient> extends 
 
     public onFilterClick(comp: FilterComponent<TFilterToServer, TFilterToClient>): () => void {
         return function() {
-            console.log(this.renderer);
             //Sets up toggling filter display/setting default focus element
             this.filterOptions.filterVisible = !this.filterOptions.filterVisible;
             if (this.filterOptions.filterVisible && this.focusRef) this.renderer.invokeElementMethod(this.focusRef.nativeElement, 'focus', []);

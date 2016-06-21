@@ -30,7 +30,12 @@ export class RootExceptionHandler  {
   
 }
 
-  
+
+//****This is a fix for a problem with the angular2 modal window - provided as issue #98 on the github repo
+import {BrowserDomAdapter} from '@angular/platform-browser/src/browser/browser_adapter';
+BrowserDomAdapter.makeCurrent();
+//********
+
 bootstrap(AppComponent, [
    ...MODAL_BROWSER_PROVIDERS, ToastyService, ToastyConfig, HTTP_PROVIDERS, ROUTER_PROVIDERS, AppSettings, BusyService,  XCoreToastService, 
    LoggingService, CookieService, SecurityService, HubService, ScrollService, BaseService,

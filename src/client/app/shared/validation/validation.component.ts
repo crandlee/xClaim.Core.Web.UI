@@ -3,8 +3,9 @@ import { IFormValidationResult } from './validation.service';
 
 
 @Component({
+    moduleId: module.id,
     selector: 'validation',
-    templateUrl: 'app/shared/validation/validation.component.html',
+    templateUrl: 'validation.component.html',
     providers: []
 })
 export class ValidationComponent {

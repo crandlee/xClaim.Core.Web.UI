@@ -24,6 +24,7 @@ function buildTS() {
     TOOLS_DIR + '/manual_typings/**/*.d.ts',
     join(TMP_DIR, '**/*.ts')
   ];
+  
   let result = gulp.src(src)
     .pipe(plugins.plumber())
     .pipe(INLINE_TEMPLATES ? plugins.inlineNg2Template(INLINE_OPTIONS) : plugins.util.noop())

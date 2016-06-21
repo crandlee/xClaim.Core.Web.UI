@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Validators, ControlGroup, Control, FormBuilder } from '@angular/common';
 import { XCoreBaseComponent } from '../shared/component/base.component';
-import { HubService } from '../shared/hub/hub.service';
-import * as _ from 'lodash';
 import { IFormValidationResult } from '../shared/validation/validation.service';
 import { ValidationComponent } from '../shared/validation/validation.component';
 import { AsyncValidator } from '../shared/validation/async-validator.service';
@@ -12,7 +10,8 @@ import { BaseService  } from '../shared/service/base.service';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
 
 @Component({
-    templateUrl: 'app/usermanagement/userprofile.component.html',
+    moduleId: module.id,
+    templateUrl: 'userprofile.component.html',
     providers: [UserService, UserProfileValidationService],
     directives: [ValidationComponent]
 })
