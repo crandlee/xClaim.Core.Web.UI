@@ -34,7 +34,6 @@ export class UserComponent extends XCoreBaseComponent  {
         private builder: FormBuilder, private validationService: UserProfileValidationService, private routeSegment: RouteSegment)     
     {  
         super(baseService);
-        console.log('part of the way');
         this.initializeTrace("UserComponent");
         this.userId = routeSegment.getParam("id");
         this.userProfile = this.userService.getEmptyUserProfileViewModel();

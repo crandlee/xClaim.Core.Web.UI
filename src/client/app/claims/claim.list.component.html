@@ -1,0 +1,14 @@
+<div class="container">
+    <div [hidden]="!dataViewModel || dataViewModel.RowCount === 0" class="edit-panel" >
+        <div class="navbar navbar-inverse center">
+            <div class="list-header">Claims</div>
+        </div>
+        <userfilter></userfilter>
+        <ng-table [config]="tableConfig" [rows]="dataViewModel.Rows" [columns]="columns" (editClicked)="editClaim($event)">
+        </ng-table>
+    </div>
+    <div class="row-count-tag">{{(dataViewModel.Rows && dataViewModel.Rows.length) || 0}} of {{dataViewModel.RowCount}}</div>
+    <div [hidden]="dataViewModel && dataViewModel.RowCount > 0" class="loading-message">
+        Loading Claims
+    </div>
+</div>
