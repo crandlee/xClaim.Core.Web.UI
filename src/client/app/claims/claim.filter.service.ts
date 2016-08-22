@@ -20,9 +20,9 @@ export class ClaimFilterService extends FilterService<IClaimsToServerFilter, ICl
         
         var emptyFilterDefinition = () => {
             return <IFilterDefinition<IClaimsToServerFilter, IClaimsToClientFilter>>{
-                toClientFilter: { Rows: [], RowCount: 0 },
-                toServerFilter: { ProcessedStartDate: null, ProcessedEndDate: null, DateOfServiceStart: null, DateOfServiceEnd: null,
-                    TransactionCode: null, Bin: null, GroupId: null, Pcn: null, PrescriptionRefNumber: null, ServiceProviderId: null }            
+                toClientFilter: { rows: [], rowCount: 0 },
+                toServerFilter: { processedStartDate: null, processedEndDate: null, dateOfServiceStart: null, dateOfServiceEnd: null,
+                    transactionCode: null, bin: null, groupId: null, pcn: null, prescriptionRefNumber: null, serviceProviderId: null }            
             };
         }
 
@@ -43,16 +43,16 @@ export class ClaimFilterService extends FilterService<IClaimsToServerFilter, ICl
         var toClientFilter = filter.toClientFilter;
 
         var filterSummary = "";
-        if (toServerFilter.ProcessedStartDate) filterSummary += this.addAnd(filterSummary) + "Processed Date >= '" + (toServerFilter.ProcessedStartDate || "") + "'";
-        if (toServerFilter.ProcessedEndDate) filterSummary += this.addAnd(filterSummary) + "Processed Date <= '" + (toServerFilter.ProcessedEndDate || "") + "'";
-        if (toServerFilter.DateOfServiceStart) filterSummary += this.addAnd(filterSummary) + "Fill Date >= '" + (toServerFilter.DateOfServiceStart || "") + "'";
-        if (toServerFilter.DateOfServiceEnd) filterSummary += this.addAnd(filterSummary) + "Fill Date <= '" + (toServerFilter.DateOfServiceEnd || "") + "'";
-        if (toServerFilter.TransactionCode) filterSummary += this.addAnd(filterSummary) + "Transaction Code = '" + (toServerFilter.TransactionCode || "") + "'";
-        if (toServerFilter.Bin) filterSummary += this.addAnd(filterSummary) + "BIN contains '" + (toServerFilter.Bin || "") + "'";
-        if (toServerFilter.Pcn) filterSummary += this.addAnd(filterSummary) + "PCN contains '" + (toServerFilter.Pcn || "") + "'";
-        if (toServerFilter.GroupId) filterSummary += this.addAnd(filterSummary) + "Group Id contains '" + (toServerFilter.GroupId || "") + "'";
-        if (toServerFilter.PrescriptionRefNumber) filterSummary += this.addAnd(filterSummary) + "Prescription Number contains '" + (toServerFilter.PrescriptionRefNumber || "") + "'";
-        if (toServerFilter.ServiceProviderId) filterSummary += this.addAnd(filterSummary) + "Pharmacy Id contains '" + (toServerFilter.ServiceProviderId || "") + "'";
+        if (toServerFilter.processedStartDate) filterSummary += this.addAnd(filterSummary) + "Processed Date >= '" + (toServerFilter.processedStartDate || "") + "'";
+        if (toServerFilter.processedEndDate) filterSummary += this.addAnd(filterSummary) + "Processed Date <= '" + (toServerFilter.processedEndDate || "") + "'";
+        if (toServerFilter.dateOfServiceStart) filterSummary += this.addAnd(filterSummary) + "Fill Date >= '" + (toServerFilter.dateOfServiceStart || "") + "'";
+        if (toServerFilter.dateOfServiceEnd) filterSummary += this.addAnd(filterSummary) + "Fill Date <= '" + (toServerFilter.dateOfServiceEnd || "") + "'";
+        if (toServerFilter.transactionCode) filterSummary += this.addAnd(filterSummary) + "Transaction Code = '" + (toServerFilter.transactionCode || "") + "'";
+        if (toServerFilter.bin) filterSummary += this.addAnd(filterSummary) + "BIN contains '" + (toServerFilter.bin || "") + "'";
+        if (toServerFilter.pcn) filterSummary += this.addAnd(filterSummary) + "PCN contains '" + (toServerFilter.pcn || "") + "'";
+        if (toServerFilter.groupId) filterSummary += this.addAnd(filterSummary) + "Group Id contains '" + (toServerFilter.groupId || "") + "'";
+        if (toServerFilter.prescriptionRefNumber) filterSummary += this.addAnd(filterSummary) + "Prescription Number contains '" + (toServerFilter.prescriptionRefNumber || "") + "'";
+        if (toServerFilter.serviceProviderId) filterSummary += this.addAnd(filterSummary) + "Pharmacy Id contains '" + (toServerFilter.serviceProviderId || "") + "'";
         trace(TraceMethodPosition.Exit);
 
         return filterSummary;
@@ -94,15 +94,15 @@ export class ClaimFilterService extends FilterService<IClaimsToServerFilter, ICl
 
 
 export interface IClaimsToServerFilter {
-    ProcessedStartDate: Date;
-    ProcessedEndDate: Date;
-    TransactionCode: string;
-    Bin: string;
-    Pcn: string;
-    GroupId: string;
-    PrescriptionRefNumber: string;
-    ServiceProviderId: string;
-    DateOfServiceStart: Date;
-    DateOfServiceEnd: Date;    
+    processedStartDate: Date;
+    processedEndDate: Date;
+    transactionCode: string;
+    bin: string;
+    pcn: string;
+    groupId: string;
+    prescriptionRefNumber: string;
+    serviceProviderId: string;
+    dateOfServiceStart: Date;
+    dateOfServiceEnd: Date;    
 }
 

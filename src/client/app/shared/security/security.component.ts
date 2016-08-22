@@ -21,7 +21,7 @@ export class SecurityComponent extends XCoreBaseComponent  {
     public userName: string;
     public isBusy: boolean = false;
     public isCollapsed:boolean = true;
-    public hubData: IHubServiceData =  { ApiEndpoints: [], MenuItems: [], Scopes:"", UserId: null };
+    public hubData: IHubServiceData =  {apiEndpoints: [], menuItems: [], scopes:"", userId: null };
     public refreshMinutesLeft: number = 0;
 
     constructor( 
@@ -63,18 +63,17 @@ export class SecurityComponent extends XCoreBaseComponent  {
         
         var trace = this.classTrace("receiveHubDataAndReAuthorize");        
         trace(TraceMethodPosition.Entry);
-        
-        this.baseService.loggingService.debug(`Retrieved ${this.baseService.hubService.HubData.ApiEndpoints.length} api endpoints and ${this.baseService.hubService.HubData.MenuItems.length} menu items from the hub`);                
+        this.baseService.loggingService.debug(`Retrieved ${this.baseService.hubService.HubData.apiEndpoints.length} api endpoints and ${this.baseService.hubService.HubData.menuItems.length} menu items from the hub`);
         this.hubData = this.baseService.hubService.HubData;
-        if (!this.hubData.Scopes) {
+        if (!this.hubData.scopes) {
             this.baseService.loggingService.warn("No applications are available to load.  Please check with the system administrator for further access");
             return;    
         }
-        if (this.hubData.Scopes !== this.baseService.appSettings.HubScopes 
-            && this.baseService.securityService.getCurrentScopes() == this.baseService.appSettings.HubScopes) {                
+        if (this.hubData.scopes !== this.baseService.appSettings.HubScopes 
+            && this.baseService.securityService.getCurrentScopes() == this.baseService.appSettings.HubScopes) {
             //Now that hub has returned data, request new authorization with requested scopes
             //(only if requested scopes are different, which they should be)
-            this.baseService.securityService.requestNewScopeAuthorization(this.hubData.Scopes);
+            this.baseService.securityService.requestNewScopeAuthorization(this.hubData.scopes);
         } else {
             this.baseService.loggingService.debug("No more reauthorization needed. Scopes are up to date");
             //This call is to allow other components interested in hub data to know it is finalized.
@@ -114,7 +113,7 @@ export class SecurityComponent extends XCoreBaseComponent  {
     };
         
     public resetLocalHubData() {
-        this.hubData = { ApiEndpoints: [], MenuItems: [], Scopes:"", UserId: "" }        
+        this.hubData = { apiEndpoints: [], menuItems: [], scopes:"", userId: "" }        
     }
     
     public logout(): void {

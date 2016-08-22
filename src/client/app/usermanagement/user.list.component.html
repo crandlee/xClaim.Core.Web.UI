@@ -1,5 +1,5 @@
 <div class="container">
-    <div [hidden]="!dataViewModel || dataViewModel.RowCount === 0" class="edit-panel" >
+    <div [hidden]="!dataViewModel || dataViewModel.rowCount === 0" class="edit-panel" >
         <div class="navbar navbar-inverse center">
             <div class="list-header">Users</div>
             <ul class="nav navbar-nav pull-right list-header-button-bar">
@@ -11,11 +11,11 @@
             </ul>            
         </div>
         <userfilter></userfilter>
-        <ng-table [config]="tableConfig" [rows]="dataViewModel.Rows" [columns]="columns" (editClicked)="editUser($event)" (deleteClicked)="deleteUser($event)">
+        <ng-table [config]="tableConfig" [rows]="dataViewModel.rows" [columns]="columns" (editClicked)="editUser($event)" (deleteClicked)="deleteUser($event)">
         </ng-table>
     </div>
-    <div class="row-count-tag">{{(dataViewModel.Rows && dataViewModel.Rows.length) || 0}} of {{dataViewModel.RowCount}}</div>
-    <div [hidden]="dataViewModel && dataViewModel.RowCount > 0" class="loading-message">
+    <div class="row-count-tag">{{(dataViewModel.rows && dataViewModel.rows.length) || 0}} of {{dataViewModel.rowCount}}</div>
+    <div [hidden]="dataViewModel && dataViewModel.rowCount > 0" class="loading-message">
         Loading Users
     </div>
 </div>

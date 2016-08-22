@@ -59,7 +59,7 @@ export abstract class FilterComponent<TFilterToServer, TFilterToClient> extends 
     private watchForServiceSetupCalled() {
         var trace = this.classTrace("watchForServiceSetupCalled");
         trace(TraceMethodPosition.Entry);
-        this.unregisterSetupCalled = this.filterService.SetupCalledEvent.subscribe(called => {
+        this.unregisterSetupCalled = this.filterService.setupCalledEvent.subscribe(called => {
             this.filterService.initializeFilter().subscribe((returnFilter: IFilterDefinition<TFilterToServer, TFilterToClient>) => {
                 this.unregisterSetupCalled.unsubscribe();
                 this.unregisterSetupCalled = null;

@@ -31,7 +31,7 @@ export class ClaimDefinitionsService implements IDataService<IClaimDefinitionMod
         var obs = this.baseService.getObjectData<IClaimDefinitionModel[]>(this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error retrieving the claim definitions"), url)
             .map(cds =>  {
                 var vm = _.map(cds, cd => this.toViewModel(cd));
-                return { Rows: vm }; 
+                return { rows: vm }; 
             });
         trace(TraceMethodPosition.Exit);
         return obs;
@@ -43,7 +43,7 @@ export class ClaimDefinitionsService implements IDataService<IClaimDefinitionMod
         trace(TraceMethodPosition.Entry);
         
         var obs = this.get(null, null, {}).map(cd => {
-            cd.Rows = _.filter(cd.Rows, r => ['given_name', 'email', 'sub', 'name'].indexOf(r.Name) === -1); 
+            cd.rows = _.filter(cd.rows, r => ['given_name', 'email', 'sub', 'name'].indexOf(r.name) === -1); 
             return cd; 
         });
         trace(TraceMethodPosition.Exit);
@@ -53,30 +53,30 @@ export class ClaimDefinitionsService implements IDataService<IClaimDefinitionMod
 
     public toModel(vm: IClaimDefinitionViewModel): IClaimDefinitionModel {
         return {
-            Id: vm.Id,
-            Name: vm.Name,            
-            Description: vm.Description                    
+            id: vm.id,
+            name: vm.name,            
+            description: vm.description                    
         };
     }
 
     public toViewModel(model: IClaimDefinitionModel): IClaimDefinitionViewModel {
         return {
-            Id: model.Id,
-            Name: model.Name,            
-            Description: model.Description                    
+            id: model.id,
+            name: model.name,            
+            description: model.description                    
         };
     }
 
 }
 
 export interface IClaimDefinitionModel extends IEntity {
-    Name: string;
-    Description: string;
+    name: string;
+    description: string;
 }
 
 export interface IClaimDefinitionViewModel extends IEntity {
-    Name: string;    
-    Description: string;
+    name: string;    
+    description: string;
 }
 
 export interface IClaimDefinitionsToServerFilter {
@@ -84,5 +84,5 @@ export interface IClaimDefinitionsToServerFilter {
 }
 
 export interface IClaimDefinitionsToClientFilter {
-    Rows: IClaimDefinitionViewModel[]
+    rows: IClaimDefinitionViewModel[]
 }

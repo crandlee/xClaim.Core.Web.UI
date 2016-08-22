@@ -40,7 +40,7 @@ export class BaseService {
     public getOptions(hubService: HubService, endpointKey: string, serviceError: string): IServiceOptions {
         var trace = this.classTrace("getOptions");
         trace(TraceMethodPosition.Entry);
-        var obs = { ApiRoot: hubService.findApiEndPoint(endpointKey).ApiRoot, ServiceError: serviceError };
+        var obs = { apiRoot: hubService.findApiEndPoint(endpointKey).apiRoot, ServiceError: serviceError };
         trace(TraceMethodPosition.Exit);
         return obs;
     }
@@ -128,7 +128,7 @@ export class BaseService {
     public getTextData(serviceOptions: IServiceOptions, routePath: string, requestOptions?: RequestOptions,  onError?: (error: any, friendlyError: string, caught: Observable<string>) => void): Observable<string> {
         var trace = this.classTrace("getTextData");
         trace(TraceMethodPosition.Entry);
-        var baseObs = this.getBaseGetObservable(serviceOptions.ApiRoot, routePath)                                        
+        var baseObs = this.getBaseGetObservable(serviceOptions.apiRoot, routePath)                                        
                 .map(res => { return res.text(); });
             var tailObs = this.getTailGetObservable<string>(baseObs, serviceOptions, onError);   
         var ret  = this.executeObservable(tailObs);
@@ -153,8 +153,8 @@ export class BaseService {
         var trace = this.classTrace("getTailGetObservable");
         trace(TraceMethodPosition.Entry);
         if (!onError) onError = (error: any, friendlyError: string,  caught: any) => { this.loggingService.error(error, friendlyError); }
-        var swallowException = (!serviceOptions || !serviceOptions.PropogateException);
-        var suppressDefaultException = (serviceOptions && serviceOptions.SuppressDefaultException); 
+        var swallowException = (!serviceOptions || !serviceOptions.propogateException);
+        var suppressDefaultException = (serviceOptions && serviceOptions.suppressDefaultException); 
         currentObservable = currentObservable
             .catch<TData>((err,caught) => {
                 if (suppressDefaultException) throw err;
@@ -179,9 +179,9 @@ export class BaseService {
         var trace = this.classTrace("getGeneralErrorMessage");
         
         trace(TraceMethodPosition.Entry);
-        var dataDescription: string = serviceOptions && serviceOptions.ServiceDataDescription;
+        var dataDescription: string = serviceOptions && serviceOptions.serviceDataDescription;
         if (!dataDescription) dataDescription = "requested data"; 
-        var errorDescription: string = serviceOptions && serviceOptions.ServiceError; 
+        var errorDescription: string = serviceOptions && serviceOptions.serviceError; 
         if (!errorDescription) errorDescription = `There was an error ${action} the ${dataDescription}`;
         
         trace(TraceMethodPosition.Exit);
@@ -193,7 +193,7 @@ export class BaseService {
             
             var trace = this.classTrace("getObjectData");
             trace(TraceMethodPosition.Entry);
-            var baseObs = this.getBaseGetObservable(serviceOptions.ApiRoot, routePath, requestOptions)
+            var baseObs = this.getBaseGetObservable(serviceOptions.apiRoot, routePath, requestOptions)
                 .map<TData>(res => res.json());                
             var tailObs = this.getTailGetObservable<TData>(baseObs, serviceOptions, onError);   
         var ret =  this.executeObservable(tailObs);
@@ -206,9 +206,9 @@ export class BaseService {
         
         var trace = this.classTrace("postData");
         trace(TraceMethodPosition.Entry);
-        serviceOptions.ApiRoot = this.getCleanApiRoot(serviceOptions.ApiRoot);
+        serviceOptions.apiRoot = this.getCleanApiRoot(serviceOptions.apiRoot);
         var baseObs = this.http
-                .post(`${serviceOptions.ApiRoot}${this.getCleanRoutePath(routePath)}`, 
+                .post(`${serviceOptions.apiRoot}${this.getCleanRoutePath(routePath)}`, 
                     JSON.stringify(data), this.setHeaders(requestOptions)).share()
                     .map<TRet>( res => { return res.json(); });
         var tailObs = this.getTailGetObservable<TRet>(baseObs, serviceOptions, onError);
@@ -222,9 +222,9 @@ export class BaseService {
         
         var trace = this.classTrace("putData");
         trace(TraceMethodPosition.Entry);
-        serviceOptions.ApiRoot = this.getCleanApiRoot(serviceOptions.ApiRoot);                
+        serviceOptions.apiRoot = this.getCleanApiRoot(serviceOptions.apiRoot);                
         var baseObs = this.http
-                .put(`${serviceOptions.ApiRoot}${this.getCleanRoutePath(routePath)}`, 
+                .put(`${serviceOptions.apiRoot}${this.getCleanRoutePath(routePath)}`, 
                     JSON.stringify(data), this.setHeaders(requestOptions)).share()
                     .map<TRet>( res => { return res.json(); });
         var tailObs = this.getTailGetObservable<TRet>(baseObs, serviceOptions, onError);
@@ -238,9 +238,9 @@ export class BaseService {
         
         var trace = this.classTrace("deleteData");
         trace(TraceMethodPosition.Entry);
-        serviceOptions.ApiRoot = this.getCleanApiRoot(serviceOptions.ApiRoot);                
+        serviceOptions.apiRoot = this.getCleanApiRoot(serviceOptions.apiRoot);                
         var baseObs = this.http
-                .delete(`${serviceOptions.ApiRoot}${this.getCleanRoutePath(routePath)}`, 
+                .delete(`${serviceOptions.apiRoot}${this.getCleanRoutePath(routePath)}`, 
                      this.setHeaders(requestOptions)).share()
                     .map<boolean>( res => { return true; });
         var tailObs = this.getTailGetObservable<boolean>(baseObs, serviceOptions, onError);
@@ -259,24 +259,24 @@ export interface IDataService<TModel, TViewModel, TFilterToServer, TFilterToClie
 }
 
 export interface ICollectionViewModel<T> {
-    RowCount: number;
-    Rows: T[];
+    rowCount: number;
+    rows: T[];
 }
 
 export interface IEntity {
-    Id: string;
+    id: string;
 }
 
 export interface IServiceOptions {
-    SuppressDefaultException?: boolean;
-    ServiceDataDescription?: string;
-    ServiceError?: string;
-    PropogateException?: boolean;
-    ApiRoot: string
+    suppressDefaultException?: boolean;
+    serviceDataDescription?: string;
+    serviceError?: string;
+    propogateException?: boolean;
+    apiRoot: string
 }
 
 
 export interface INameValue<T> {
-    Name: string,
-    Value: T
+    name: string,
+    value: T
 }

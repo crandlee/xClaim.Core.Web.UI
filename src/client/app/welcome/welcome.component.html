@@ -3,13 +3,13 @@
         <h3 class="menu-header">xClaim Web</h3>
         <div>
             <ul>
-                <li (click)="reactToItemClick(mainMenuItem.Id)"
-                    [ngClass]="{'transition': mainMenuItem.IsDisplayed, 
-                    'indent1': mainMenuItem.Level == 2, 'indent2': mainMenuItem.Level == 3, 'indent3': mainMenuItem.Level == 4}" 
+                <li (click)="reactToItemClick(mainMenuItem.id)"
+                    [ngClass]="{'transition': mainMenuItem.isDisplayed, 
+                    'indent1': mainMenuItem.level == 2, 'indent2': mainMenuItem.level == 3, 'indent3': mainMenuItem.level == 4}" 
                     *ngFor="let mainMenuItem of menuItems">
                     <span [class]="getClassMap(mainMenuItem)" style=""></span>
-                    <h3>{{mainMenuItem.MenuItem.Name}}</h3>
-                    <p class="hidden-xs">{{mainMenuItem.MenuItem.Description}}</p>
+                    <h3>{{mainMenuItem.menuItem.name}}</h3>
+                    <p class="hidden-xs">{{mainMenuItem.menuItem.description}}</p>
                     <span *ngIf="hasSubItems(mainMenuItem)" 
                         [ngClass]= "{'fa-caret-left': showLeftCaret(mainMenuItem), 'fa-caret-down': showDownCaret(mainMenuItem)}" 
                         class="fa pull-right"></span>

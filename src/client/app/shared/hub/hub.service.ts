@@ -101,8 +101,8 @@ export class HubService {
                 trace(TraceMethodPosition.CallbackStart, "HubDataRetrievedEvent");
                 //Update with the proper api scopes - hub should not be called again until total refresh
                 this.clientId = this.appSettings.ApiClientId;
-                this.scopes = hb.Scopes;
-                hb.UserId = this.securityService.getUserId()
+                this.scopes = hb.scopes;
+                hb.userId = this.securityService.getUserId()
                 this.hubData = hb;
                 this.HubDataRetrievedSource.next(hb);
                 trace(TraceMethodPosition.CallbackEnd, "HubDataRetrievedEvent");
@@ -138,7 +138,7 @@ export class HubService {
         
         var trace = this.classTrace("findApiEndPoint");        
         trace(TraceMethodPosition.Entry);
-        var ret = _.find(this.hubData.ApiEndpoints, e => { return e.ApiKey === apiKey; });
+        var ret = _.find(this.hubData.apiEndpoints, e => { return e.apiKey === apiKey; });
         trace(TraceMethodPosition.Exit);
         return ret; 
     }
@@ -159,22 +159,22 @@ export class HubService {
 }
 
 export interface IHubServiceData {
-    ApiEndpoints: IHubServiceApiEndpoint[],
-    MenuItems: IHubServiceMenuItem[],
-    Scopes: string,
-    UserId: string
+    apiEndpoints: IHubServiceApiEndpoint[],
+    menuItems: IHubServiceMenuItem[],
+    scopes: string,
+    userId: string
 }
 
 export interface IHubServiceApiEndpoint {
-    ApiKey: string;
-    ApiRoot: string;
+    apiKey: string;
+    apiRoot: string;
 }
 
 export interface IHubServiceMenuItem {
-    Key: string,
-    Name: string,
-    Description: string,
-    Route: string,
-    Icon: string,
-    SubMenus: IHubServiceMenuItem[]
+    key: string,
+    name: string,
+    description: string,
+    route: string,
+    icon: string,
+    subMenus: IHubServiceMenuItem[]
 }

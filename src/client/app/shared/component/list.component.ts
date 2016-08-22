@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 export abstract class XCoreListComponent<TModel, TViewModel extends INgTableRow, TFilterToServer, TFilterToClient extends ICollectionViewModel<TViewModel>> extends XCoreBaseComponent  {
     
     protected serviceSubscription: Subscription = null;
-    public dataViewModel: ICollectionViewModel<TViewModel> = { RowCount:0, Rows:[] };
+    public dataViewModel: ICollectionViewModel<TViewModel> = { rowCount:0, rows:[] };
 
     public columns: INgTableColumn[] = [];
 
@@ -54,7 +54,7 @@ export abstract class XCoreListComponent<TModel, TViewModel extends INgTableRow,
         trace(TraceMethodPosition.Entry);
         filterService.initializeFilter().subscribe(filter => {
             trace(TraceMethodPosition.Callback);
-            currentViewModel.Rows = [];
+            currentViewModel.rows = [];
             this.loadFirstData(currentViewModel, tableComponent, tableConfig, filter, service);
             this.subscribeToFilterChanged(currentViewModel, tableComponent, tableConfig, filterService, service);
         });
@@ -70,9 +70,9 @@ export abstract class XCoreListComponent<TModel, TViewModel extends INgTableRow,
 
         var trace = this.classTrace("subscribeToFilterChanged");
         trace(TraceMethodPosition.Entry);
-        filterService.FilterUpdatedEvent.subscribe(filter => {
+        filterService.filterUpdatedEvent.subscribe(filter => {
             trace(TraceMethodPosition.Callback);
-            currentViewModel.Rows = [];
+            currentViewModel.rows = [];
             this.loadFirstData(currentViewModel, tableComponent, tableConfig, filter, service);
         });
         trace(TraceMethodPosition.Exit);
@@ -87,19 +87,19 @@ export abstract class XCoreListComponent<TModel, TViewModel extends INgTableRow,
         var trace = this.classTrace("loadFirstData");
         trace(TraceMethodPosition.Entry);
 
-        currentViewModel.Rows = currentViewModel.Rows.concat(filter.toClientFilter.Rows);
-        currentViewModel.RowCount = filter.toClientFilter.RowCount;
-        var msg: INgTableChangeMessage = { rows: currentViewModel.Rows, config: tableConfig };
+        currentViewModel.rows = currentViewModel.rows.concat(filter.toClientFilter.rows);
+        currentViewModel.rowCount = filter.toClientFilter.rowCount;
+        var msg: INgTableChangeMessage = { rows: currentViewModel.rows, config: tableConfig };
         tableComponent.load(msg);
 
         //Subscribe to infinite scroll
         if (this.serviceSubscription) this.serviceSubscription.unsubscribe();      
         this.serviceSubscription = this.baseService.scrollService.ScrollNearBottomEvent.subscribe(si => {
-            if (currentViewModel.Rows.length >= currentViewModel.RowCount) return;
-            service.get(currentViewModel.Rows.length, this.baseService.appSettings.DefaultPageSize, filter.toServerFilter).subscribe(data => {
-                currentViewModel.Rows = currentViewModel.Rows.concat(data.Rows);
-                currentViewModel.RowCount = data.RowCount;                
-                tableComponent.load({ rows: currentViewModel.Rows, config: tableConfig });
+            if (currentViewModel.rows.length >= currentViewModel.rowCount) return;
+            service.get(currentViewModel.rows.length, this.baseService.appSettings.DefaultPageSize, filter.toServerFilter).subscribe(data => {
+                currentViewModel.rows = currentViewModel.rows.concat(data.rows);
+                currentViewModel.rowCount = data.rowCount;                
+                tableComponent.load({ rows: currentViewModel.rows, config: tableConfig });
                 this.baseService.scrollService.checkNearBottom();
             });                                     
         });

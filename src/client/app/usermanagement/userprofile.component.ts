@@ -36,7 +36,7 @@ export class UserProfileComponent extends XCoreBaseComponent implements OnInit  
         trace(TraceMethodPosition.Entry);
         //Set up any async validators
         var emailControl = new Control("", Validators.compose([Validators.required, this.validationService.emailValidator]));
-        var emailAsyncValidator = AsyncValidator.debounceControl(emailControl, control => this.validationService.isEmailDuplicate(control, this.userService, this.userProfile.Id));
+        var emailAsyncValidator = AsyncValidator.debounceControl(emailControl, control => this.validationService.isEmailDuplicate(control, this.userService, this.userProfile.id));
         
         //Set up controls            
         var buildReturn = this.validationService.buildControlGroup(builder, [
@@ -67,7 +67,7 @@ export class UserProfileComponent extends XCoreBaseComponent implements OnInit  
         
         var trace = this.classTrace("getInitialData");
         trace(TraceMethodPosition.Entry);
-        userService.getUserProfile(this.baseService.hubService.HubData.UserId).subscribe(up => {
+        userService.getUserProfile(this.baseService.hubService.HubData.userId).subscribe(up => {
             trace(TraceMethodPosition.CallbackStart);
             this.userProfile = this.userService.toViewModel(up);
             this.active = true;

@@ -57,14 +57,14 @@ export class NgTableComponent {
   }
 
   public getRowTooltip(row: INgTableRow): string {
-    var id = "R" + row.Id;
+    var id = "R" + row.id;
     if (!this.tooltipTemplate) return id;
     jQuery('#' + id).tooltip({
       delay: { show: 500, hide: 10 },
       placement: 'top',
       html: true,
       template: this.tooltipTemplate,
-      title: (row && row.TooltipMessage) ? row.TooltipMessage : ""
+      title: (row && row.tooltipMessage) ? row.tooltipMessage : ""
     });
     return id;
   }
@@ -191,8 +191,8 @@ export interface INgTableConfig {
 }
 
 export interface INgTableRow {
-  Id: string;
-  TooltipMessage?: string;
+  id: string;
+  tooltipMessage?: string;
 }
 
 export interface INgTableChangeMessage {

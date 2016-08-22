@@ -20,8 +20,8 @@ export class UserFilterService extends FilterService<IUsersToServerFilter, IUser
         
         var emptyFilterDefinition = () => {
             return <IFilterDefinition<IUsersToServerFilter, IUsersToClientFilter>>{
-                toClientFilter: { Rows: [], RowCount: 0, Statuses: this.userService.defaultStatuses },
-                toServerFilter: { UserName: null, Email: null, FullName: null, Status: "All"  }            
+                toClientFilter: { rows: [], rowCount: 0, statuses: this.userService.defaultStatuses },
+                toServerFilter: { userName: null, email: null, fullName: null, status: "All"  }            
             };
         }
 
@@ -42,10 +42,10 @@ export class UserFilterService extends FilterService<IUsersToServerFilter, IUser
         var toClientFilter = filter.toClientFilter;
 
         var filterSummary = "";
-        if (toServerFilter.UserName) filterSummary += "User Name contains '" + (toServerFilter.UserName || "") + "'";
-        if (toServerFilter.FullName) filterSummary += this.addAnd(filterSummary) + "Full Name contains '" + (toServerFilter.FullName || "") + "'";
-        if (toServerFilter.Email) filterSummary += this.addAnd(filterSummary) + "Email contains '" + (toServerFilter.Email || "") + "'";
-        if (toServerFilter.Status && toServerFilter.Status !== "All") filterSummary += this.addAnd(filterSummary) + "Status = " + (toServerFilter.Status || "") + "";
+        if (toServerFilter.userName) filterSummary += "User Name contains '" + (toServerFilter.userName || "") + "'";
+        if (toServerFilter.fullName) filterSummary += this.addAnd(filterSummary) + "Full Name contains '" + (toServerFilter.fullName || "") + "'";
+        if (toServerFilter.email) filterSummary += this.addAnd(filterSummary) + "Email contains '" + (toServerFilter.email || "") + "'";
+        if (toServerFilter.status && toServerFilter.status !== "All") filterSummary += this.addAnd(filterSummary) + "Status = " + (toServerFilter.status || "") + "";
         //filterSummary += this.aggregateDescription(this.selectedItems(toClientFilter.Status, toServerFilter.Statuses, "Value"), "Value", "Statuses are ", this.addAnd(filterSummary));
 
         trace(TraceMethodPosition.Exit);
@@ -89,9 +89,9 @@ export class UserFilterService extends FilterService<IUsersToServerFilter, IUser
 
 
 export interface IUsersToServerFilter {
-    UserName: string;
-    FullName: string;
-    Email: string;
-    Status: string;
+    userName: string;
+    fullName: string;
+    email: string;
+    status: string;
 }
 

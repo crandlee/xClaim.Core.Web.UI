@@ -20,26 +20,26 @@
                                 <div class="row">
                                     <div class="col-sm-4 form-label filter-label">User Name:</div>
                                     <div class="col-sm-8">
-                                        <input class="form-control input-sm" placeholder="User Name" #userName [(ngModel)]="toServerFilter.UserName" />
+                                        <input class="form-control input-sm" placeholder="User Name" #userName [(ngModel)]="toServerFilter.userName" />
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4 form-label filter-label">Full Name:</div>
                                     <div class="col-sm-8">
-                                        <input class="form-control input-sm" placeholder="Full Name" [(ngModel)]="toServerFilter.FullName" />
+                                        <input class="form-control input-sm" placeholder="Full Name" [(ngModel)]="toServerFilter.fullName" />
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4 form-label filter-label">Email:</div>
                                     <div class="col-sm-8">
-                                        <input class="form-control input-sm" placeholder="Email" [(ngModel)]="toServerFilter.Email" />
+                                        <input class="form-control input-sm" placeholder="Email" [(ngModel)]="toServerFilter.email" />
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4 form-label filter-label">Status:</div>
                                     <div class="col-sm-8">
-                                        <select class="form-control input-sm" [(ngModel)]="toServerFilter.Status">
-                                            <option *ngFor="let status of toClientFilter.Statuses" [value]="status.Value">{{status.Name}}</option>
+                                        <select class="form-control input-sm" [(ngModel)]="toServerFilter.status">
+                                            <option *ngFor="let status of toClientFilter.statuses" [value]="status.value">{{status.name}}</option>
                                         </select>
                                     </div>
                                 </div>                    

@@ -12,7 +12,7 @@ import * as _ from 'lodash';
 })
 export class WelcomeComponent extends XCoreBaseComponent {
 
-    public hubData: IHubServiceData =  { ApiEndpoints: [], MenuItems: [], Scopes:"", UserId: "" };
+    public hubData: IHubServiceData =  { apiEndpoints: [], menuItems: [], scopes:"", userId: "" };
     public menuItems: IMainMenuItem[] = [];
     public menuItemIdGenerator: number = 0;
     public hubDataLoaded: boolean = false;
@@ -27,8 +27,8 @@ export class WelcomeComponent extends XCoreBaseComponent {
         var trace = this.classTrace("loadMenuItems");
         trace(TraceMethodPosition.CallbackStart);
         this.hubData = hd;
-        this.hubData.MenuItems = _.chain(this.hubData.MenuItems)
-            .sortBy(mi => mi.Description)
+        this.hubData.menuItems = _.chain(this.hubData.menuItems)
+            .sortBy(mi => mi.description)
             .value();
         this.menuItems = this.flattenMenuItems();
         this.hubDataLoaded = true;
@@ -37,7 +37,7 @@ export class WelcomeComponent extends XCoreBaseComponent {
     public visibleMenuItems() {
         var trace = this.classTrace("visibleMenuItems");
         trace(TraceMethodPosition.Entry);        
-        var ret = _.chain(this.menuItems).filter(mi => mi.IsDisplayed).value();
+        var ret = _.chain(this.menuItems).filter(mi => mi.isDisplayed).value();
         trace(TraceMethodPosition.Exit);
     }
     
@@ -56,13 +56,13 @@ export class WelcomeComponent extends XCoreBaseComponent {
         var level: number = 1;
         var parents: number[] = [];
         this.menuItemIdGenerator = 0;
-        this.getMenuItemChildren(level, null, parents, this.hubData.MenuItems, ret);
+        this.getMenuItemChildren(level, null, parents, this.hubData.menuItems, ret);
         trace(TraceMethodPosition.Exit);
         return ret;
     }
 
     public getClassMap(menuItem: IMainMenuItem): string {
-        return `menu-image pull-left glyphicon ${menuItem.MenuItem.Icon}`;    
+        return `menu-image pull-left glyphicon ${menuItem.menuItem.icon}`;    
     }
     
     public reactToItemClick(id: number): void {
@@ -70,12 +70,12 @@ export class WelcomeComponent extends XCoreBaseComponent {
         var trace = this.classTrace("reactToItemClick");
         trace(TraceMethodPosition.Entry);
         
-        var item = _.find(this.menuItems, mi => mi.Id == id);
+        var item = _.find(this.menuItems, mi => mi.id == id);
         if (!item) this.baseService.loggingService.warn(`Unable to select element with Id ${id}`);
-        if (item.MenuItem.SubMenus.length > 0) {
-            this.setMenuItemState(item, !item.IsOpen);
+        if (item.menuItem.subMenus.length > 0) {
+            this.setMenuItemState(item, !item.isOpen);
         } else {
-            this.navigateToRoute(item.MenuItem.Route);
+            this.navigateToRoute(item.menuItem.route);
         }
         
         trace(TraceMethodPosition.Exit);
@@ -86,36 +86,36 @@ export class WelcomeComponent extends XCoreBaseComponent {
         var trace = this.classTrace("setMenuItemState");
         trace(TraceMethodPosition.Entry);
         
-        item.IsOpen = open;        
+        item.isOpen = open;        
         _.each(this.menuItems, mi => {
            //If an item has this item in the parent chain then check to see if its immediate parent is open
            //If it is then display it.  If not then don't
-           if (_.findIndex(mi.Parents, p => p == item.Id) > -1) {
-                if (mi.Parent && mi.Parent.IsOpen) mi.IsDisplayed = true;
-                if (mi.Parent && !mi.Parent.IsOpen) mi.IsDisplayed = false;             
-                if (!open) mi.IsDisplayed = false;      
+           if (_.findIndex(mi.parents, p => p == item.id) > -1) {
+                if (mi.parent && mi.parent.isOpen) mi.isDisplayed = true;
+                if (mi.parent && !mi.parent.isOpen) mi.isDisplayed = false;             
+                if (!open) mi.isDisplayed = false;      
            }                       
         });
         if (open) {
             //Set other items at this level to closed if they are open
             _.chain(this.menuItems)
-                .filter(mi => mi.Id !== item.Id && mi.Level == item.Level)
-                .each(mi => { if (mi.IsOpen) this.setMenuItemState(mi, false); }).value();            
+                .filter(mi => mi.id !== item.id && mi.level == item.level)
+                .each(mi => { if (mi.isOpen) this.setMenuItemState(mi, false); }).value();            
         }
         
         trace(TraceMethodPosition.Exit);
     }
     
     public hasSubItems(menuItem: IMainMenuItem): boolean {
-        return menuItem.MenuItem.SubMenus.length > 0    
+        return menuItem.menuItem.subMenus.length > 0    
     }
     
     public showDownCaret(menuItem: IMainMenuItem): boolean {
-        return menuItem.MenuItem.SubMenus.length > 0 && menuItem.IsOpen;
+        return menuItem.menuItem.subMenus.length > 0 && menuItem.isOpen;
     }
 
     public showLeftCaret(menuItem: IMainMenuItem): boolean {
-        return menuItem.MenuItem.SubMenus.length > 0 && !menuItem.IsOpen;
+        return menuItem.menuItem.subMenus.length > 0 && !menuItem.isOpen;
     }
     
     private getMenuItemChildren(level: number, parent: IMainMenuItem, parents: number[], currentChildren: IHubServiceMenuItem[], allItems: IMainMenuItem[] ): void {
@@ -126,25 +126,22 @@ export class WelcomeComponent extends XCoreBaseComponent {
         _.each(currentChildren, (mi) => {
             this.menuItemIdGenerator += 1;
             var newMenuItem: IMainMenuItem = {
-                Id: this.menuItemIdGenerator,
-                MenuItem: mi,
-                IsDisplayed: (level == 1),
-                Level: level,
-                Parents: [].concat(parents),
-                Parent: parent,
-                IsOpen: false
+                id: this.menuItemIdGenerator,
+                menuItem: mi,
+                isDisplayed: (level == 1),
+                level: level,
+                parents: [].concat(parents),
+                parent: parent,
+                isOpen: false
             }
-            
             allItems.push(newMenuItem);            
-            this.getMenuItemChildren(level + 1, newMenuItem, parents.concat(newMenuItem.Id), mi.SubMenus, allItems);
-        });    
-        
+            this.getMenuItemChildren(level + 1, newMenuItem, parents.concat(newMenuItem.id), mi.subMenus, allItems);
+        });            
         trace(TraceMethodPosition.Exit);
     }
     
     ngOnInit() {
         super.NotifyLoaded("Welcome");
-        
         if (this.baseService.hubService.HubDataLoaded)
             this.loadMenuItems(this.baseService.hubService.HubData)
         else                   
@@ -157,11 +154,11 @@ export class WelcomeComponent extends XCoreBaseComponent {
 }
 
 export interface IMainMenuItem {
-    Id: number,
-    MenuItem: IHubServiceMenuItem,
-    IsDisplayed : boolean,
-    IsOpen: boolean,
-    Level: number,
-    Parents: number[],
-    Parent: IMainMenuItem
+    id: number,
+    menuItem: IHubServiceMenuItem,
+    isDisplayed : boolean,
+    isOpen: boolean,
+    level: number,
+    parents: number[],
+    parent: IMainMenuItem
 }

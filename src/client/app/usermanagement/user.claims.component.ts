@@ -25,8 +25,8 @@ import { OrderByPipe } from '../shared/pipe/orderby.pipe';
 export class UserClaimsComponent extends XCoreBaseComponent {
 
     public columns: INgTableColumn[] = [
-        { name: "Description", title: "Claim Name", colWidth: 5, sort: "asc" },
-        { name: "Value", title: "Claim Value", colWidth: 6 },
+        { name: "description", title: "Claim Name", colWidth: 5, sort: "asc" },
+        { name: "value", title: "Claim Value", colWidth: 6 },
         { name: "Delete", title: "", deleteRow: true, deleteMessage: "Delete this claim from the user?", colWidth: 1}
     ];
 
@@ -34,15 +34,15 @@ export class UserClaimsComponent extends XCoreBaseComponent {
         sorting: { columns: this.columns  }
     }
     public claimDefinitions: IClaimDefinitionViewModel[] = [];
-    public ClaimType: string;
-    public ClaimValue: string;
+    public claimType: string;
+    public claimValue: string;
 
-    @Input() public User: IUserProfileViewModel;
-    @ViewChild(NgTableComponent) TableComponent: NgTableComponent;
+    @Input() public user: IUserProfileViewModel;
+    @ViewChild(NgTableComponent) tableComponent: NgTableComponent;
 
     private get tableLoadFunction(): () => INgTableChangeMessage {
         return () => {
-            return { rows: _.filter(this.User.Claims, r => ['given_name', 'email', 'sub', 'name'].indexOf(r.Name) === -1), config: this.tableConfig }            
+            return { rows: _.filter(this.user.claims, r => ['given_name', 'email', 'sub', 'name'].indexOf(r.name) === -1), config: this.tableConfig }            
         };
     }
     constructor(protected baseService: BaseService, private userService: UserService, 
@@ -55,10 +55,10 @@ export class UserClaimsComponent extends XCoreBaseComponent {
     }
     
     public load(user: IUserProfileViewModel) {
-        this.User = user;
-        this.TableComponent.load(this.tableLoadFunction());
+        this.user = user;
+        this.tableComponent.load(this.tableLoadFunction());
         this.claimDefinitionsService.getNonCoreDefinitions().subscribe(cd => {
-            this.claimDefinitions = cd.Rows;
+            this.claimDefinitions = cd.rows;
         });
 
     }
@@ -68,11 +68,11 @@ export class UserClaimsComponent extends XCoreBaseComponent {
         var trace = this.classTrace("deleteClaim");
         trace(TraceMethodPosition.Entry);
 
-        this.userService.deleteUserClaim(row.Id).subscribe(d => {
+        this.userService.deleteUserClaim(row.id).subscribe(d => {
            if (d) {
-             this.baseService.loggingService.success(`User claim ${row.Description} deleted successfully`);
-             _.remove(this.User.Claims, cd =>  cd.Id === row.Id && cd.Value.toLowerCase() === row.Value.toLowerCase());  
-             this.TableComponent.load(this.tableLoadFunction());
+             this.baseService.loggingService.success(`User claim ${row.description} deleted successfully`);
+             _.remove(this.user.claims, cd =>  cd.id === row.id && cd.value.toLowerCase() === row.value.toLowerCase());  
+             this.tableComponent.load(this.tableLoadFunction());
            } 
         });
         trace(TraceMethodPosition.Exit);
@@ -82,17 +82,17 @@ export class UserClaimsComponent extends XCoreBaseComponent {
     public addClaim(event: any): void {
         var trace = this.classTrace("addClaim");
         trace(TraceMethodPosition.Entry);
-        var claimLookup: IClaimDefinitionViewModel = _.find(this.claimDefinitions, cd => cd.Id === this.ClaimType);
-        var existingUserClaim: IUserClaimViewModel = _.find(this.User.Claims, cd => cd.DefinitionId === this.ClaimType && cd.Value.toLowerCase() === this.ClaimValue.toLowerCase());
+        var claimLookup: IClaimDefinitionViewModel = _.find(this.claimDefinitions, cd => cd.id === this.claimType);
+        var existingUserClaim: IUserClaimViewModel = _.find(this.user.claims, cd => cd.definitionId === this.claimType && cd.value.toLowerCase() === this.claimValue.toLowerCase());
         if (existingUserClaim) this.baseService.loggingService.warn("This claim/value already exist on the user");
         if (claimLookup && !existingUserClaim) {
-            var vm = <IUserClaimViewModel>{ Id: "", Value: this.ClaimValue, DefinitionId: claimLookup.Id, Description: claimLookup.Description, Name: claimLookup.Name, UserId: this.User.Id };            
+            var vm = <IUserClaimViewModel>{ id: "", value: this.claimValue, definitionId: claimLookup.id, description: claimLookup.description, name: claimLookup.name, userId: this.user.id };            
             this.userService.saveUserClaim(vm).subscribe(vm => {
-                this.baseService.loggingService.success(`Successfully added new ${vm.Description} claim `);
-                this.User.Claims.push(vm);
-                this.TableComponent.load(this.tableLoadFunction());
-                this.ClaimType = null;
-                this.ClaimValue = null;
+                this.baseService.loggingService.success(`Successfully added new ${vm.description} claim `);
+                this.user.claims.push(vm);
+                this.tableComponent.load(this.tableLoadFunction());
+                this.claimType = null;
+                this.claimValue = null;
             });
         }    
         trace(TraceMethodPosition.Exit);

@@ -18,7 +18,7 @@ export class UserService implements IDataService<IUserProfile, IUserProfileViewM
     private endpointKey: string = 'xClaim.Core.Web.Api.Security';
 
 
-    public defaultStatuses: INameValue<string>[] = [{ Name: "All", Value:"All"}, {Name: "Enabled", Value: "Enabled"}, {Name: "Disabled", Value: "Disabled"}]
+    public defaultStatuses: INameValue<string>[] = [{ name: "All", value:"All"}, {name: "Enabled", value: "Enabled"}, {name: "Disabled", value: "Disabled"}]
 
     public get(skip?: number, take?: number, toServerFilter?: IUsersToServerFilter): Observable<IUsersToClientFilter> {
 
@@ -29,16 +29,16 @@ export class UserService implements IDataService<IUserProfile, IUserProfileViewM
         if (!take) take = this.baseService.appSettings.DefaultPageSize;
 
         var url = `users?skip=${skip}&take=${take}`;
-        if (toServerFilter && toServerFilter.UserName) url +=`&userName=${toServerFilter.UserName}`;
-        if (toServerFilter && toServerFilter.FullName) url +=`&fullName=${toServerFilter.FullName}`;
-        if (toServerFilter && toServerFilter.Email) url +=`&email=${toServerFilter.Email}`;
-        if (toServerFilter && toServerFilter.Status && toServerFilter.Status !== "All") url +=`&enabled=${toServerFilter.Status === "Enabled"? true : false}`;
+        if (toServerFilter && toServerFilter.userName) url +=`&userName=${toServerFilter.userName}`;
+        if (toServerFilter && toServerFilter.fullName) url +=`&fullName=${toServerFilter.fullName}`;
+        if (toServerFilter && toServerFilter.email) url +=`&email=${toServerFilter.email}`;
+        if (toServerFilter && toServerFilter.status && toServerFilter.status !== "All") url +=`&enabled=${toServerFilter.status === "Enabled"? true : false}`;
 
         var obs = this.baseService.getObjectData<IUsersFromServer>(this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error retrieving the users"), url)
             .map<IUsersToClientFilter>(data => { 
-                            return { RowCount: data.RowCount, 
-                                    Rows: data.Rows.map(r => this.toViewModel(r)), 
-                                    Statuses: this.defaultStatuses };})
+                            return { rowCount: data.rowCount, 
+                                    rows: data.rows.map(r => this.toViewModel(r)), 
+                                    statuses: this.defaultStatuses };})
 
         trace(TraceMethodPosition.Exit);
         return obs;
@@ -78,42 +78,42 @@ export class UserService implements IDataService<IUserProfile, IUserProfileViewM
     
     public toModel(vm: IUserProfileViewModel): IUserProfile {
         var up: IUserProfile = {
-            Name: vm.Name,
-            Id: vm.Id,
-            SavePassword: vm.Password,
-            ConfirmPassword: vm.ConfirmPassword,
-            SaveGivenName: vm.GivenName,
-            SaveEmailAddress: vm.EmailAddress,
-            Enabled: vm.Enabled,
-            Claims: []
+            name: vm.name,
+            id: vm.id,
+            savePassword: vm.password,
+            confirmPassword: vm.confirmPassword,
+            saveGivenName: vm.givenName,
+            saveEmailAddress: vm.emailAddress,
+            enabled: vm.enabled,
+            claims: []
         };        
         return up;
     }
 
     public toViewModel(model: IUserProfile): IUserProfileViewModel {
-        var emailClaim = _.find(model.Claims, c => c.Definition && c.Definition.Name == "email");
-        var givenNameClaim = _.find(model.Claims, c => c.Definition && c.Definition.Name == "given_name");
+        var emailClaim = _.find(model.claims, c => c.definition && c.definition.name == "email");
+        var givenNameClaim = _.find(model.claims, c => c.definition && c.definition.name == "given_name");
         var vm: IUserProfileViewModel  = {
-                Id: model.Id,
-                Name: model.Name,
-                GivenName: (givenNameClaim && givenNameClaim.Value) || "",
-                EmailAddress: (emailClaim && emailClaim.Value) || "",
-                Password: "Dummy@000",
-                ConfirmPassword: "Dummy@000",
-                Enabled: model.Enabled,
-                Claims: [].concat(_.map(model.Claims, c => this.userClaimToViewModel(c)  )),
-                TooltipMessage: `<table>
+                id: model.id,
+                name: model.name,
+                givenName: (givenNameClaim && givenNameClaim.value) || "",
+                emailAddress: (emailClaim && emailClaim.value) || "",
+                password: "Dummy@000",
+                confirmPassword: "Dummy@000",
+                enabled: model.enabled,
+                claims: [].concat(_.map(model.claims, c => this.userClaimToViewModel(c)  )),
+                tooltipMessage: `<table>
                                 <tr>
-                                    <td>User Name:</td><td style="padding-left: 5px">${model.Name}</td>
+                                    <td>User Name:</td><td style="padding-left: 5px">${model.name}</td>
                                 </tr>
                                 <tr>
-                                    <td>Full Name:</td><td style="padding-left: 5px">${(givenNameClaim && givenNameClaim.Value) || ""}</td>
+                                    <td>Full Name:</td><td style="padding-left: 5px">${(givenNameClaim && givenNameClaim.value) || ""}</td>
                                 </tr>
                                 <tr>
-                                    <td>Email:</td><td style="padding-left: 5px">${(emailClaim && emailClaim.Value) || ""}</td>
+                                    <td>Email:</td><td style="padding-left: 5px">${(emailClaim && emailClaim.value) || ""}</td>
                                 </tr>
                                 <tr>                                        
-                                    <td>Id:</td><td style="padding-left: 5px">${model.Id}</td>
+                                    <td>Id:</td><td style="padding-left: 5px">${model.id}</td>
                                 </tr>
                                 </table>
                 `  
@@ -171,66 +171,68 @@ export class UserService implements IDataService<IUserProfile, IUserProfileViewM
     }
 
     public getEmptyUserProfileViewModel(): IUserProfileViewModel {
-        return <IUserProfileViewModel>{ Id: "", Name: "", EmailAddress: "", GivenName: "", Password: "", ConfirmPassword: "", Enabled: false, TooltipMessage: "", Claims: []};
+        return <IUserProfileViewModel>{ id: "", name: "", emailAddress: "", givenName: "", password: "", confirmPassword: "", enabled: false, 
+        tooltipMessage: "", claims: []};
     }
 
 
     public userClaimToViewModel(model: IUserClaim) : IUserClaimViewModel {
-        return <IUserClaimViewModel>{ Id: model.Id || this.baseService.appSettings.EmptyGuid, DefinitionId: model.Definition.Id,  UserId: model.UserId,
-            Name: model.Definition && model.Definition.Name, Description: model.Definition && model.Definition.Description, Value: model.Value }
+        return <IUserClaimViewModel>{ id: model.id || this.baseService.appSettings.EmptyGuid, definitionId: model.definition.id,  userId: model.userId,
+            name: model.definition && model.definition.name, description: model.definition && model.definition.description, value: model.value }
     } 
 
     public viewModelToUserClaim(vm: IUserClaimViewModel): IUserClaim {
-        return <IUserClaim>{ Id: vm.Id || this.baseService.appSettings.EmptyGuid, UserId: vm.UserId, DefinitionId: vm.DefinitionId, Definition: { Id: vm.DefinitionId, Name: vm.Name, Description: vm.Description}, Value: vm.Value };
+        return <IUserClaim>{ id: vm.id || this.baseService.appSettings.EmptyGuid, userId: vm.userId, 
+            definitionId: vm.definitionId, definition: { id: vm.definitionId, name: vm.name, description: vm.description}, value: vm.value };
 
     }
 
 }
 
 export interface IUserProfileViewModel {
-     Name: string;
-     Id: string;
-     EmailAddress: string;
-     GivenName: string;
-     Password?: string;
-     ConfirmPassword?: string;
-     Enabled: boolean;
-     TooltipMessage: string;
-     Claims: IUserClaimViewModel[];
+     name: string;
+     id: string;
+     emailAddress: string;
+     givenName: string;
+     password?: string;
+     confirmPassword?: string;
+     enabled: boolean;
+     tooltipMessage: string;
+     claims: IUserClaimViewModel[];
 }
 
 export interface IUserClaimViewModel {
-    Id: string;
-    DefinitionId: string;
-    Name: string;
-    Description: string;
-    Value: string;
-    UserId: string;
+    id: string;
+    definitionId: string;
+    name: string;
+    description: string;
+    value: string;
+    userId: string;
 }
 
 export interface IUserProfile {
-     Name: string;
-     Id: string;
-     SavePassword: string;
-     ConfirmPassword: string;
-     SaveGivenName: string;
-     SaveEmailAddress: string;  
-     Enabled: boolean;  
-     Claims: IUserClaim[];
+     name: string;
+     id: string;
+     savePassword: string;
+     confirmPassword: string;
+     saveGivenName: string;
+     saveEmailAddress: string;  
+     enabled: boolean;  
+     claims: IUserClaim[];
 }
 
 export interface IUserClaim {
-     UserId: string;
-     Definition: IClaimDefinition;
-     DefinitionId: string;
-     Id: string;         
-     Value?: string;
+     userId: string;
+     definition: IClaimDefinition;
+     definitionId: string;
+     id: string;         
+     value?: string;
 }
 
 export interface IClaimDefinition {
-     Id: string;
-     Name: string;
-     Description?: string;
+     id: string;
+     name: string;
+     description?: string;
 }
 
 export interface IUsersFromServer extends ICollectionViewModel<IUserProfile> {
@@ -238,7 +240,6 @@ export interface IUsersFromServer extends ICollectionViewModel<IUserProfile> {
 }
 
 export interface IUsersToClientFilter extends ICollectionViewModel<IUserProfileViewModel> {
-    Statuses: INameValue<string>[];
-
+    statuses: INameValue<string>[];
 }
 

@@ -34,9 +34,9 @@ export class UserListComponent extends XCoreListComponent<IUserProfile, IUserPro
 
     public ngOnInit() {
         this.initializeWith([
-            { title: "User Name", name: "Name", colWidth: 3, sort: "asc" },
-            { title: "Full Name", name: "GivenName", colWidth: 6 },
-            { title: "Enabled", name: "Enabled", colWidth: 1, transform: (val: boolean) => { return val ? "Yes": "No"; } },
+            { title: "User Name", name: "name", colWidth: 3, sort: "asc" },
+            { title: "Full Name", name: "givenName", colWidth: 6 },
+            { title: "Enabled", name: "enabled", colWidth: 1, transform: (val: boolean) => { return val ? "Yes": "No"; } },
             { title: "Edit", name: "Edit", colWidth: 1, editRow: true },        
             { title: "Delete", name: "Delete", colWidth: 1, deleteRow: true, deleteMessage: 'Do you want to delete this user?' }
         ], this.userFilterService, this.userService);  
@@ -58,8 +58,8 @@ export class UserListComponent extends XCoreListComponent<IUserProfile, IUserPro
     public editUser(row: INgTableRow): void {
         var trace = this.classTrace("editUser");
         trace(TraceMethodPosition.Entry);
-        if (!row || !row.Id) throw Error("Invalid row");
-        var url = `/User/${row.Id}`;
+        if (!row || !row.id) throw Error("Invalid row");
+        var url = `/user/${row.id}`;
         this.baseService.router.navigate([url]);
         trace(TraceMethodPosition.Exit);            
     }
@@ -67,12 +67,12 @@ export class UserListComponent extends XCoreListComponent<IUserProfile, IUserPro
     public deleteUser(row: INgTableRow): void {
         var trace = this.classTrace("deleteUser");
         trace(TraceMethodPosition.Entry);
-        if (!row || !row.Id) throw Error("Invalid row");
-        this.userService.deleteUser(row.Id).subscribe(d => {
+        if (!row || !row.id) throw Error("Invalid row");
+        this.userService.deleteUser(row.id).subscribe(d => {
            if (d) {
              this.baseService.loggingService.success("User deleted successfully");
-             _.remove(this.dataViewModel.Rows, u => u.Id === row.Id);  
-             this.TableComponent.load({ rows: this.dataViewModel.Rows, config: this.tableConfig });
+             _.remove(this.dataViewModel.rows, u => u.id === row.id);  
+             this.TableComponent.load({ rows: this.dataViewModel.rows, config: this.tableConfig });
            } 
         });
         trace(TraceMethodPosition.Exit);                        

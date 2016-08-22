@@ -14,13 +14,13 @@ export abstract class FilterService<TFilterToServer, TFilterToClient> implements
     public idListMappings: IFilterIdListMapping[];
     protected emptyFilterDefinition: () => IFilterDefinition<TFilterToServer, TFilterToClient>;
 
-    private SetupCalledSource = new Subject<boolean>();    
-    public SetupCalledEvent = this.SetupCalledSource.asObservable().share();
-    private InitializeCalledSource = new Subject<IFilterDefinition<TFilterToServer, TFilterToClient>>();    
-    public InitializeCalledEvent = this.InitializeCalledSource.asObservable().share();
+    private setupCalledSource = new Subject<boolean>();    
+    public setupCalledEvent = this.setupCalledSource.asObservable().share();
+    private initializeCalledSource = new Subject<IFilterDefinition<TFilterToServer, TFilterToClient>>();    
+    public initializeCalledEvent = this.initializeCalledSource.asObservable().share();
 
-    private FilterUpdatedSource = new Subject<IFilterDefinition<TFilterToServer, TFilterToClient>>();
-    public FilterUpdatedEvent = this.FilterUpdatedSource.asObservable().share();
+    private filterUpdatedSource = new Subject<IFilterDefinition<TFilterToServer, TFilterToClient>>();
+    public filterUpdatedEvent = this.filterUpdatedSource.asObservable().share();
 
     constructor(protected baseService: BaseService) {
                 
@@ -67,7 +67,7 @@ export abstract class FilterService<TFilterToServer, TFilterToClient> implements
         this.currentFilter = filterDefinition;
         this.componentOptions = setupObject.componentOptions;
         this.idListMappings = setupObject.idListMappings || [];
-        this.SetupCalledSource.next(true);
+        this.setupCalledSource.next(true);
         this.setupCalled = true;
         trace(TraceMethodPosition.Exit);
     };
@@ -85,7 +85,7 @@ export abstract class FilterService<TFilterToServer, TFilterToClient> implements
             trace(TraceMethodPosition.Callback);
             if (!returnFilter) throw "Must return a valid filter object from initializeFilterFunction";
             this.currentFilter = returnFilter;
-            this.InitializeCalledSource.next(returnFilter);
+            this.initializeCalledSource.next(returnFilter);
         });
         trace(TraceMethodPosition.Exit);
         return obs;
@@ -104,7 +104,7 @@ export abstract class FilterService<TFilterToServer, TFilterToClient> implements
             trace(TraceMethodPosition.Callback);
             if (!returnFilter) throw "Must return a valid filter object from applyFilterFunction";
             this.currentFilter = returnFilter;
-            this.FilterUpdatedSource.next(returnFilter);            
+            this.filterUpdatedSource.next(returnFilter);            
         });
         
         trace(TraceMethodPosition.Exit);        
@@ -137,7 +137,7 @@ export abstract class FilterService<TFilterToServer, TFilterToClient> implements
             trace(TraceMethodPosition.Callback);
             if (!returnFilter) throw "Must return a valid filter object from resetFilterFunction";
             this.currentFilter = returnFilter;
-            this.FilterUpdatedSource.next(returnFilter);
+            this.filterUpdatedSource.next(returnFilter);
         });
         trace(TraceMethodPosition.Exit);
         return obs;
@@ -198,5 +198,5 @@ export interface IComponentOptions {
 
 export interface IFilterService<TFilterToServer, TFilterToClient> {
     initializeFilter(): Observable<IFilterDefinition<TFilterToServer, TFilterToClient>>;
-    FilterUpdatedEvent: Observable<IFilterDefinition<TFilterToServer, TFilterToClient>>;
+    filterUpdatedEvent: Observable<IFilterDefinition<TFilterToServer, TFilterToClient>>;
 }

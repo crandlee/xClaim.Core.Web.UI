@@ -46,9 +46,9 @@ export class UserComponent extends XCoreBaseComponent  {
         
         //Set up any async validators
         var emailControl = new Control("", Validators.compose([Validators.required, this.validationService.emailValidator]));
-        var emailAsyncValidator = AsyncValidator.debounceControl(emailControl, control => this.validationService.isEmailDuplicate(control, this.userService, this.userProfile.Id));
+        var emailAsyncValidator = AsyncValidator.debounceControl(emailControl, control => this.validationService.isEmailDuplicate(control, this.userService, this.userProfile.id));
         var userNameControl = new Control("", Validators.compose([Validators.required]));
-        var userNameValidator = AsyncValidator.debounceControl(userNameControl, control => this.validationService.isUserNameDuplicate(control, this.userService, this.userProfile.Id));
+        var userNameValidator = AsyncValidator.debounceControl(userNameControl, control => this.validationService.isUserNameDuplicate(control, this.userService, this.userProfile.id));
             
         //Set up controls            
         var buildReturn = this.validationService.buildControlGroup(builder, [
@@ -90,9 +90,9 @@ export class UserComponent extends XCoreBaseComponent  {
             this.userProfile = this.userService.toViewModel(up);
             
             if (this.userId == null) {
-                this.userProfile.Password = "";
-                this.userProfile.ConfirmPassword = "";
-                this.userProfile.Enabled = true;
+                this.userProfile.password = "";
+                this.userProfile.confirmPassword = "";
+                this.userProfile.enabled = true;
             }
             this.ClaimsView.load(this.userProfile);
             trace(TraceMethodPosition.CallbackEnd);            
@@ -118,14 +118,14 @@ export class UserComponent extends XCoreBaseComponent  {
             trace(TraceMethodPosition.Callback);
             this.userProfile = up;
             this.baseService.loggingService.success("User successfully saved");
-            this.baseService.router.navigate([`/User/${this.userProfile.Id}`]);
+            this.baseService.router.navigate([`/user/${this.userProfile.id}`]);
         });
         
         trace(TraceMethodPosition.Exit);
     }
     
     public cancel(): void {
-        this.baseService.router.navigate(["/UserList"]);
+        this.baseService.router.navigate(["/userlist"]);
     }
 }
 
