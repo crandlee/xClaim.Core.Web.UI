@@ -7,14 +7,12 @@ import { INgTableColumn, INgTableConfig, INgTableRow, INgTableChangeMessage } fr
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { IDataService, ICollectionViewModel } from '../shared/service/base.service';
-
- import { ClaimService, IClaim, IClaimViewModel, IClaimsToClientFilter } from './claim.service';
- import { ClaimFilterComponent } from './claim.filter.component';
- import { ClaimFilterService, IClaimsToServerFilter } from './claim.filter.service';
+import { ClaimService, IClaim, IClaimViewModel, IClaimsToClientFilter } from './claim.service';
+import { ClaimFilterComponent } from './claim.filter.component';
+import { ClaimFilterService, IClaimsToServerFilter } from './claim.filter.service';
 import { Observable } from 'rxjs';
 import { IFilterDefinition, IFilterService } from '../shared/filtering/filter.service';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
-
 
 @Component({
     moduleId: module.id,    
@@ -25,5 +23,37 @@ import { TraceMethodPosition } from '../shared/logging/logging.service';
 })
 export class ClaimListComponent extends XCoreListComponent<IClaim, IClaimViewModel, IClaimsToServerFilter, IClaimsToClientFilter> {
     
-    @ViewChild(NgTableComponent) TableComponent: NgTableComponent;
+    @ViewChild(NgTableComponent) tableComponent: NgTableComponent;
+
+
+    constructor(protected baseService: BaseService, private claimService: ClaimService, private claimFilterService: ClaimFilterService) {
+        super(baseService);
+        this.initializeTrace("ClaimsListComponent");
+    }
+
+    public ngOnInit() {
+        this.initializeWith([
+            { title: "Processed Date", name: "processedDate", colWidth: 2, sort: "asc" },
+            { title: "Fill Date", name: "dateOfService", colWidth: 2 },
+            { title: "Pharmacy Id", name: "serviceProviderId", colWidth: 2 },
+            { title: "Prescription Number", name: "prescriptionRefNumber", colWidth: 2 },
+            { title: "Packet Type", name: "headerResponseStatus", colWidth: 2, transformString: val => val ? 'Response': 'Request' },
+            { title: "View", name: "View", colWidth: 1, editRow: true }      
+        ], this.claimFilterService, this.claimService);  
+    }
+
+    public ngAfterViewInit() {
+        this.NotifyLoaded("ClaimsList");
+        super.initialize(this.tableComponent);
+    }
+
+    public viewClaim(row: INgTableRow): void {
+        var trace = this.classTrace("viewClaim");
+        trace(TraceMethodPosition.Entry);
+        if (!row || !row.id) throw Error("Invalid row");
+        var url = `/packet/${row.id}`;
+        this.baseService.router.navigate([url]);
+        trace(TraceMethodPosition.Exit);            
+    }
+
 }

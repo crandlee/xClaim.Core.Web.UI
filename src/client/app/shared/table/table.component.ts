@@ -7,6 +7,7 @@ import {NgTableSortingDirective} from './table.sorting.directive';
 import {Modal, BS_MODAL_PROVIDERS} from 'angular2-modal/plugins/bootstrap/index';
 import 'jquery';
 import 'bootstrap';
+import * as moment from 'moment';
 
 @Component({
   moduleId: module.id,
@@ -118,8 +119,14 @@ export class NgTableComponent {
   public getData(row: INgTableRow, propertyName: string): string {
     var val = propertyName.split('.').reduce((prev: any, curr: string) => prev[curr], row);
     var colDef = this._columns.find(c => c.name == propertyName);
-    if (colDef && colDef.transform) {
-      val = colDef.transform(val);
+    if (colDef && colDef.transformBool) {
+      val = colDef.transformBool(val);
+    }
+    if (colDef && colDef.transformString) {
+      val = colDef.transformString(val);
+    }
+    if (colDef && colDef.dateFormat) {
+      val = moment(Date.parse(val)).format(colDef.dateFormat);
     }
     return val;
   }
@@ -180,7 +187,9 @@ export interface INgTableColumn {
   name: string;
   colWidth?: number;
   sort?: "asc" | "desc" | "";
-  transform?: (trans: boolean) => string;
+  transformBool?: (trans: boolean) => string;
+  transformString?: (trans: string) => string;
+  dateFormat?: string;
   editRow?: boolean;
   deleteRow?: boolean;
   deleteMessage?: string;

@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import { IClaimsToServerFilter } from './claim.filter.service';
 import { IFilterDefinition } from '../shared/filtering/filter.service';
 import { TraceMethodPosition } from '../shared/logging/logging.service'
+import * as moment from 'moment';
 
 @Injectable()
 export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClaimsToServerFilter, IClaimsToClientFilter> {
@@ -15,7 +16,7 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
          baseService.initializeTrace("ClaimService");               
     }
 
-    private endpointKey: string = 'xClaim.Core.Web.Api.Claim';
+    private endpointKey: string = 'xClaim.Core.Web.Api.Claims';
 
 
 
@@ -59,17 +60,18 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
     public toModel(vm: IClaimViewModel): IClaim {
         var model: IClaim = {
             id: vm.id,
-            processedDate: vm.processedDate,
+            processedDate: new Date(vm.processedDate),
             serviceProviderId: vm.serviceProviderId,
             transactionCode: vm.transactionCode,
-            dateOfService: vm.dateOfService,
+            dateOfService: new Date(vm.dateOfService),
             prescriptionRefNumber: vm.prescriptionRefNumber,
             bin: vm.bin,
             pcn: vm.pcn,
             groupId: vm.groupId,
             transactionCount: vm.transactionCount,
             headerResponseStatus: vm.headerResponseStatus,
-            version: vm.version
+            version: vm.version,
+            contents: vm.contents
         };        
         return model;
     }
@@ -77,10 +79,10 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
     public toViewModel(model: IClaim): IClaimViewModel {
         var vm: IClaimViewModel  = {
             id: model.id,
-            processedDate: model.processedDate,
+            processedDate: moment(model.processedDate).format('MM/DD/YYYY hh:mm:ss a'),
             serviceProviderId: model.serviceProviderId,
             transactionCode: model.transactionCode,
-            dateOfService: model.dateOfService,
+            dateOfService: moment(model.dateOfService).format('MM/DD/YYYY'),
             prescriptionRefNumber: model.prescriptionRefNumber,
             bin: model.bin,
             pcn: model.pcn,
@@ -88,10 +90,8 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
             transactionCount: model.transactionCount,
             headerResponseStatus: model.headerResponseStatus,
             version: model.version,
+            contents: model.contents,
             tooltipMessage: `<table>
-                            <tr>
-                                <td>Date Of Service:</td><td style="padding-left: 5px">${model.dateOfService}</td>
-                            </tr>
                             <tr>
                                 <td>BIN:</td><td style="padding-left: 5px">${model.bin}</td>
                             </tr>   
@@ -100,6 +100,12 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
                             </tr>   
                             <tr>
                                 <td>Group Id:</td><td style="padding-left: 5px">${model.groupId}</td>
+                            </tr>   
+                            <tr>
+                                <td>Transaction Code:</td><td style="padding-left: 5px">${model.transactionCode}</td>
+                            </tr>   
+                            <tr>
+                                <td>Response Status:</td><td style="padding-left: 5px">${model.headerResponseStatus}</td>
                             </tr>   
                             <tr>                                        
                                 <td>Id:</td><td style="padding-left: 5px">${model.id}</td>
@@ -111,15 +117,20 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
         return vm;
     }
     
-    
+    public getEmptyClaimViewModel(): IClaimViewModel {
+        return <IClaimViewModel>{ id: "", processedDate: "", serviceProviderId: "", transactionCode: "", dateOfService: "",
+            prescriptionRefNumber: "", bin: "", pcn: "", groupId: "", transactionCount: 0, headerResponseStatus: "", version: "", contents: "", 
+            tooltipMessage: ""};
+    }
+
 }
 
 export interface IClaimViewModel {
      id: string;
-     processedDate: Date;
+     processedDate: string;
      serviceProviderId: string;
      transactionCode: string;
-     dateOfService: Date;
+     dateOfService: string;
      prescriptionRefNumber: string;
      bin: string;
      pcn: string;
@@ -127,6 +138,7 @@ export interface IClaimViewModel {
      transactionCount: number;
      headerResponseStatus: string;
      version: string;
+     contents: string;
      tooltipMessage: string;
 }
 
@@ -141,6 +153,7 @@ export interface IClaim {
      bin: string;
      pcn: string;
      groupId: string;
+     contents: string;
      transactionCount: number;
      headerResponseStatus: string;
      version: string;

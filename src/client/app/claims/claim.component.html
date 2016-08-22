@@ -1,0 +1,36 @@
+<div class="container">
+    <div [hidden]="!claim || !claim.id" class="container edit-panel" >
+        <div class="navbar navbar-inverse center">
+            <div class="col-sm-11">
+            <h4>Claim Information for Pharmacy: {{claim.serviceProviderId}}
+            </h4>
+            </div>
+            <div class="col-sm-1"><button type="button" class="btn btn-primary pull-right return-btn" (click)="cancel()">Return</button></div>            
+        </div>
+        <div class="col-sm-12">
+            <div class="col-sm-4">Pharmacy Id:</div>
+            <div class="col-sm-8">{{claim.serviceProviderId}}</div>
+            <div class="col-sm-4">Prescription Number:</div>
+            <div class="col-sm-8">{{claim.prescriptionRefNumber}}</div>
+            <div class="col-sm-4">Processed Date:</div>
+            <div class="col-sm-8">{{claim.processedDate}}</div>
+            <div class="col-sm-4">Fill Date:</div>
+            <div class="col-sm-8">{{claim.dateOfService}}</div>
+            <div class="col-sm-4">BIN:</div>
+            <div class="col-sm-8">{{claim.bin || '(None)'}}</div>
+            <div class="col-sm-4">PCN:</div>
+            <div class="col-sm-8">{{claim.pcn || '(None)'}}</div>
+            <div class="col-sm-4">Group Id:</div>
+            <div class="col-sm-8">{{claim.groupId || '(None)'}}</div>
+            <div class="col-sm-4">Packet Type:</div>
+            <div class="col-sm-8">{{claim.headerResponseStatus ? 'Response': 'Request'}}</div>
+
+            <div *ngIf="claim.headerResponseStatus" class="col-sm-4">Header Response Status:</div>
+            <div *ngIf="claim.headerResponseStatus" class="col-sm-8">{{claim.headerResponseStatus == 'A'? 'Accepted': 'Rejected'}}</div>
+        </div>    
+    </div>
+    <div [hidden]="claim && claim.id" class="loading-message">
+        Loading Claim
+    </div>        
+</div>
+

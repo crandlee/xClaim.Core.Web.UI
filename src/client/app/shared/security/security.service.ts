@@ -172,8 +172,8 @@ export class SecurityService {
         var dataToken: any = this.getDataFromToken(token);
         var ret: number = 0;
         if (dataToken && dataToken.exp && !isNaN(parseInt(dataToken.exp))) {
-            var exp: number = parseInt(dataToken.exp);
-            return exp - this.getUtcNowTicks();              
+            var exp: number = parseInt(dataToken.exp) - this.getUtcNowTicks();
+            return exp < 0 ? 0 : exp;              
         }
         trace(TraceMethodPosition.Exit);
         return ret;

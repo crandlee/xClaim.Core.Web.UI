@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { TraceMethodPosition, IDataService, ICollectionViewModel, BaseService,
     IFilterDefinition, IFilterService, INgTableColumn, INgTableConfig, INgTableRow, INgTableChangeMessage, NgTableComponent } from '../index';
 import { XCoreBaseComponent } from './base.component';
-
 import * as _ from 'lodash';
 
 export abstract class XCoreListComponent<TModel, TViewModel extends INgTableRow, TFilterToServer, TFilterToClient extends ICollectionViewModel<TViewModel>> extends XCoreBaseComponent  {

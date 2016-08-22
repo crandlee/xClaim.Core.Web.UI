@@ -139,7 +139,6 @@ export class SecurityComponent extends XCoreBaseComponent  {
         trace(TraceMethodPosition.Entry);
 
         super.NotifyLoaded("Security");
-        
          try {  
              this.loggedIn = this.baseService.securityService.checkAuthorized();            
              this.userName = this.baseService.securityService.getUserName();                                   

@@ -19,7 +19,7 @@
             <li><a href="#" (click)="navigateToRoute('/')">Home</a></li>            
         </ul> <!-- navbar-nav -->
         <ul class="nav navbar-nav navbar-right" id="login-menu">
-            <li *ngIf="loggedIn"><a href="#" (click)='navigateToRoute("/UserProfile")'>My User Information</a></li>
+            <li *ngIf="loggedIn"><a href="#" (click)='navigateToRoute("/userprofile")'>My User Information</a></li>
             <li *ngIf="!loggedIn"><a href="#" (click)='login()'>Login</a></li>
             <li *ngIf="loggedIn"><a href="#" [ngClass]="{'refresh-warn':(refreshMinutesLeft < 3)}" (click)='login()' class="refresh-access">Refresh Access <div class="refresh-time">({{refreshMinutesLeft}} minutes left)</div></a></li>
             <li *ngIf="loggedIn"><a href="#" (click)='logout()'>Logout</a></li>

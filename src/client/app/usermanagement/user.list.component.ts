@@ -36,7 +36,7 @@ export class UserListComponent extends XCoreListComponent<IUserProfile, IUserPro
         this.initializeWith([
             { title: "User Name", name: "name", colWidth: 3, sort: "asc" },
             { title: "Full Name", name: "givenName", colWidth: 6 },
-            { title: "Enabled", name: "enabled", colWidth: 1, transform: (val: boolean) => { return val ? "Yes": "No"; } },
+            { title: "Enabled", name: "enabled", colWidth: 1, transformBool: (val: boolean) => { return val ? "Yes": "No"; } },
             { title: "Edit", name: "Edit", colWidth: 1, editRow: true },        
             { title: "Delete", name: "Delete", colWidth: 1, deleteRow: true, deleteMessage: 'Do you want to delete this user?' }
         ], this.userFilterService, this.userService);  

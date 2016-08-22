@@ -39,8 +39,12 @@ export class BaseService {
 
     public getOptions(hubService: HubService, endpointKey: string, serviceError: string): IServiceOptions {
         var trace = this.classTrace("getOptions");
-        trace(TraceMethodPosition.Entry);
-        var obs = { apiRoot: hubService.findApiEndPoint(endpointKey).apiRoot, ServiceError: serviceError };
+        trace(TraceMethodPosition.Entry);        
+        var apiEndpoint = hubService.findApiEndPoint(endpointKey);
+        if (!apiEndpoint) {
+            throw `Unable to load endpoint ${endpointKey}. Endpoint not found in available hosts.`;
+        }
+        var obs = { apiRoot: apiEndpoint.apiRoot, ServiceError: serviceError };
         trace(TraceMethodPosition.Exit);
         return obs;
     }
@@ -159,7 +163,7 @@ export class BaseService {
             .catch<TData>((err,caught) => {
                 if (suppressDefaultException) throw err;
                 var newError = err._body;
-                var friendlyError = this.getGeneralErrorMessage("retrieving", serviceOptions);                
+                var friendlyError = this.getGeneralErrorMessage("retrieving", serviceOptions);
                 if (!err.status || err.status === 200) newError = friendlyError;                                
                 onError(newError, friendlyError, caught);
                 if (swallowException) return Observable.empty<TData>();
@@ -194,7 +198,14 @@ export class BaseService {
             var trace = this.classTrace("getObjectData");
             trace(TraceMethodPosition.Entry);
             var baseObs = this.getBaseGetObservable(serviceOptions.apiRoot, routePath, requestOptions)
-                .map<TData>(res => res.json());                
+                .map<TData>(res => {
+                    var j = res.json();
+                    if (j.isResult) { 
+                        var err = { _body: ((j.result && j.result.message) || 'An error occured retrieving the data'), status: 500};
+                        throw err;
+                    }
+                    if (j.model) return j.model; 
+                    return j});                
             var tailObs = this.getTailGetObservable<TData>(baseObs, serviceOptions, onError);   
         var ret =  this.executeObservable(tailObs);
         trace(TraceMethodPosition.Exit);
