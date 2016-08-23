@@ -1,36 +1,213 @@
 <div class="container">
-    <div [hidden]="!claim || !claim.id" class="container edit-panel" >
+    <div [hidden]="!claim || !claim.id" class="container edit-panel">
         <div class="navbar navbar-inverse center">
             <div class="col-sm-11">
-            <h4>Claim Information for Pharmacy: {{claim.serviceProviderId}}
-            </h4>
+                <h4>Claim Information for Pharmacy: {{claim.serviceProviderId}}
+                </h4>
             </div>
-            <div class="col-sm-1"><button type="button" class="btn btn-primary pull-right return-btn" (click)="cancel()">Return</button></div>            
+            <div class="col-sm-1"><button type="button" class="btn btn-primary pull-right return-btn" (click)="cancel()">Return</button></div>
         </div>
         <div class="col-sm-12">
-            <div class="col-sm-4">Pharmacy Id:</div>
-            <div class="col-sm-8">{{claim.serviceProviderId}}</div>
-            <div class="col-sm-4">Prescription Number:</div>
-            <div class="col-sm-8">{{claim.prescriptionRefNumber}}</div>
-            <div class="col-sm-4">Processed Date:</div>
-            <div class="col-sm-8">{{claim.processedDate}}</div>
-            <div class="col-sm-4">Fill Date:</div>
-            <div class="col-sm-8">{{claim.dateOfService}}</div>
-            <div class="col-sm-4">BIN:</div>
-            <div class="col-sm-8">{{claim.bin || '(None)'}}</div>
-            <div class="col-sm-4">PCN:</div>
-            <div class="col-sm-8">{{claim.pcn || '(None)'}}</div>
-            <div class="col-sm-4">Group Id:</div>
-            <div class="col-sm-8">{{claim.groupId || '(None)'}}</div>
-            <div class="col-sm-4">Packet Type:</div>
-            <div class="col-sm-8">{{claim.headerResponseStatus ? 'Response': 'Request'}}</div>
-
-            <div *ngIf="claim.headerResponseStatus" class="col-sm-4">Header Response Status:</div>
-            <div *ngIf="claim.headerResponseStatus" class="col-sm-8">{{claim.headerResponseStatus == 'A'? 'Accepted': 'Rejected'}}</div>
-        </div>    
+            <table>
+                <tbody>
+                    <tr><td class="header-info-name">Pharmacy Id:</td><td class="header-info-value">{{claim.serviceProviderId}}</td></tr>
+                    <tr *ngIf="claim.prescriptionRefNumber"><td class="header-info-name">Prescription Number:</td><td>{{claim.prescriptionRefNumber}}</td></tr>
+                    <tr><td class="header-info-name">Processed Date:</td><td>{{claim.processedDate}}</td></tr>
+                    <tr><td class="header-info-name">Fill Date:</td><td>{{claim.dateOfService}}</td></tr>
+                    <tr *ngIf="claim.bin"><td class="header-info-name">BIN:</td><td>{{claim.bin}}</td></tr>
+                    <tr *ngIf="claim.pcn"><td class="header-info-name">PCN:</td><td>{{claim.pcn}}</td></tr>
+                    <tr *ngIf="claim.groupId"><td class="header-info-name">Group Id:</td><td>{{claim.groupId}}</td></tr>
+                    <tr><td class="header-info-name">Packet Type:</td><td>{{claim.headerResponseStatus ? 'Response': 'Request'}}</td></tr>
+                    <tr *ngIf="claim.headerResponseStatus"><td class="header-info-name">Header Response Status:</td><td>{{claim.headerResponseStatus}}</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
+
+    <div [hidden]="!claim || !claim.id" class="container edit-panel">
+        <div class="navbar navbar-inverse center">
+            <h4>Claim Contents</h4>
+        </div>
+        <div class="col-sm-12">
+            <div style="margin:0;padding:0" *ngIf="claim.contents && claim.contents.Segments" class="col-sm-12">
+                <div style="margin:0;padding:0" *ngFor="let segment of claim.contents.Segments" class="col-sm-12">
+                    <h4>AM{{segment.SegmentCode}} - {{segment.SegmentDescription}}</h4>                
+                    <table>
+                        <thead class="table-header">
+                            <tr>
+                                <th class="field-id">Id</th>
+                                <th class="field-name">Name</th>
+                                <th class="field-desc">Description</th>
+                                <th class="field-value">Value</th>
+                                <th class="field-summary">Value Additional Info</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let field of segment.Fields">
+                                <td>{{field.FieldId}}</td>
+                                <td>{{field.FieldName}}</td>
+                                <td class="field-desc-column">{{field.Description}}</td>
+                                <td>{{field.Value}}</td>
+                                <td class="field-value-summary-column">{{field.Summary}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin:0;padding:0" *ngFor="let transaction of claim.contents.Transactions" class="col-sm-12">
+                    <div style="margin:0;padding:0" *ngFor="let segment of transaction.Segments" class="col-sm-12">
+                        <h4>Transaction {{segment.TransactionIndex}} - {{segment.TransactionType}} - AM{{segment.SegmentCode}} - {{segment.SegmentDescription}}</h4>                
+                        <table>
+                            <thead class="table-header">
+                                <tr>
+                                    <th class="field-id">Id</th>
+                                    <th class="field-name">Name</th>
+                                    <th class="field-desc">Description</th>
+                                    <th class="field-value">Value</th>
+                                    <th class="field-summary">Value Additional Info</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let field of segment.Fields">
+                                    <td>{{field.FieldId}}</td>
+                                    <td>{{field.FieldName}}</td>
+                                    <td class="field-desc-column">{{field.Description}}</td>
+                                    <td>{{field.Value}}</td>
+                                    <td class="field-value-summary-column">{{field.Summary}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>
+
+    <div [hidden]="!claim || !claim.id" class="container edit-panel">
+        <div class="navbar navbar-inverse center">
+            <h4>Claim Processing Logs</h4>
+        </div>
+        <div class="col-sm-12">
+            <table>
+                <thead class="table-header">
+                    <tr>
+                        <th class="processing-log-date">Log Date</th>
+                        <th class="processing-log-message">Log Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let processingLog of claim.processingLogs">
+                        <td>{{processingLog.loggedDate}}</td>
+                        <td>{{processingLog.message}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div [hidden]="!claim || !claim.id" class="container edit-panel">
+        <div class="navbar navbar-inverse center">
+            <h4>Claim Rejections</h4>
+        </div>
+        <div class="col-sm-12">
+            <table>
+                <thead class="table-header">
+                    <tr>
+                        <th class="rejection-level">Level</th>
+                        <th class="rejection-transaction-number">Tx</th>
+                        <th class="rejection-field-position">Field</th>
+                        <th class="rejection-code">Code</th>
+                        <th class="rejection-description">Description</th>
+                        <th class="rejection-message">Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let rejection of claim.rejections">
+                        <td>{{rejection.rejectionLevel}}</td>
+                        <td>{{rejection.transactionIndex}}</td>
+                        <td>{{rejection.repeatingFieldIndex}}</td>
+                        <td>{{rejection.code}}</td>
+                        <td>{{rejection.description}}</td>
+                        <td>{{rejection.message}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div [hidden]="!claim || !claim.id" class="container edit-panel">
+        <div class="navbar navbar-inverse center">
+            <h4>Claim Additional Processing Data</h4>
+        </div>
+        <div class="col-sm-12">
+            <table>
+                <thead class="table-header">
+                    <tr>
+                        <th class="additional-key">Name</th>
+                        <th class="additional-value">Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let additionalValue of claim.additionalValues">
+                        <td>{{additionalValue.key}}</td>
+                        <td>{{additionalValue.value}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div [hidden]="!claim || !claim.id" class="container edit-panel">
+        <div class="navbar navbar-inverse center">
+            <h4>Claim Matched Data Values</h4>
+        </div>
+        <div class="col-sm-12">
+            <table>
+                <thead class="table-header">
+                    <tr>
+                        <th class="sd-namespace">Name</th>
+                        <th class="sd-description">Desc</th>
+                        <th class="sd-value">Value</th>
+                        <th class="sd-matched">Matched</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let subordinateData of claim.subordinateDataValues">
+                        <td>{{subordinateData.namespace}}</td>
+                        <td>{{subordinateData.description}}</td>
+                        <td>{{subordinateData.value}}</td>
+                        <td>{{subordinateData.matched}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div [hidden]="!claim || !claim.id" class="container edit-panel">
+        <div class="navbar navbar-inverse center">
+            <h4>Claim Status Changes</h4>
+        </div>
+        <div class="col-sm-12">
+            <table>
+                <thead class="table-header">
+                    <tr>
+                        <th class="sc-status-date">Date</th>
+                        <th class="sc-route-ordinal">Route</th>
+                        <th class="sc-event-name">Event</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let statusChange of claim.statusChanges">
+                        <td>{{statusChange.statusDate}}</td>
+                        <td>{{statusChange.routeOrdinal}}</td>
+                        <td>{{statusChange.eventName}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
     <div [hidden]="claim && claim.id" class="loading-message">
         Loading Claim
-    </div>        
+    </div>
 </div>
-

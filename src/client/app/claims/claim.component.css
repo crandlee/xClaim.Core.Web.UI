@@ -1,3 +1,131 @@
 :host .return-btn {
     margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+:host .table-header {
+    font-weight: bold;
+}
+
+:host table {
+    width: 100%;
+    border: 1px ridge #CCCCCC;
+    background: #FAFAFA;
+}
+
+:host td {
+    padding: 3px;
+    border: 1px ridge #CCCCCC;
+    vertical-align: top;
+}
+
+:host th {
+    padding: 3px;
+    border: 1px ridge #CCCCCC;
+    background: #F0F0F0
+}
+
+:host .header-info-name {
+    width:40%;
+    font-weight: bold;
+}
+
+:host .header-info-value {
+    width: 60%;
+}
+
+:host .processing-log-date {
+    width: 40%
+}
+
+:host .processing-log-message {
+    width: 60%
+}
+
+:host .additional-key {
+    width: 60%
+}
+
+:host .additional-value {
+    width: 40%
+}
+
+:host .rejection-level {
+    width: 8%;
+}
+
+:host .rejection-transaction-number {
+    width: 5%;
+}
+
+:host .rejection-field-position {
+    width: 5%;
+}
+
+:host .rejection-code {
+    width: 5%;
+}
+
+:host .rejection-description {
+    width: 27%;
+}
+
+:host .rejection-message {
+    width: 50%;
+}
+:host .sd-namespace {
+    width: 20%;
+}
+
+:host .sd-description {
+    width: 20%;
+}
+
+:host .sd-value {
+    width: 25%;
+}
+
+:host .sd-matched {
+    width: 35%;
+}
+
+:host .sc-status-date {
+    width: 20%
+}
+
+:host .sc-route-ordinal {
+    width: 20%
+}
+
+:host .sc-event-name {
+    width: 60%
+}
+
+:host .field-id {
+    width: 5%
+}
+
+:host .field-name {
+    width: 20%
+}
+
+
+:host .field-desc {
+    width: 25%;
+}
+
+:host .field-desc-column {
+    font-size: 0.8em;
+}
+
+:host .field-value {
+    width: 25%
+}
+
+:host .field-summary {
+    width: 25%
+}
+
+:host .field-value-summary-column {
+    font-size: 0.8em;
 }
