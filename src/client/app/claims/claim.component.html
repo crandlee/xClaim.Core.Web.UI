@@ -2,8 +2,10 @@
     <div [hidden]="!claim || !claim.id" class="container edit-panel">
         <div class="navbar navbar-inverse center">
             <div class="col-sm-11">
-                <h4>Claim Information for Pharmacy: {{claim.serviceProviderId}}
-                </h4>
+                <h4>Claim Information for Pharmacy: {{claim.serviceProviderId}}</h4>
+                <div class="toggle-descriptions-container">
+                    <input type="checkbox" [(ngModel)]="showDescriptions" class="toggle-descriptions"/><span class="toggle-descriptions-text">Show Detailed Descriptions</span>
+                </div>                
             </div>
             <div class="col-sm-1"><button type="button" class="btn btn-primary pull-right return-btn" (click)="cancel()">Return</button></div>
         </div>
@@ -37,18 +39,62 @@
                             <tr>
                                 <th class="field-id">Id</th>
                                 <th class="field-name">Name</th>
-                                <th class="field-desc">Description</th>
+                                <th *ngIf="showDescriptions" class="field-desc">Description</th>
                                 <th class="field-value">Value</th>
-                                <th class="field-summary">Value Additional Info</th>
+                                <th *ngIf="showDescriptions" class="field-summary">Value Description</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let field of segment.Fields">
-                                <td>{{field.FieldId}}</td>
-                                <td>{{field.FieldName}}</td>
-                                <td class="field-desc-column">{{field.Description}}</td>
-                                <td>{{field.Value}}</td>
-                                <td class="field-value-summary-column">{{field.Summary}}</td>
+                                <td *ngIf="field.Fields.length === 0">{{field.FieldId}}</td>
+                                <td *ngIf="field.Fields.length === 0">{{field.FieldName}}</td>
+                                <td *ngIf="field.Fields.length === 0 && showDescriptions" class="field-desc-column">{{field.Description}}</td>
+                                <td *ngIf="field.Fields.length === 0">{{field.Value}}</td>
+                                <td *ngIf="field.Fields.length === 0 && showDescriptions" class="field-value-summary-column">{{field.Summary}}</td>
+                                <td *ngIf="field.Fields.length > 0" colspan="5" class="field-group-indent1">
+                                    <table>
+                                        <thead class="table-header">
+                                            <tr>
+                                                <th class="field-id">Id</th>
+                                                <th class="field-name">Name</th>
+                                                <th *ngIf="showDescriptions" class="field-desc">Description</th>
+                                                <th class="field-value">Value</th>
+                                                <th *ngIf="showDescriptions" class="field-summary">Value Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let innerField of field.Fields">
+                                                <td *ngIf="innerField.Fields.length === 0">{{innerField.FieldId}}</td>
+                                                <td *ngIf="innerField.Fields.length === 0">{{innerField.FieldName}}</td>
+                                                <td *ngIf="innerField.Fields.length === 0 && showDescriptions" class="field-desc-column">{{innerField.Description}}</td>
+                                                <td *ngIf="innerField.Fields.length === 0">{{innerField.Value}}</td>
+                                                <td *ngIf="innerField.Fields.length === 0 && showDescriptions" class="field-value-summary-column">{{innerField.Summary}}</td>
+                                                <td *ngIf="innerField.Fields.length > 0" colspan="5" class="field-group-indent2">                                                    
+                                                    <table>
+                                                        <thead class="table-header">
+                                                            <tr>
+                                                                <th class="field-id">Id</th>
+                                                                <th class="field-name">Name</th>
+                                                                <th *ngIf="showDescriptions" class="field-desc">Description</th>
+                                                                <th class="field-value">Value</th>
+                                                                <th *ngIf="showDescriptions" class="field-summary">Value Description</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr *ngFor="let innerField2 of innerField.Fields">
+                                                                <td *ngIf="innerField2.Fields.length === 0">{{innerField2.FieldId}}</td>
+                                                                <td *ngIf="innerField2.Fields.length === 0">{{innerField2.FieldName}}</td>
+                                                                <td *ngIf="innerField2.Fields.length === 0 && showDescriptions" class="field-desc-column">{{innerField2.Description}}</td>
+                                                                <td *ngIf="innerField2.Fields.length === 0">{{innerField2.Value}}</td>
+                                                                <td *ngIf="innerField2.Fields.length === 0 && showDescriptions" class="field-value-summary-column">{{innerField2.Summary}}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>                                                                            
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>                                                                            
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -61,18 +107,62 @@
                                 <tr>
                                     <th class="field-id">Id</th>
                                     <th class="field-name">Name</th>
-                                    <th class="field-desc">Description</th>
+                                    <th *ngIf="showDescriptions" class="field-desc">Description</th>
                                     <th class="field-value">Value</th>
-                                    <th class="field-summary">Value Additional Info</th>
+                                    <th *ngIf="showDescriptions" class="field-summary">Value Description</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let field of segment.Fields">
-                                    <td>{{field.FieldId}}</td>
-                                    <td>{{field.FieldName}}</td>
-                                    <td class="field-desc-column">{{field.Description}}</td>
-                                    <td>{{field.Value}}</td>
-                                    <td class="field-value-summary-column">{{field.Summary}}</td>
+                                    <td *ngIf="field.Fields.length === 0">{{field.FieldId}}</td>
+                                    <td *ngIf="field.Fields.length === 0">{{field.FieldName}}</td>
+                                    <td *ngIf="field.Fields.length === 0 && showDescriptions" class="field-desc-column">{{field.Description}}</td>
+                                    <td *ngIf="field.Fields.length === 0">{{field.Value}}</td>
+                                    <td *ngIf="field.Fields.length === 0 && showDescriptions" class="field-value-summary-column">{{field.Summary}}</td>
+                                    <td *ngIf="field.Fields.length > 0" colspan="5" class="field-group-indent1">
+                                        <table>
+                                            <thead class="table-header">
+                                                <tr>
+                                                    <th class="field-id">Id</th>
+                                                    <th class="field-name">Name</th>
+                                                    <th *ngIf="showDescriptions" class="field-desc">Description</th>
+                                                    <th class="field-value">Value</th>
+                                                    <th *ngIf="showDescriptions" class="field-summary">Value Description</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let innerField of field.Fields">
+                                                    <td *ngIf="innerField.Fields.length === 0">{{innerField.FieldId}}</td>
+                                                    <td *ngIf="innerField.Fields.length === 0">{{innerField.FieldName}}</td>
+                                                    <td *ngIf="innerField.Fields.length === 0 && showDescriptions" class="field-desc-column">{{innerField.Description}}</td>
+                                                    <td *ngIf="innerField.Fields.length === 0">{{innerField.Value}}</td>
+                                                    <td *ngIf="innerField.Fields.length === 0 && showDescriptions" class="field-value-summary-column">{{innerField.Summary}}</td>
+                                                    <td *ngIf="innerField.Fields.length > 0" colspan="5" class="field-group-indent2">
+                                                        <table>
+                                                            <thead class="table-header">
+                                                                <tr>
+                                                                    <th class="field-id">Id</th>
+                                                                    <th class="field-name">Name</th>
+                                                                    <th *ngIf="showDescriptions" class="field-desc">Description</th>
+                                                                    <th class="field-value">Value</th>
+                                                                    <th *ngIf="showDescriptions" class="field-summary">Value Description</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr *ngFor="let innerField2 of innerField.Fields">
+                                                                    <td *ngIf="innerField2.Fields.length === 0">{{innerField2.FieldId}}</td>
+                                                                    <td *ngIf="innerField2.Fields.length === 0">{{innerField2.FieldName}}</td>
+                                                                    <td *ngIf="innerField2.Fields.length === 0 && showDescriptions" class="field-desc-column">{{innerField2.Description}}</td>
+                                                                    <td *ngIf="innerField2.Fields.length === 0">{{innerField2.Value}}</td>
+                                                                    <td *ngIf="innerField2.Fields.length === 0 && showDescriptions" class="field-value-summary-column">{{innerField2.Summary}}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>                                                                                                                                                                                        
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>                                                                            
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

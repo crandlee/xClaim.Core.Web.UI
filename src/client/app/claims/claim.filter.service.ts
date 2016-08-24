@@ -6,7 +6,7 @@ import { ClaimService, IClaimsToClientFilter } from './claim.service';
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
-
+import * as moment from 'moment';
 
 @Injectable()
 export class ClaimFilterService extends FilterService<IClaimsToServerFilter, IClaimsToClientFilter> {
@@ -43,10 +43,10 @@ export class ClaimFilterService extends FilterService<IClaimsToServerFilter, ICl
         var toClientFilter = filter.toClientFilter;
 
         var filterSummary = "";
-        if (toServerFilter.processedStartDate) filterSummary += this.addAnd(filterSummary) + "Processed Date >= '" + (toServerFilter.processedStartDate || "") + "'";
-        if (toServerFilter.processedEndDate) filterSummary += this.addAnd(filterSummary) + "Processed Date <= '" + (toServerFilter.processedEndDate || "") + "'";
-        if (toServerFilter.dateOfServiceStart) filterSummary += this.addAnd(filterSummary) + "Fill Date >= '" + (toServerFilter.dateOfServiceStart || "") + "'";
-        if (toServerFilter.dateOfServiceEnd) filterSummary += this.addAnd(filterSummary) + "Fill Date <= '" + (toServerFilter.dateOfServiceEnd || "") + "'";
+        if (toServerFilter.processedStartDate) filterSummary += this.addAnd(filterSummary) + "Processed Date >= '" + (moment(toServerFilter.processedStartDate).format("MM/DD/YYYY hh:mm:ss a") || "") + "'";
+        if (toServerFilter.processedEndDate) filterSummary += this.addAnd(filterSummary) + "Processed Date <= '" + (moment(toServerFilter.processedEndDate).format("MM/DD/YYYY hh:mm:ss a") || "") + "'";
+        if (toServerFilter.dateOfServiceStart) filterSummary += this.addAnd(filterSummary) + "Fill Date >= '" + (moment(toServerFilter.dateOfServiceStart).format("MM/DD/YYYY") || "") + "'";
+        if (toServerFilter.dateOfServiceEnd) filterSummary += this.addAnd(filterSummary) + "Fill Date <= '" + (moment(toServerFilter.dateOfServiceEnd).format("MM/DD/YYYY") || "") + "'";
         if (toServerFilter.transactionCode) filterSummary += this.addAnd(filterSummary) + "Transaction Code = '" + (toServerFilter.transactionCode || "") + "'";
         if (toServerFilter.bin) filterSummary += this.addAnd(filterSummary) + "BIN contains '" + (toServerFilter.bin || "") + "'";
         if (toServerFilter.pcn) filterSummary += this.addAnd(filterSummary) + "PCN contains '" + (toServerFilter.pcn || "") + "'";

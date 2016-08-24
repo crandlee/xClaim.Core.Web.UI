@@ -29,16 +29,17 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
         if (!take) take = this.baseService.appSettings.DefaultPageSize;
 
         var url = `claims?skip=${skip}&take=${take}`;
-        if (toServerFilter && toServerFilter.dateOfServiceStart) url +=`&startServiceDate=${toServerFilter.dateOfServiceStart}`;
-        if (toServerFilter && toServerFilter.dateOfServiceEnd) url +=`&endServiceDate=${toServerFilter.dateOfServiceEnd}`;
-        if (toServerFilter && toServerFilter.processedStartDate) url +=`&startDate=${toServerFilter.processedStartDate}`;
-        if (toServerFilter && toServerFilter.processedEndDate) url +=`&endDate=${toServerFilter.processedEndDate}`;
+        if (toServerFilter && toServerFilter.dateOfServiceStart) url +=`&startServiceDate=${moment(toServerFilter.dateOfServiceStart).format("MM/DD/YYYY")}`;
+        if (toServerFilter && toServerFilter.dateOfServiceEnd) url +=`&endServiceDate=${moment(toServerFilter.dateOfServiceEnd).format("MM/DD/YYYY")}`;
+        if (toServerFilter && toServerFilter.processedStartDate) url +=`&startDate=${moment(toServerFilter.processedStartDate).utc().format("MM/DD/YYYY HH:mm:ss")}`;
+        if (toServerFilter && toServerFilter.processedEndDate) url +=`&endDate=${moment(toServerFilter.processedEndDate).utc().format("MM/DD/YYYY HH:mm:ss")}`;
         if (toServerFilter && toServerFilter.bin) url +=`&bin=${toServerFilter.bin}`;
         if (toServerFilter && toServerFilter.pcn) url +=`&pcn=${toServerFilter.pcn}`;
         if (toServerFilter && toServerFilter.groupId) url +=`&groupId=${toServerFilter.groupId}`;
         if (toServerFilter && toServerFilter.prescriptionRefNumber) url +=`&prescriptionRefNumber=${toServerFilter.prescriptionRefNumber}`;
         if (toServerFilter && toServerFilter.serviceProviderId) url +=`&serviceProviderId=${toServerFilter.serviceProviderId}`;
         if (toServerFilter && toServerFilter.transactionCode) url +=`&transactionCode=${toServerFilter.transactionCode}`;
+        console.log(url);
         var obs = this.baseService.getObjectData<IClaimsFromServer>(this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error retrieving the claims"), url)
             .map<IClaimsToClientFilter>(data => { 
                             return { rowCount: data.rowCount, 
@@ -63,7 +64,7 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
     public toViewModel(model: IClaim): IClaimViewModel {
         var vm: IClaimViewModel  = {
             id: model.id,
-            processedDate: moment(model.processedDate).format('MM/DD/YYYY hh:mm:ss a'),
+            processedDate: moment.utc(model.processedDate).local().format('MM/DD/YYYY hh:mm:ss a'),
             serviceProviderId: model.serviceProviderId,
             transactionCode: model.transactionCode,
             dateOfService: moment(model.dateOfService).format('MM/DD/YYYY'),
@@ -138,39 +139,55 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
     }
 
     private segmentToViewModel(segmentContainer: ISegmentContainer, packetSegment:any, transactionIndex?: number, transactionType?: string): ISegment {
-        var transmissionSegment = <ISegment>{};
-        transmissionSegment.Fields = [];
-        transmissionSegment.TransactionIndex = transactionIndex || 0;
-        transmissionSegment.TransactionType = transactionType;
+        var segment = <ISegment>{};
+        segment.Fields = [];
+        segment.TransactionIndex = transactionIndex || 0;
+        segment.TransactionType = transactionType;
         for (var propertyName in packetSegment) {
             if (propertyName === "SegmentCode") {
-                transmissionSegment.SegmentCode = packetSegment[propertyName];
+                segment.SegmentCode = packetSegment[propertyName];
                 continue;
             }  
             if (propertyName === "SegmentDescription") {
-                transmissionSegment.SegmentDescription = packetSegment[propertyName];
+                segment.SegmentDescription = packetSegment[propertyName];
                 continue;
             } 
             if (propertyName.indexOf("FieldGroupSize") > -1 || propertyName === "TransactionIndex") continue;
 
             var field = <IClaimField>packetSegment[propertyName];
-            field.Fields = [];
-            if (_.isArray(packetSegment[propertyName])) this.fieldGroupToViewModel(field, packetSegment[propertyName]);
-            transmissionSegment.Fields.push(this.fieldToViewModel(field));    
+            if (_.isArray(packetSegment[propertyName])) {
+                var fieldGroup = <IClaimField[]>packetSegment[propertyName];
+                fieldGroup.forEach(innerField => {
+                    field = <IClaimField>{ Fields: []};
+                    field.Fields = this.fieldGroupToViewModel(innerField);
+                    segment.Fields.push(field);        
+                });
+            } else {
+                field.Fields = [];                
+                segment.Fields.push(this.fieldToViewModel(field));    
+            }
         }
-        return transmissionSegment;
+        return segment;
     }
 
-    private fieldGroupToViewModel(field: IClaimField, fieldGroup: any[]): void {
-        fieldGroup.forEach(innerField => {
-            for (var propertyName in innerField) {
-                if (propertyName.indexOf("FieldGroupSize") > -1) continue;
-                var field = <IClaimField>innerField[propertyName];
+    private fieldGroupToViewModel(fieldGroup: any): IClaimField[] {
+        var fieldGroupFields: IClaimField[] = [];
+        for (var propertyName in fieldGroup) {
+            if (propertyName.indexOf("FieldGroupSize") > -1) continue;
+            var field = <IClaimField>fieldGroup[propertyName];
+            if (_.isArray(fieldGroup[propertyName])) {
+                var innerFieldGroup = <IClaimField[]>fieldGroup[propertyName];
+                innerFieldGroup.forEach(innerField => {
+                    field = <IClaimField>{Fields: []};
+                    field.Fields = this.fieldGroupToViewModel(innerField);
+                    fieldGroupFields.push(field);
+                });
+            } else {
                 field.Fields = [];
-                if (_.isArray(innerField[propertyName])) this.fieldGroupToViewModel(field, innerField[propertyName]);
-                field.Fields.push(this.fieldToViewModel(field));    
-            }        
-        });
+                fieldGroupFields.push(this.fieldToViewModel(field));
+            }
+        }
+        return fieldGroupFields;            
     }
 
     private fieldToViewModel(packetField: any): IClaimField {
@@ -178,12 +195,14 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
         transmissionField.FieldId = packetField.FieldId || '(none)';
         transmissionField.FieldName = packetField.FieldName || '(none)';
         transmissionField.Description = packetField.Description || '(none)';
+        transmissionField.Fields = [];
         transmissionField.Value = (packetField.Value && packetField.Value.Data) || packetField.Value;
         var valDesc = (packetField.Value && packetField.Value.Metadata && packetField.Value.Metadata.Description);
         if (valDesc) transmissionField.Value += ` (${valDesc})`;
         transmissionField.Summary = packetField.Value ? packetField.Value.Metadata && packetField.Value.Metadata.Summary : null;
         return transmissionField;
     }
+
 
     private processingLogToViewModel(model: IProcessingLog): IProcessingLogViewModel {
         var vm: IProcessingLogViewModel = {

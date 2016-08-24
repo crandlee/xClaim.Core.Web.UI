@@ -37,7 +37,7 @@
 }
 
 :host .filter-label {
-    font-size: 0.9em;
+    font-size: 0.8em;
     transform: translate(0, 50%);
 }
 
@@ -123,4 +123,23 @@
 
 :host .form-control {
     padding: 3px;
+}
+
+:host .popup {
+    position: absolute;
+    border-radius: 3px;
+    height: 251px;
+    top: 35px;
+    z-index: 10000;
+}
+
+:host .calendar-button {
+    position:absolute;
+    right:15px; 
+    top:0; 
+    height: 35px;
+}
+
+:host .invalid {
+  border-left: 5px solid #a94442; /* red */
 }

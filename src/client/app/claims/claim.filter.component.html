@@ -9,8 +9,8 @@
                             Filter:
                         </div>                                                
                         <div class="btn-toolbar inline pull-right">
-                            <a class="btn btn-primary btn-sm" href="#" (click)="resetFilter($event)">Reset Filter</a>
-                            <a class="btn btn-primary btn-sm" href="#" (click)="applyFilter($event)">Apply Filter</a>
+                            <a class="btn btn-primary btn-sm" href="#" (click)="resetFilter($event);clearDateTexts();">Reset Filter</a>
+                            <button class="btn btn-primary btn-sm" [disabled]="disableApply()" href="#" (click)="applyFilter($event)">Apply Filter</button>
                         </div>
                     </div>
                     <!--All Filters-->
@@ -20,26 +20,34 @@
                                 <div class="row">
                                     <div class="col-sm-4 form-label filter-label">Fill Date Start:</div>
                                     <div class="col-sm-8">
-                                        <input class="form-control input-sm" placeholder="Fill Date Start" #fillDateStart [(ngModel)]="toServerFilter.dateOfServiceStart" />
+                                        <input [ngClass]="{invalid: startServiceInvalid}" class="form-control input-sm" placeholder="Fill Date Start" #fillDateStart (blur)="startServiceDateString($event.target)" [value]="StartServiceDateString" />
+                                        <button class="btn btn-xs calendar-button" (click)="toggleServiceStart();"><span class="glyphicon glyphicon-calendar"></span></button>
+                                        <datepicker class="popup" *ngIf="showServiceStartPicker" [showWeeks]="false" [(ngModel)]="toServerFilter.dateOfServiceStart" (ngModelChange)="hideServiceStart()"></datepicker>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4 form-label filter-label">Fill Date End:</div>
                                     <div class="col-sm-8">
-                                        <input class="form-control input-sm" placeholder="Fill Date End" [(ngModel)]="toServerFilter.dateOfServiceEnd" />
+                                        <input [ngClass]="{invalid: endServiceInvalid}" class="form-control input-sm" placeholder="Fill Date End" #fillDateEnd (blur)="endServiceDateString($event.target)" [value]="EndServiceDateString" />
+                                        <button class="btn btn-xs calendar-button" (click)="toggleServiceEnd();"><span class="glyphicon glyphicon-calendar"></span></button>
+                                        <datepicker class="popup" *ngIf="showServiceEndPicker" [showWeeks]="false" [(ngModel)]="toServerFilter.dateOfServiceEnd" (ngModelChange)="hideServiceEnd()"></datepicker>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-sm-4 form-label filter-label">Processed Date Start:</div>
                                     <div class="col-sm-8">
-                                        <input class="form-control input-sm" placeholder="Processed Date Start" #fillDateStart [(ngModel)]="toServerFilter.processedDateStart" />
+                                        <input [ngClass]="{invalid: startInvalid}" class="form-control input-sm" placeholder="Processed Date Start" (blur)="startDateString($event.target)" [value]="StartDateString" />
+                                        <button class="btn btn-xs calendar-button" (click)="toggleStart();"><span class="glyphicon glyphicon-calendar"></span></button>
+                                        <datepicker class="popup" *ngIf="showStartPicker" [showWeeks]="false" [(ngModel)]="toServerFilter.processedStartDate" (ngModelChange)="hideStart()"></datepicker>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4 form-label filter-label">Processed Date End:</div>
                                     <div class="col-sm-8">
-                                        <input class="form-control input-sm" placeholder="Processed Date End" [(ngModel)]="toServerFilter.processedDateEnd" />
+                                        <input [ngClass]="{invalid: endInvalid}" class="form-control input-sm" placeholder="Processed Date End" (blur)="endDateString($event.target)" [value]="EndDateString" />
+                                        <button class="btn btn-xs calendar-button" (click)="toggleEnd();"><span class="glyphicon glyphicon-calendar"></span></button>
+                                        <datepicker class="popup" *ngIf="showEndPicker" [showWeeks]="false" [(ngModel)]="toServerFilter.processedEndDate" (ngModelChange)="hideEnd()"></datepicker>
                                     </div>
                                 </div>
 

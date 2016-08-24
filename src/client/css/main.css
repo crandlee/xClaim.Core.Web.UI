@@ -46,7 +46,11 @@ div.panel-heading {
 .navbar-inverse h4 {
     margin-left: 10px;    
     color: #FFFFFF;
-    margin-top: 20px;
+    margin-top: 10px;
+}
+
+.navbar-inverse h5 {
+    color: #FFFFFF;
 }
 
 

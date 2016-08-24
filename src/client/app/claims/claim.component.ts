@@ -20,7 +20,8 @@ export class ClaimComponent extends XCoreBaseComponent  {
     public claim: IClaimViewModel;
     public controlDataDescriptions: string[];
     public id: string;
-
+    public showDescriptions: boolean = false;
+    
     constructor(protected baseService: BaseService, private claimService: ClaimService, private routeSegment: RouteSegment)     
     {  
         super(baseService);
