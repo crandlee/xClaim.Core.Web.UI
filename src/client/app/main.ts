@@ -1,8 +1,9 @@
 import { APP_BASE_HREF } from '@angular/common';
+import { PLATFORM_DIRECTIVES } from '@angular/core';
 import { enableProdMode, provide, Injectable, ExceptionHandler } from '@angular/core';
 import { bootstrap } from '@angular/platform-browser-dynamic';
 import { HTTP_PROVIDERS } from '@angular/http';
-import { ROUTER_PROVIDERS } from '@angular/router';
+import { ROUTER_PROVIDERS, ROUTER_DIRECTIVES } from '@angular/router';
 import { AppSettings } from './appsettings';
 import { ToastyService, ToastyConfig, Toasty, ToastOptions, ToastData, XCoreToastService, LoggingService } from './shared/index';
 import { BaseService, HubService, SecurityService, BusyService, ScrollService } from './shared/index';
@@ -39,7 +40,7 @@ BrowserDomAdapter.makeCurrent();
 bootstrap(AppComponent, [
    ...MODAL_BROWSER_PROVIDERS, ToastyService, ToastyConfig, HTTP_PROVIDERS, ROUTER_PROVIDERS, AppSettings, BusyService,  XCoreToastService, 
    LoggingService, CookieService, SecurityService, HubService, ScrollService, BaseService,
-   provide(ExceptionHandler, { useClass: RootExceptionHandler}), provide(Window, { useValue: window })
+   provide(ExceptionHandler, { useClass: RootExceptionHandler}), provide(Window, { useValue: window }), provide(PLATFORM_DIRECTIVES, { useValue: [ROUTER_DIRECTIVES], multi: true})
 ]);
 
 

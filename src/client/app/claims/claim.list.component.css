@@ -11,3 +11,7 @@
 :host .list-new-button {
     margin-right: 5px;
 }
+
+:host td {
+    font-size: 0.9em;
+}

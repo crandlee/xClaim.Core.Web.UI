@@ -22,7 +22,7 @@
 :host th {
     padding: 3px;
     border: 1px ridge #CCCCCC;
-    background: #F0F0F0
+    background: #EAEAEA
 }
 
 :host .header-info-name {
@@ -32,6 +32,15 @@
 
 :host .header-info-value {
     width: 60%;
+}
+
+:host .header-info-name-2c {
+    width:20%;
+    font-weight: bold;
+}
+
+:host .header-info-value-2c {
+    width: 30%;
 }
 
 :host .processing-log-date {

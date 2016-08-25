@@ -16,7 +16,7 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
          baseService.initializeTrace("ClaimService");               
     }
 
-    private endpointKey: string = 'xClaim.Core.Web.Api.Claims';
+    public endpointKey: string = 'xClaim.Core.Web.Api.Claims';
 
 
 
@@ -76,11 +76,17 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
             headerResponseStatus: !model.headerResponseStatus ? null : model.headerResponseStatus == 'A'? 'Accepted': 'Rejected',
             version: model.version,
             contents: this.contentsToViewModel(model.contents),
+            secondaryId: model.secondaryId,
+            authorizationNumber: model.authorizationNumber,
+            primaryPacketType: this.toPacketTypeViewModel(model.primaryPacketType),
+            secondaryPacketType: this.toPacketTypeViewModel(model.secondaryPacketType),
             processingLogs: (model.processingLogs ? model.processingLogs.map(pl => this.processingLogToViewModel(pl)) : []),
             rejections: (model.rejections ? model.rejections.map(r => this.rejectionToViewModel(r)) : []),
             additionalValues: (model.additionalValues ? model.additionalValues.map(av => this.additionalValueToViewModel(av)) : []),
             subordinateDataValues: (model.subordinateDataValues ? model.subordinateDataValues.map(sd => this.subordinateDataToViewModel(sd)) : []),
             statusChanges: (model.statusChanges ? model.statusChanges.map(sc => this.statusChangeToViewModel(sc)) : []),
+            isIncoming: model.isIncoming,
+            correlatedPackets: (model.correlatedPackets ? model.correlatedPackets.map(cp => this.correlatedPacketToViewModel(cp)) : []),
             tooltipMessage: `<table>
                             <tr>
                                 <td>BIN:</td><td style="padding-left: 5px">${model.bin}</td>
@@ -93,9 +99,6 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
                             </tr>   
                             <tr>
                                 <td>Transaction Code:</td><td style="padding-left: 5px">${model.transactionCode}</td>
-                            </tr>   
-                            <tr>
-                                <td>Response Status:</td><td style="padding-left: 5px">${!model.headerResponseStatus ? null : model.headerResponseStatus == 'A'? 'Accepted': 'Rejected'}</td>
                             </tr>   
                             <tr>                                        
                                 <td>Id:</td><td style="padding-left: 5px">${model.id}</td>
@@ -206,7 +209,7 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
 
     private processingLogToViewModel(model: IProcessingLog): IProcessingLogViewModel {
         var vm: IProcessingLogViewModel = {
-            loggedDate: moment(model.loggedDate).format('MM/DD/YYYY hh:mm:ss a'),
+            loggedDate: moment.utc(model.loggedDate).local().format('MM/DD/YYYY hh:mm:ss a'),
             message: model.message
         }
         return vm;
@@ -220,9 +223,19 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
         return vm;
     }
 
+    private correlatedPacketToViewModel(model: ICorrelatedPacket): ICorrelatedPacketViewModel {
+        var vm: ICorrelatedPacketViewModel = {
+            id: model.id,
+            transactionCode: model.transactionCode,
+            processedDate: moment.utc(model.processedDate).local().format('MM/DD/YYYY hh:mm:ss a'),
+            type: this.toCorrelatedPacketType(model.transactionCode)
+        }
+        return vm;
+    }
+
     private statusChangeToViewModel(model: IStatusChange): IStatusChangeViewModel {
         var vm: IStatusChangeViewModel = {
-            statusDate: moment(model.statusDate).format('MM/DD/YYYY hh:mm:ss a'),
+            statusDate: moment.utc(model.statusDate).local().format('MM/DD/YYYY hh:mm:ss a'),
             routeOrdinal: this.translateRouteOrdinal(model.routeOrdinal),
             eventName: model.eventName.replace(/\./g," / ")    
         }
@@ -247,6 +260,8 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
         if (existing) return " / ";
         return "";
     }
+
+
     private translateMatchedSubordinate(model: ISubordinateData): string {
         var matched: string = "";
         if (model.matchedBins) matched += `${this.getSeparator(matched)}BINs: ${model.matchedBins}`;
@@ -295,6 +310,42 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
             tooltipMessage: ""};
     }
 
+    public toCorrelatedPacketType(transactionCode: string): string {
+
+        if (!transactionCode) return "Unknown";
+        if (_.last(transactionCode) === "1") return "Billing Request";
+        if (_.last(transactionCode) === "2") return "Reversal";
+        if (_.last(transactionCode) === "3") return "Rebill/Inquiry";
+        if (_.last(transactionCode) === "4") return "Request Only";
+        return "Unknown";
+
+    }
+
+    private toPacketTypeViewModel(packetType: number): string {
+        if (packetType === 0) return "Unknown";
+        if (packetType === 1) return "Service Provider Request";
+        if (packetType === 2) return "Accepted";
+        if (packetType === 3) return "Benefit";
+        if (packetType === 4) return "Captured";
+        if (packetType === 5) return "Paid";
+        if (packetType === 6) return "Rejected";
+        if (packetType === 7) return "Deferred";
+        if (packetType === 8) return "Outgoing Response";
+        if (packetType === 9) return "Outgoing Request";
+        if (packetType === 9) return "Incoming Payer";
+        return "Unknown";
+    }
+
+
+    public getFieldValues(fieldCode: string, claim: ITransmission): string[] {
+        
+        claim.Segments.forEach(s => {
+            
+        });
+
+        return [];
+    }
+
 }
 
 export interface IClaimViewModel {
@@ -317,6 +368,12 @@ export interface IClaimViewModel {
      additionalValues: IAdditionalValueViewModel[];
      subordinateDataValues: ISubordinateDataViewModel[];
      statusChanges: IStatusChangeViewModel[];
+     primaryPacketType: string;
+     secondaryPacketType: string;
+     secondaryId: string;
+     authorizationNumber: string;
+     isIncoming: boolean;
+     correlatedPackets: ICorrelatedPacketViewModel[];
 }
 
 
@@ -339,6 +396,25 @@ export interface IClaim {
      additionalValues: IAdditionalValue[];
      subordinateDataValues: ISubordinateData[];
      statusChanges: IStatusChange[];
+     primaryPacketType: number;
+     secondaryPacketType: number;
+     secondaryId: string;
+     authorizationNumber: string;
+     isIncoming: boolean;
+     correlatedPackets: ICorrelatedPacket[];
+}
+
+export interface ICorrelatedPacket {
+    id: string;
+    transactionCode: string;
+    processedDate: Date;
+}
+
+export interface ICorrelatedPacketViewModel {
+    id: string;
+    transactionCode: string;
+    processedDate: string;
+    type: string;
 }
 
 export interface IProcessingLog {

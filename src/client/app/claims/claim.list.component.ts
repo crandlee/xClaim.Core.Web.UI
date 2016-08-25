@@ -33,11 +33,12 @@ export class ClaimListComponent extends XCoreListComponent<IClaim, IClaimViewMod
 
     public ngOnInit() {
         this.initializeWith([
+            { title: "Authorization Number", name: "authorizationNumber", colWidth: 2 },
             { title: "Processed Date", name: "processedDate", colWidth: 2, sort: "asc" },
             { title: "Fill Date", name: "dateOfService", colWidth: 2 },
             { title: "Pharmacy Id", name: "serviceProviderId", colWidth: 2 },
             { title: "Prescription Number", name: "prescriptionRefNumber", colWidth: 2 },
-            { title: "Packet Type", name: "headerResponseStatus", colWidth: 2, transformString: val => val ? 'Response': 'Request' },
+            { title: "Response", name: "secondaryPacketType", colWidth: 1 },
             { title: "View", name: "View", colWidth: 1, editRow: true }      
         ], this.claimFilterService, this.claimService);  
     }

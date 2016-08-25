@@ -21,7 +21,7 @@ export class ClaimComponent extends XCoreBaseComponent  {
     public controlDataDescriptions: string[];
     public id: string;
     public showDescriptions: boolean = false;
-    
+
     constructor(protected baseService: BaseService, private claimService: ClaimService, private routeSegment: RouteSegment)     
     {  
         super(baseService);
@@ -43,7 +43,13 @@ export class ClaimComponent extends XCoreBaseComponent  {
         
         trace(TraceMethodPosition.Exit);
     }
-    
+
+    public redirectSecondary(e: any) {
+        e.preventDefault();
+        console.log(this.claim.secondaryId);
+        //this.baseService.router.navigate([`/claim/${this.claim.secondaryId}`]);
+    }    
+
     public cancel() {
         this.baseService.router.navigate(["/packetlist"]);
     }
