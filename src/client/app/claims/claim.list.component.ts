@@ -34,7 +34,7 @@ export class ClaimListComponent extends XCoreListComponent<IClaim, IClaimViewMod
     public ngOnInit() {
         this.initializeWith([
             { title: "Authorization Number", name: "authorizationNumber", colWidth: 2 },
-            { title: "Processed Date", name: "processedDate", colWidth: 2, sort: "asc" },
+            { title: "Processed Date", name: "processedDate", colWidth: 2, sort: "desc" },
             { title: "Fill Date", name: "dateOfService", colWidth: 2 },
             { title: "Pharmacy Id", name: "serviceProviderId", colWidth: 2 },
             { title: "Prescription Number", name: "prescriptionRefNumber", colWidth: 2 },
@@ -57,4 +57,7 @@ export class ClaimListComponent extends XCoreListComponent<IClaim, IClaimViewMod
         trace(TraceMethodPosition.Exit);            
     }
 
+    public reload() {
+        window.location.reload();
+    }
 }

@@ -1,7 +1,7 @@
 <div class="container">
     <div [hidden]="!dataViewModel" class="edit-panel" >
         <div class="navbar navbar-inverse center">
-            <div class="list-header">Claims</div>
+            <div class="list-header" (click)="reload()">Claims</div>
         </div>
         <claimfilter></claimfilter>
         <ng-table [config]="tableConfig" [rows]="dataViewModel.rows" [columns]="columns" (editClicked)="viewClaim($event)">

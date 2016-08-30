@@ -39,7 +39,6 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
         if (toServerFilter && toServerFilter.prescriptionRefNumber) url +=`&prescriptionRefNumber=${toServerFilter.prescriptionRefNumber}`;
         if (toServerFilter && toServerFilter.serviceProviderId) url +=`&serviceProviderId=${toServerFilter.serviceProviderId}`;
         if (toServerFilter && toServerFilter.transactionCode) url +=`&transactionCode=${toServerFilter.transactionCode}`;
-        console.log(url);
         var obs = this.baseService.getObjectData<IClaimsFromServer>(this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error retrieving the claims"), url)
             .map<IClaimsToClientFilter>(data => { 
                             return { rowCount: data.rowCount, 
@@ -337,13 +336,57 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
     }
 
 
-    public getFieldValues(fieldCode: string, claim: ITransmission): string[] {
-        
-        claim.Segments.forEach(s => {
-            
-        });
+    public getFieldValues(fieldCode: string, claim: ITransmission, firstOnly: boolean = false, firstTransactionOnly: boolean = false): string[] {
+        //Super routh and brute force version of this function.  Only goes two levels of field groups - but the standard only goes up to two
+        //levels atm.  
+        var values: string[] = [];
+        for (var i = 0; i < claim.Segments.length; i++) {
+            for (var j = 0; j < claim.Segments[i].Fields.length; j++) {
+                if (claim.Segments[i].Fields[j].FieldId === fieldCode) {
+                    values.push(claim.Segments[i].Fields[j].Value);
+                    if (firstOnly) return values;
+                } 
+                for (var k = 0; k < claim.Segments[i].Fields[j].Fields.length; k++) {
+                    if (claim.Segments[i].Fields[j].Fields[k].FieldId === fieldCode) {
+                        values.push(claim.Segments[i].Fields[j].Fields[k].Value);
+                        if (firstOnly) return values;
+                    } 
+                    for (var l = 0; l < claim.Segments[i].Fields[j].Fields[k].Fields.length; l++) {
+                        if (claim.Segments[i].Fields[j].Fields[k].Fields[l].FieldId === fieldCode) {
+                            values.push(claim.Segments[i].Fields[j].Fields[k].Fields[l].Value);
+                            if (firstOnly) return values;
+                        } 
+                    }                
+                }                
+            }
+        };
 
-        return [];
+        var transactionLength = claim.Transactions.length > 0 ? (firstTransactionOnly ? 1 : claim.Transactions.length) : 0;
+
+        for (var t = 0; t < transactionLength; t++) {
+            for (var i = 0; i < claim.Transactions[t].Segments.length; i++) {
+                for (var j = 0; j < claim.Transactions[t].Segments[i].Fields.length; j++) {
+                    if (claim.Transactions[t].Segments[i].Fields[j].FieldId === fieldCode){
+                        values.push(claim.Transactions[t].Segments[i].Fields[j].Value);
+                        if (firstOnly) return values;
+                    } 
+                    for (var k = 0; k < claim.Transactions[t].Segments[i].Fields[j].Fields.length; k++) {
+                        if (claim.Transactions[t].Segments[i].Fields[j].Fields[k].FieldId === fieldCode) {
+                            values.push(claim.Transactions[t].Segments[i].Fields[j].Fields[k].Value);
+                            if (firstOnly) return values;
+                        } 
+                        for (var l = 0; l < claim.Transactions[t].Segments[i].Fields[j].Fields[k].Fields.length; l++) {
+                            if (claim.Transactions[t].Segments[i].Fields[j].Fields[k].Fields[l].FieldId === fieldCode) {
+                                values.push(claim.Transactions[t].Segments[i].Fields[j].Fields[k].Fields[l].Value);
+                                if (firstOnly) return values;
+                            } 
+                        }                
+                    }
+                }
+            };
+        };
+
+        return values;
     }
 
 }

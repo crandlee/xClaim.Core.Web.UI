@@ -11,3 +11,8 @@
 :host .list-new-button {
     margin-right: 5px;
 }
+
+
+:host .list-header {
+    cursor: pointer;
+}

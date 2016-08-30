@@ -7,7 +7,7 @@ import { ROUTER_PROVIDERS, ROUTER_DIRECTIVES } from '@angular/router';
 import { AppSettings } from './appsettings';
 import { ToastyService, ToastyConfig, Toasty, ToastOptions, ToastData, XCoreToastService, LoggingService } from './shared/index';
 import { BaseService, HubService, SecurityService, BusyService, ScrollService } from './shared/index';
-
+import { LocationStrategy, HashLocationStrategy} from '@angular/common';
 
 import { CookieService } from 'angular2-cookie/core';
 import { MODAL_BROWSER_PROVIDERS } from 'angular2-modal/platform-browser/index';

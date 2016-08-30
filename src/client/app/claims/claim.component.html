@@ -3,32 +3,13 @@
         <div class="navbar navbar-inverse center">
             <div class="col-sm-11">
                 <h4>Claim Information / {{claim.headerResponseStatus ? 'Response': 'Request'}} / {{claim.transactionCode}} / {{claim.authorizationNumber}}</h4>
-                <div class="toggle-descriptions-container">
+                <div *ngIf="canViewDetails" class="toggle-descriptions-container">
                     <input type="checkbox" [(ngModel)]="showDescriptions" class="toggle-descriptions" /><span class="toggle-descriptions-text">Show Detailed Descriptions</span>
                 </div>
             </div>
             <div class="col-sm-1"><button type="button" class="btn btn-primary pull-right return-btn" (click)="cancel()">Return</button></div>
         </div>
-        <div class="col-sm-12">
-            <table>
-                <thead class="table-header">
-                    <tr>
-                        <th colspan="2">Related Claims</th>
-                    </tr>
-                </thead>                
-                <tbody>
-                    <tr>
-                        <td class="header-info-name">{{claim.isIncoming ? 'Primary Response:' : 'Primary Request:'}}</td>
-                        <td class="header-info-value"><a [routerLink]="['/packet', claim.secondaryId]">{{claim.secondaryPacketType}}</a></td>
-                    </tr>
-                    <tr [hidden]="!claim.isIncoming" *ngFor="let correlatedPacket of claim.correlatedPackets">
-                        <td class="header-info-name">Related Request ({{correlatedPacket.processedDate}}):</td>
-                        <td class="header-info-value"><a [routerLink]="['/packet', correlatedPacket.id]">{{correlatedPacket.type}} ({{correlatedPacket.transactionCode}})</a></td>
-                    </tr>
-
-                </tbody>
-            </table>
-            <br />
+        <div *ngIf="claim.contents && canViewSummary" class="col-sm-12">
             <table>
                 <thead class="table-header">
                     <tr>
@@ -71,15 +52,15 @@
                     </tr>
                     <tr>
                         <td class="header-info-name-2c">First Name</td>
-                        <td class="header-info-value-2c">&nbsp;</td>
+                        <td class="header-info-value-2c">{{firstName}}</td>
                         <td class="header-info-name-2c">Last Name</td>
-                        <td class="header-info-value-2c">&nbsp;</td>
+                        <td class="header-info-value-2c">{{lastName}}</td>
                     </tr>
                     <tr>
-                        <td class="header-info-name-2c">Middle Initial</td>
-                        <td class="header-info-value-2c">&nbsp;</td>
+                        <td class="header-info-name-2c">Gender</td>
+                        <td class="header-info-value-2c">{{genderCode}}</td>
                         <td class="header-info-name-2c">Member Id</td>
-                        <td class="header-info-value-2c">{{claim.memberId}}</td>
+                        <td class="header-info-value-2c">{{memberId}}</td>
                     </tr>
                     <tr>
                         <td class="header-info-name-2c">Effective Date</td>
@@ -91,21 +72,221 @@
                         <td class="header-info-name-2c">Date of Birth</td>
                         <td class="header-info-value-2c">&nbsp;</td>
                         <td class="header-info-name-2c">Person</td>
-                        <td class="header-info-value-2c">&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td class="header-info-name-2c">Gender</td>
-                        <td class="header-info-value-2c">&nbsp;</td>
-                        <td colspan="2">&nbsp;</td>
+                        <td class="header-info-value-2c">{{personCode}}</td>
                     </tr>
                 </tbody>
             </table>
             <br/>
 
+            <table>
+                <thead class="table-header">
+                    <tr>
+                        <th colspan="4">Drug Information</th>
+                    </tr>
+                </thead>                
+                <tbody>
+                    <tr>
+                        <td class="header-info-name-2c">NDC</td>
+                        <td class="header-info-value-2c">{{productServiceId}}</td>
+                        <td class="header-info-name-2c">Product Name</td>
+                        <td class="header-info-value-2c">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="header-info-name-2c">GPI</td>
+                        <td class="header-info-value-2c">&nbsp;</td>
+                        <td class="header-info-name-2c">Multi-Source Code</td>
+                        <td class="header-info-value-2c">&nbsp;</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table *ngIf="compounds.length > 0">
+                <thead class="table-header">
+                    <tr>
+                        <th colspan="4">Compound Information</th>
+                    </tr>
+                </thead>                
+                <tbody>            
+                    <tr>
+                        <td class="header-info-name-2c">Compound Dosage Form</td>
+                        <td class="header-info-value-2c">{{compoundDosageForm}}</td>
+                        <td class="header-info-name-2c">Compound Dispensing Unit Form</td>
+                        <td class="header-info-value-2c">{{compoundDispensingUnitForm}}</td>
+                    </tr>
+                    <tr *ngFor="let compound of compounds">
+                        <td class="header-info-name-2c">Compound Product Id</td>
+                        <td class="header-info-value-2c">{{compound.id}}</td>
+                        <td class="header-info-name-2c">Cost / Quantity</td>
+                        <td class="header-info-value-2c">{{compound.cost}} / {{compound.qty}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/>
+            <table>
+                <thead class="table-header">
+                    <tr>
+                        <th colspan="4">Claim Information</th>
+                    </tr>
+                </thead>                
+                <tbody>
+                    <tr>
+                        <td class="header-info-name-2c">Rx Number</td>
+                        <td class="header-info-value-2c">{{claim.prescriptionRefNumber}}</td>
+                        <td class="header-info-name-2c">New/Refill</td>
+                        <td class="header-info-value-2c">{{refillCount}}</td>
+                    </tr>
+                    <tr>
+                        <td class="header-info-name-2c">Version</td>
+                        <td class="header-info-value-2c">{{claim.version}}</td>
+                        <td class="header-info-name-2c">Compound</td>
+                        <td class="header-info-value-2c">{{isCompound}}</td>
+                    </tr>
+                    <tr>
+                        <td class="header-info-name-2c">WAC</td>
+                        <td class="header-info-value-2c">{{wac}}</td>
+                        <td class="header-info-name-2c">Unit Cost</td>
+                        <td class="header-info-value-2c">{{unitCost}}</td>
+                    </tr>
+                    <tr>
+                        <td class="header-info-name-2c">Unit Cost Used</td>
+                        <td class="header-info-value-2c">{{unitCostUsed}}</td>
+                        <td class="header-info-name-2c">Quantity</td>
+                        <td class="header-info-value-2c">{{quantity}}</td>
+                    </tr>
+                    <tr>
+                        <td class="header-info-name-2c">MAC Difference</td>
+                        <td class="header-info-value-2c">{{macDifference}}</td>
+                        <td class="header-info-name-2c">Other Coverage Amount</td>
+                        <td class="header-info-value-2c">{{otherCoverageAmount}}</td>
+                    </tr>
+                    <tr>
+                        <td class="header-info-name-2c">Other Coverage</td>
+                        <td class="header-info-value-2c">{{otherCoverage}}</td>
+                        <td class="header-info-name-2c">Dispensed As Written</td>
+                        <td class="header-info-value-2c">{{dispensedAsWritten}}</td>
+                    </tr>
+                    <tr>
+                        <td class="header-info-name-2c">Days Supply</td>
+                        <td class="header-info-value-2c">{{daysSupply}}</td>
+                        <td class="header-info-name-2c">Prescriber Id</td>
+                        <td class="header-info-value-2c">{{prescriberId}}</td>
+                    </tr>
+                    <tr>
+                        <td class="header-info-name-2c">Prior Authorization</td>
+                        <td class="header-info-value-2c">{{priorAuthorization}}</td>
+                        <td colspan="2">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="header-info-name-2c">Rebate</td>
+                        <td class="header-info-value-2c">{{rebate}}</td>
+                        <td class="header-info-name-2c">Rebate Percentage</td>
+                        <td class="header-info-value-2c">{{rebatePct}}</td>
+                    </tr>
+                    <tr>
+                        <td class="header-info-name-2c">Check Number</td>
+                        <td class="header-info-value-2c">{{checkNumber}}</td>
+                        <td class="header-info-name-2c">Check Date</td>
+                        <td class="header-info-value-2c">{{checkDate}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/>          
+            <table>
+                <thead class="table-header">
+                    <tr>
+                        <th colspan="4">Pricing Information</th>
+                    </tr>
+                </thead>                
+                <tbody>
+                    <tr>
+                        <td class="header-info-name-2c">Ingredient Cost Submitted</td>
+                        <td class="header-info-value-2c">{{costSubmitted}}</td>
+                        <td class="header-info-name-2c">Ingredient Cost Calculated</td>
+                        <td class="header-info-value-2c">{{costCalculated}}</td>
+                    </tr>
+                    <tr>
+                        <td class="header-info-name-2c">Dispensing Fee Submitted</td>
+                        <td class="header-info-value-2c">{{dispFeeSubmitted}}</td>
+                        <td class="header-info-name-2c">Dispensing Fee Calculated</td>
+                        <td class="header-info-value-2c">{{dispFeeCalculated}}</td>
+                    </tr>
+                    <tr>
+                        <td class="header-info-name-2c">Tax Submitted</td>
+                        <td class="header-info-value-2c">{{taxSubmitted}}</td>
+                        <td class="header-info-name-2c">Tax Calculated</td>
+                        <td class="header-info-value-2c">{{taxCalculated}}</td>
+                    </tr>
+                    <tr>
+                        <td class="header-info-name-2c">Total Price Submitted</td>
+                        <td class="header-info-value-2c">{{priceSubmitted}}</td>
+                        <td class="header-info-name-2c">Total Price Calculated</td>
+                        <td class="header-info-value-2c">{{priceCalculated}}</td>
+                    </tr>
+                    <tr>
+                        <td class="header-info-name-2c">Copay Submitted</td>
+                        <td class="header-info-value-2c">{{copaySubmitted}}</td>
+                        <td class="header-info-name-2c">Copay Calculated</td>
+                        <td class="header-info-value-2c">{{copayCalculated}}</td>
+                    </tr>
+                    <tr>
+                        <td class="header-info-name-2c">Usual and Customary</td>
+                        <td class="header-info-value-2c">{{usualAndCustomary}}</td>
+                        <td class="header-info-name-2c">Paid Amount</td>
+                        <td class="header-info-value-2c">{{paidAmount}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">&nbsp;</td>
+                        <td class="header-info-name-2c">Total With Margin</td>
+                        <td class="header-info-value-2c">{{totalWithMargin}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/>  
+            <table>
+                <thead class="table-header">
+                    <tr>
+                        <th colspan="4">Worker's Compensation</th>
+                    </tr>
+                </thead>                
+                <tbody>
+                    <tr>
+                        <td class="header-info-name-2c">Employer Name</td>
+                        <td class="header-info-value-2c">{{employerName}}</td>
+                        <td class="header-info-name-2c">Date Of Injury</td>
+                        <td class="header-info-value-2c">{{dateOfInjury}}</td>
+                    </tr>
+                    <tr>
+                        <td class="header-info-name-2c">Workeer's Comp Claim Id</td>
+                        <td class="header-info-value-2c">{{workersCompClaimId}}</td>
+                        <td colspan="2">&nbsp;</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/>  
+
+            <table>
+                <thead class="table-header">
+                    <tr>
+                        <th colspan="2">Related Claims</th>
+                    </tr>
+                </thead>                
+                <tbody>
+                    <tr>
+                        <td class="header-info-name">{{claim.isIncoming ? 'Primary Response:' : 'Primary Request:'}}</td>
+                        <td class="header-info-value"><a [routerLink]="['/packet', claim.secondaryId]">{{claim.secondaryPacketType}}</a></td>
+                    </tr>
+                    <tr [hidden]="!claim.isIncoming" *ngFor="let correlatedPacket of claim.correlatedPackets">
+                        <td class="header-info-name">Related Request ({{correlatedPacket.processedDate}}):</td>
+                        <td class="header-info-value"><a [routerLink]="['/packet', correlatedPacket.id]">{{correlatedPacket.type}} ({{correlatedPacket.transactionCode}})</a></td>
+                    </tr>
+
+                </tbody>
+            </table>
+            <br />
+
         </div>
     </div>
 
-    <div [hidden]="!claim || !claim.id" class="container edit-panel">
+    <div [hidden]="!claim || !claim.id || !canViewSummary" class="container edit-panel">
         <div class="navbar navbar-inverse center">
             <h4>Claim Rejections</h4>
         </div>
@@ -118,7 +299,7 @@
                         <th class="rejection-field-position">Field</th>
                         <th class="rejection-code">Code</th>
                         <th class="rejection-description">Description</th>
-                        <th class="rejection-message">Message</th>
+                        <th *ngIf="canViewDiagnostics" class="rejection-message">Message</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -128,7 +309,7 @@
                         <td>{{rejection.repeatingFieldIndex}}</td>
                         <td>{{rejection.code}}</td>
                         <td>{{rejection.description}}</td>
-                        <td>{{rejection.message}}</td>
+                        <td *ngIf="canViewDiagnostics">{{rejection.message}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -136,7 +317,7 @@
     </div>
 
 
-    <div [hidden]="!claim || !claim.id" class="container edit-panel">
+    <div [hidden]="!claim || !claim.id || !canViewDiagnostics" class="container edit-panel">
         <div class="navbar navbar-inverse center">
             <h4>Claim Processing Logs</h4>
         </div>
@@ -158,7 +339,7 @@
         </div>
     </div>
 
-    <div [hidden]="!claim || !claim.id" class="container edit-panel">
+    <div [hidden]="!claim || !claim.id || !canViewDiagnostics" class="container edit-panel">
         <div class="navbar navbar-inverse center">
             <h4>Claim Additional Processing Data</h4>
         </div>
@@ -182,7 +363,7 @@
 
 
 
-    <div [hidden]="!claim || !claim.id" class="container edit-panel">
+    <div [hidden]="!claim || !claim.id || !canViewDetails" class="container edit-panel">
         <div class="navbar navbar-inverse center">
             <h4>Claim Contents</h4>
         </div>
@@ -329,7 +510,7 @@
         </div>
     </div>
 
-    <div [hidden]="!claim || !claim.id" class="container edit-panel">
+    <div [hidden]="!claim || !claim.id || !canViewDiagnostics" class="container edit-panel">
         <div class="navbar navbar-inverse center">
             <h4>Claim Matched Data Values</h4>
         </div>
@@ -355,7 +536,7 @@
         </div>
     </div>
 
-    <div [hidden]="!claim || !claim.id" class="container edit-panel">
+    <div [hidden]="!claim || !claim.id || !canViewDiagnostics" class="container edit-panel">
         <div class="navbar navbar-inverse center">
             <h4>Claim Status Changes</h4>
         </div>

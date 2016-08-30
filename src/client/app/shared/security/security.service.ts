@@ -7,6 +7,7 @@ import 'rxjs/add/operator/take';
 import { TraceMethodPosition } from '../index';
 import { BusyService } from '../service/busy.service';
 import { LoggingService } from '../logging/logging.service';
+import * as _ from 'lodash';
 
 @Injectable()
 export class SecurityService {
@@ -25,13 +26,18 @@ export class SecurityService {
         this.classTrace = this.loggingService.getTraceFunction("SecurityService");
         
         if (this.retrieve("xc.IsAuthorized") !== "") {
-            this.HasAdminRole = this.retrieve("xc.HasAdminRole");
             this.IsAuthorized = this.retrieve("xc.IsAuthorized");
         }
     }
 
     public IsAuthorized: boolean;
-    public HasAdminRole: boolean;
+
+    public HasAdminRole(): boolean { 
+        var token:any = this.getDataFromToken(this.cookieService.get("xc.authorizationData"));
+        var roleArr = <Array<string>>token.role;
+        if (!roleArr) return false;
+        return _.some(roleArr, r => r === "admin");
+    };
 
     public GetToken(): any {
         var trace = this.classTrace("getToken");
@@ -49,8 +55,6 @@ export class SecurityService {
         this.store("xc.authorizationDataIdToken", "");
 
         this.IsAuthorized = false;
-        this.HasAdminRole = false;
-        this.store("xc.HasAdminRole", false);
         this.store("xc.IsAuthorized", false);
         
         trace(TraceMethodPosition.Exit);
@@ -240,6 +244,28 @@ export class SecurityService {
         trace(TraceMethodPosition.Exit);
         return false;
     }
+
+    public getTokenValue(key:string): any {
+
+        var trace = this.classTrace("getTokenValue");
+        trace(TraceMethodPosition.Entry);
+
+        var token = this.cookieService.get("xc.authorizationData");
+        if (!token) return null;
+        var tokenObj: any = this.getDataFromToken(token);
+        if (!tokenObj) return null;
+        
+        trace(TraceMethodPosition.Exit);
+        return tokenObj[key];
+
+    }
+
+    public getTokenValueAsBoolean(key: string): boolean {
+        var tokenVal = this.getTokenValue(key);
+        if (!tokenVal) return false;
+        return true;
+    }
+
     public checkAuthorized(): boolean {
 
         var trace = this.classTrace("checkAuthorized");

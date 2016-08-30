@@ -1,7 +1,7 @@
 <div class="container">
     <div [hidden]="!dataViewModel" class="edit-panel" >
         <div class="navbar navbar-inverse center">
-            <div class="list-header">Users</div>
+            <div class="list-header" (click)="reload()">Users</div>
             <ul class="nav navbar-nav pull-right list-header-button-bar">
                 <li>
                     <p class="navbar-btn list-new-button">

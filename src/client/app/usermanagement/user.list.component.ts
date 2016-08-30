@@ -79,5 +79,8 @@ export class UserListComponent extends XCoreListComponent<IUserProfile, IUserPro
     }
     
 
+    public reload() {
+        window.location.reload();
+    }
 }
 
