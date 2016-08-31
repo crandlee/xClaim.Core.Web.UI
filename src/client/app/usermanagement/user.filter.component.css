@@ -50,7 +50,7 @@
     /* symbol for "opening" panels */
     font-family: 'Glyphicons Halflings';
     /* essential for enabling glyphicon */
-    content: "\e114";
+    /* content: "\e114"; */
     /* adjust as needed, taken from bootstrap.css */
     float: right;
     position: relative;
@@ -66,7 +66,7 @@
     /* symbol for "collapsed" panels */
     font-family: 'Glyphicons Halflings';
     /* essential for enabling glyphicon */
-    content: "\e079";
+    /* content: "\e079"; */
     /* adjust as needed, taken from bootstrap.css */
     float: right;
     position: relative;

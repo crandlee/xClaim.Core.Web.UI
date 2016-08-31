@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { BaseService } from '../shared/service/base.service';
-import { ClaimService, IClaimViewModel } from '../claims/claim.service';
+import { ClaimService, IClaimViewModel } from './claim.service';
 import { XCoreBaseComponent } from '../shared/component/base.component';
 import { HubService } from '../shared/hub/hub.service';
 import * as _ from 'lodash';
@@ -8,12 +8,13 @@ import { RouteSegment } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
 import { SecurityService } from '../shared/security/security.service';
+import { OverpunchService } from './overpunch.service'
 
 @Component({
     moduleId: module.id,
     styleUrls: ['claim.component.css'],
     templateUrl: 'claim.component.html',
-    providers: [ClaimService],
+    providers: [ClaimService, OverpunchService],
     directives: []
 })
 export class ClaimComponent extends XCoreBaseComponent  {
@@ -114,11 +115,15 @@ export class ClaimComponent extends XCoreBaseComponent  {
         this.prescriberId = this.getFieldValue("DB");
         this.priorAuthorization = this.getFieldValue("EU") + " - " + this.getFieldValue("EV");
         this.costSubmitted = this.getFieldValue("D9");
+        this.costCalculated = this.getPairedContentsFieldValue("F6", true, 2);
         this.dispFeeSubmitted = this.getFieldValue("DC");
+        this.dispFeeCalculated = this.getPairedContentsFieldValue("F7", true, 2);
         this.taxSubmitted = this.getFieldValue("HA") || this.getFieldValue("GE");
+        this.taxCalculated = this.getPairedContentsFieldValue("AX", true, 2) || this.getPairedContentsFieldValue("AW", true, 2);
         this.usualAndCustomary = this.getFieldValue("DQ");
         this.copaySubmitted = this.getFieldValue("DX");
-        
+        this.copayCalculated = this.getPairedContentsFieldValue("F5", true, 2);
+        this.paidAmount = this.getPairedContentsFieldValue("F9", true, 2);
     }
 
     private getCompounds(): ICompound[] {
@@ -132,6 +137,12 @@ export class ClaimComponent extends XCoreBaseComponent  {
         return compounds;
     }
 
+    public getPairedContentsFieldValue(fieldCode: string, overpunch: boolean = false, decimals: number = 0): string {
+        if (!this.claim || !this.claim.pairedContents) return "";
+        var values = this.claimService.getQuickFields(this.claim.pairedContents, fieldCode, overpunch, decimals);
+        if (values && values.length > 0) return values[0];
+        return "";
+    }
 
     private getFieldValue(fieldCode: string): string {
         if (!this.claim || !this.claim.contents) return "";

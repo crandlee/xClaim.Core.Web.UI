@@ -13,12 +13,13 @@ import { ClaimFilterService, IClaimsToServerFilter } from './claim.filter.servic
 import { Observable } from 'rxjs';
 import { IFilterDefinition, IFilterService } from '../shared/filtering/filter.service';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
+import { OverpunchService } from './overpunch.service'
 
 @Component({
     moduleId: module.id,    
     styleUrls: ['claim.list.component.css'],
     templateUrl: 'claim.list.component.html',
-    providers: [ClaimService, ClaimFilterService],
+    providers: [ClaimService, ClaimFilterService, OverpunchService],
     directives: [NgTableComponent, ClaimFilterComponent]
 })
 export class ClaimListComponent extends XCoreListComponent<IClaim, IClaimViewModel, IClaimsToServerFilter, IClaimsToClientFilter> {

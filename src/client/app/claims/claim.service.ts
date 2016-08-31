@@ -2,6 +2,7 @@ import { Observable } from 'rxjs/Observable';
 import { Injectable } from '@angular/core';
 import { BaseService, INameValue } from '../shared/service/base.service';
 import { HubService } from '../shared/hub/hub.service';
+import { OverpunchService } from './overpunch.service';
 import { IServiceOptions, IDataService, ICollectionViewModel } from '../shared/service/base.service';
 import * as _ from 'lodash';
 import { IClaimsToServerFilter } from './claim.filter.service';
@@ -12,12 +13,11 @@ import * as moment from 'moment';
 @Injectable()
 export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClaimsToServerFilter, IClaimsToClientFilter> {
     
-    constructor(private baseService: BaseService) {
+    constructor(private baseService: BaseService, private overpunchService: OverpunchService) {
          baseService.initializeTrace("ClaimService");               
     }
 
     public endpointKey: string = 'xClaim.Core.Web.Api.Claims';
-
 
 
     public get(skip?: number, take?: number, toServerFilter?: IClaimsToServerFilter): Observable<IClaimsToClientFilter> {
@@ -75,6 +75,7 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
             headerResponseStatus: !model.headerResponseStatus ? null : model.headerResponseStatus == 'A'? 'Accepted': 'Rejected',
             version: model.version,
             contents: this.contentsToViewModel(model.contents),
+            pairedContents: model.pairedContents,
             secondaryId: model.secondaryId,
             authorizationNumber: model.authorizationNumber,
             primaryPacketType: this.toPacketTypeViewModel(model.primaryPacketType),
@@ -263,7 +264,7 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
 
     private translateMatchedSubordinate(model: ISubordinateData): string {
         var matched: string = "";
-        if (model.matchedBins) matched += `${this.getSeparator(matched)}BINs: ${model.matchedBins}`;
+        if (model.matchedBins) matched += `${this.getSeparator(matched)}BINs: ${model.matchedBins}\n`;
         if (model.matchedPcns) matched += `${this.getSeparator(matched)}PCNs: ${model.matchedPcns}\n`;
         if (model.matchedGroupIds) matched += `${this.getSeparator(matched)}Groups: ${model.matchedGroupIds}\n`;
         if (model.matchedServiceProviderIds) matched += `${this.getSeparator(matched)}Pharmacies: ${model.matchedServiceProviderIds}\n`;
@@ -336,8 +337,46 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
     }
 
 
+    public getQuickFields(contents: string, fieldCode: string, overpunch: boolean = false, decimals: number = 0): string[] {
+
+        const fieldSeparator = String.fromCharCode(28);
+        const segmentSeparator = String.fromCharCode(29);
+        const transactionSeparator = String.fromCharCode(30);
+        const maxNumber = 2147483647
+        var search = `${fieldSeparator}${fieldCode}`;
+        var searchIndexStart = contents.indexOf(search);
+        var strs: string[] = [];
+        do {
+            if (searchIndexStart <= -1) break;
+            searchIndexStart += search.length;
+            var nextFld = contents.indexOf(fieldSeparator, searchIndexStart);
+            if (nextFld == -1) nextFld = maxNumber;
+            var nextSeg = contents.indexOf(segmentSeparator, searchIndexStart);
+            if (nextSeg == -1) nextSeg = maxNumber;
+            var nextTrans = contents.indexOf(transactionSeparator, searchIndexStart);
+            if (nextTrans == -1) nextTrans = maxNumber;
+            var endOfPacket = contents.length - 1;
+            var searchIndexEnd = _.min([nextFld, nextSeg, nextTrans, endOfPacket]);
+            strs.push(contents.substr(searchIndexStart, searchIndexEnd - searchIndexStart));
+            searchIndexStart = contents.indexOf(search, searchIndexEnd);
+        } while (searchIndexStart > -1 && searchIndexStart < contents.length)
+        return strs.map(s => {
+            s = s.trim();
+            if (overpunch) {
+                var overpunchResult = this.overpunchService.overpunch(s);
+                if (overpunchResult.overpunched) s = overpunchResult.value;
+            }
+            var num = _.toNumber(s);
+            if (decimals > 0 && !_.isNaN(num)) {
+                num = num / Math.pow(10, decimals);
+                s = num.toFixed(decimals);                
+            }
+            return s;
+        });
+    }
+
     public getFieldValues(fieldCode: string, claim: ITransmission, firstOnly: boolean = false, firstTransactionOnly: boolean = false): string[] {
-        //Super routh and brute force version of this function.  Only goes two levels of field groups - but the standard only goes up to two
+        //Super rough and brute force version of this function.  Only goes two levels of field groups - but the standard only goes up to two
         //levels atm.  
         var values: string[] = [];
         for (var i = 0; i < claim.Segments.length; i++) {
@@ -405,6 +444,7 @@ export interface IClaimViewModel {
      headerResponseStatus: string;
      version: string;
      contents: ITransmission;
+     pairedContents: string;
      tooltipMessage: string;     
      processingLogs: IProcessingLogViewModel[];
      rejections: IRejectionViewModel[];
@@ -431,6 +471,9 @@ export interface IClaim {
      pcn: string;
      groupId: string;
      contents: string;
+     //NOTE: The paired contents field is not JSON, it is a raw packet since we only
+     //need a couple of fields from it and it thus not worth converting to JSON on the server side.
+     pairedContents: string;
      transactionCount: number;
      headerResponseStatus: string;
      version: string;
