@@ -1,0 +1,52 @@
+<div class="container">
+    <div [hidden]="!viewModel || !viewModel.id" class="edit-panel" >
+        <div class="navbar navbar-inverse center">
+            <h4>Namespace Information for: {{viewModel.name || "New Namespace"}}</h4>
+        </div>
+        <form (ngSubmit)="onSubmit()" [ngFormModel]="form">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" placeholder="Name" name="name" class="form-control" ngControl="NameControl" [(ngModel)]="viewModel.name" required />
+            </div>    
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <input type="text" placeholder="Description" name="description" class="form-control" ngControl="DescriptionControl" [(ngModel)]="viewModel.description" />
+            </div>    
+            <div class="form-group">
+                <label for="valuetype">Value Type</label>
+                <select class="form-control input-sm" [(ngModel)]="viewModel.type" required>
+                    <option *ngFor="let val of namespaceValueTypes | orderBy : '+description'" [value]="val.id">{{val.description}}</option>
+                </select>                                
+            </div>    
+            <div class="form-group">
+                <label for="validationpattern">Validation Pattern</label>
+                <input type="text" placeholder="Validation Pattern" name="validationpattern" class="form-control" ngControl="ValidationPatternControl" [(ngModel)]="viewModel.validationPattern" />
+            </div>    
+            <div class="form-group">
+                <label for="length">Length</label>
+                <input type="text" placeholder="Length" name="length" class="form-control" ngControl="LengthControl" [(ngModel)]="viewModel.length" />
+            </div>
+            <div class="form-group">
+                <label for="precision">Precision</label>
+                <input type="text" placeholder="Precision" name="precision" class="form-control" ngControl="PrecisionControl" [(ngModel)]="viewModel.precision" />
+            </div>
+            <div class="form-group">
+                <label for="enabled">Allow Null:</label>
+                <div>
+                    <ui-switch name="allowNull" (change)="viewModel.allowNull = $event" [checked]="viewModel.allowNull"></ui-switch>
+                </div>
+            </div>    
+            <validation [validationMessages]='validationMessages'></validation>
+            <div class="form-group clearfix">
+                <div class="btn-toolbar pull-right">
+                    <button type="submit" class="btn btn-default" [disabled]="validationMessages.length > 0">Save</button>
+                    <button type="button" class="btn btn-primary" (click)="cancel()">Namespace List</button>
+                </div>
+            </div>    
+        </form>    
+    </div>
+    <div [hidden]="viewModel && viewModel.id" class="loading-message">
+        Loading Namespace
+    </div>        
+</div>
+

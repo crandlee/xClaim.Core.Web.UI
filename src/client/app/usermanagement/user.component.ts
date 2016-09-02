@@ -88,7 +88,6 @@ export class UserComponent extends XCoreBaseComponent  {
         fn().subscribe(up => {
             trace(TraceMethodPosition.CallbackStart);
             this.userProfile = this.userService.toViewModel(up);
-            
             if (this.userId == null) {
                 this.userProfile.password = "";
                 this.userProfile.confirmPassword = "";

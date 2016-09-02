@@ -1,7 +1,7 @@
 <div class="container">
     <div [hidden]="!dataViewModel" class="edit-panel" >
         <div class="navbar navbar-inverse center">
-            <div class="list-header" (click)="reload()">Users</div>
+            <div class="list-header" (click)="reload()">Namespaces</div>
             <ul class="nav navbar-nav pull-right list-header-button-bar">
                 <li>
                     <p class="navbar-btn list-new-button">
@@ -10,12 +10,12 @@
                 </li>
             </ul>            
         </div>
-        <userfilter></userfilter>
-        <ng-table [config]="tableConfig" [rows]="dataViewModel.rows" [columns]="columns" (editClicked)="editUser($event)" (deleteClicked)="deleteUser($event)">
+        <namespacefilter></namespacefilter>
+        <ng-table [config]="tableConfig" [rows]="dataViewModel.rows" [columns]="columns" (editClicked)="edit($event)" (deleteClicked)="delete($event)">
         </ng-table>
     </div>
     <div class="row-count-tag">{{(dataViewModel.rows && dataViewModel.rows.length) || 0}} of {{dataViewModel.rowCount}}</div>
     <div [hidden]="dataViewModel" class="loading-message">
-        Loading Users
+        Loading Namespaces
     </div>
 </div>

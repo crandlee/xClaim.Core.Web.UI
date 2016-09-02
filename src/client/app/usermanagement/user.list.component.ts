@@ -51,7 +51,7 @@ export class UserListComponent extends XCoreListComponent<IUserProfile, IUserPro
         event.preventDefault();
         var trace = this.classTrace("addNew");
         trace(TraceMethodPosition.Entry);
-        this.baseService.router.navigate(['/NewUser'])
+        this.baseService.router.navigate(['/newuser'])
         trace(TraceMethodPosition.Exit);            
     }
     

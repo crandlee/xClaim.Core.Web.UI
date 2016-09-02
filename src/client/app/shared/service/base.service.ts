@@ -274,6 +274,11 @@ export interface ICollectionViewModel<T> {
     rows: T[];
 }
 
+export interface IEnumViewModel {
+    id: number;
+    description: string;
+}
+
 export interface IEntity {
     id: string;
 }

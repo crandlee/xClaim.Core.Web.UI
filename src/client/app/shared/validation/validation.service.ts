@@ -11,12 +11,20 @@ export class ValidationService {
     private static passwordNotStrong: string = "passwordNotStrong";
     private static required: string = "required";
     private static invalidEmailAddress: string = "invalidEmailAddress";
+    private static notNumeric: string = "notNumeric";
+    private static notInteger: string = "notInteger";
+    private static lessThanOne: string = "lessThanOne";
+    private static lessThanZero: string = "lessThanZero";
 
     public getValidatorErrorMessage(code: string): string {
         let config:any = {
             [ValidationService.required]: "Required",
             [ValidationService.invalidEmailAddress]: "Invalid email address",
-            [ValidationService.passwordNotStrong]: "The password must be at least 9 characters containing one upper, lower, numeric, and symbol character"
+            [ValidationService.passwordNotStrong]: "The password must be at least 9 characters containing one upper, lower, numeric, and symbol character",
+            [ValidationService.notNumeric]: "Value must be numeric",
+            [ValidationService.notInteger]: "Value must be an integer",
+            [ValidationService.lessThanOne]: "Value must be greater than zero",
+            [ValidationService.lessThanZero]: "Value must be greater than or equal to zero",
         };
 
         return config[code] || `Unknown Error (key = ${code})`;
@@ -25,6 +33,56 @@ export class ValidationService {
     constructor() {
         
     }
+
+    public static isGreaterThanOrEqualToZero(canBeEmpty: boolean = false, control: AbstractControl): IValidationResult {
+        
+        if (canBeEmpty && (!control || !control.value)) return null;
+        var num = _.toNumber(control.value);
+        if (!_.isNaN(num) && Number.isInteger(num) && num >= 0) {
+            return null;
+        } else {
+            return { [ValidationService.lessThanZero]: true };
+        }
+        
+    }
+
+
+    public static isGreaterThanZero(canBeEmpty: boolean = false, control: AbstractControl): IValidationResult {
+        if (canBeEmpty && (!control || !control.value)) return null;
+        var num = _.toNumber(control.value);
+        if (!_.isNaN(num) && Number.isInteger(num) && num > 0) {
+            return null;
+        } else {
+            return { [ValidationService.lessThanOne]: true };
+        }
+        
+    }
+
+    public static isInteger(canBeEmpty: boolean = false, control: AbstractControl): IValidationResult {
+        
+        if (canBeEmpty && (!control || !control.value)) return null;
+        var num = _.toNumber(control.value);
+        if (!_.isNaN(num) && Number.isInteger(num)) {
+            return null;
+        } else {
+            return { [ValidationService.notInteger]: true };
+        }
+        
+    }
+
+    public static isNumeric(canBeEmpty: boolean = false, control: AbstractControl): IValidationResult {
+        
+        if (canBeEmpty && (!control || !control.value)) return null;
+        var num = _.toNumber(control.value);
+        if (!_.isNaN(num)) {
+            return null;
+        } else {
+            return { [ValidationService.notNumeric]: true };
+        }
+        
+    }
+
+
     
     public static passwordStrength(passwordControl: AbstractControl): IValidationResult {
         
