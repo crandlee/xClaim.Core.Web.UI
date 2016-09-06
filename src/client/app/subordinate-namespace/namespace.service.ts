@@ -58,7 +58,7 @@ export class NamespaceService implements IDataService<INamespace, INamespaceView
     public getNamespaceValueTypes(): Observable<IEnumViewModel[]> {
         var trace = this.baseService.classTrace("getNamespaceValueTypes");
         trace(TraceMethodPosition.Entry);
-        var obs = this.baseService.getObjectData<IEnumViewModel[]>(this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error retrieving the namespace"), `namespacevaluetypes`);
+        var obs = this.baseService.getObjectData<IEnumViewModel[]>(this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error retrieving the value types"), `namespacevaluetypes`);
         trace(TraceMethodPosition.Exit);
         return obs;
     }

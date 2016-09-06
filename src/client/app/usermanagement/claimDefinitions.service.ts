@@ -14,7 +14,7 @@ export class ClaimDefinitionsService implements IDataService<IClaimDefinitionMod
 
     constructor(private baseService: BaseService) {
         
-         this.baseService.classTrace = this.baseService.loggingService.getTraceFunction("UserService");
+         this.baseService.classTrace = this.baseService.loggingService.getTraceFunction("UserClaimDefinitions");
     }
 
     private endpointKey: string = 'xClaim.Core.Web.Api.Security';
