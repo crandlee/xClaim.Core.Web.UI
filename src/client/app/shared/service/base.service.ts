@@ -204,7 +204,7 @@ export class BaseService {
                         var err = { _body: ((j.result && j.result.message) || 'An error occured retrieving the data'), status: 500};
                         throw err;
                     }
-                    if (j.model) return j.model; 
+                        if (typeof(j.isResult) == "boolean" && !j.isResult) return j.model; 
                     return j});                
             var tailObs = this.getTailGetObservable<TData>(baseObs, serviceOptions, onError);   
         var ret =  this.executeObservable(tailObs);
@@ -221,7 +221,14 @@ export class BaseService {
         var baseObs = this.http
                 .post(`${serviceOptions.apiRoot}${this.getCleanRoutePath(routePath)}`, 
                     JSON.stringify(data), this.setHeaders(requestOptions)).share()
-                    .map<TRet>( res => { return res.json(); });
+                    .map<TRet>(res => {                        
+                        var j = res.json();
+                        if (j.isResult) { 
+                            var err = { _body: ((j.result && j.result.message) || 'An error occured retrieving the data'), status: 500};
+                            throw err;
+                        }
+                        if (typeof(j.isResult) == "boolean" && !j.isResult) return j.model; 
+                        return j});                
         var tailObs = this.getTailGetObservable<TRet>(baseObs, serviceOptions, onError);
         var ret =  this.executeObservable(tailObs);
         trace(TraceMethodPosition.Exit);
@@ -237,7 +244,15 @@ export class BaseService {
         var baseObs = this.http
                 .put(`${serviceOptions.apiRoot}${this.getCleanRoutePath(routePath)}`, 
                     JSON.stringify(data), this.setHeaders(requestOptions)).share()
-                    .map<TRet>( res => { return res.json(); });
+                    .map<TRet>(res => {
+                        var j = res.json();
+                        if (j == undefined) return res;
+                        if (j.isResult) { 
+                            var err = { _body: ((j.result && j.result.message) || 'An error occured retrieving the data'), status: 500};
+                            throw err;
+                        }
+                        if (typeof(j.isResult) == "boolean" && !j.isResult) return j.model; 
+                        return j});                
         var tailObs = this.getTailGetObservable<TRet>(baseObs, serviceOptions, onError);
         var ret = this.executeObservable(tailObs);
         trace(TraceMethodPosition.Exit);

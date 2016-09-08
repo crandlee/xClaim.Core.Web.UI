@@ -1,0 +1,45 @@
+<div class="container">
+    <div [hidden]="!defaultValues || defaultValues.length === 0" class="edit-panel" >
+        <div class="navbar navbar-inverse center">
+            <h4>Default Values for {{parentVm?.name}}</h4>
+        </div>
+        <ng-table [config]="tableConfig" [columns]="columns" (deleteClicked)="delete($event)"></ng-table>
+        <div class="row">
+            <div class="col-xs-4">Entity Type:</div>
+            <div class="col-xs-8">
+                <select [ngClass]="{invalid: entityTypeInvalid()}" class="form-control input-sm" [(ngModel)]="entityType" required>
+                    <option *ngFor="let val of entityTypes | orderBy : '+description'" [value]="val.id">{{val.description}}</option>
+                </select>                
+            </div>
+        </div>
+        <div class="row">            
+            <div class="col-xs-4">Value:</div>
+            <div class="col-xs-8"><textarea [ngClass]="{valid: valueValid, invalid: !valueValid}" placeholder="Value" name="value" class="form-control input-sm" [(ngModel)]="value" (blur)="validateDefaultValue()"></textarea></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 form-label filter-label">Effective Date:</div>
+            <div class="col-sm-4">
+                <input [ngClass]="{valid: !effectiveDateInvalid, invalid: effectiveDateInvalid}" class="form-control input-sm" placeholder="Effective Date" #effectiveDateStart (blur)="effectiveDateString($event.target)" [value]="EffectiveDateString" />                                
+            </div>
+            <div class="col-sm-1">
+                <button class="btn btn-xs calendar-button" (click)="toggleEffectiveDate();"><span class="glyphicon glyphicon-calendar"></span></button>
+                <datepicker class="popup" *ngIf="showEffectiveDatePicker" [showWeeks]="false" [(ngModel)]="effectiveDate" (ngModelChange)="hideEffectiveDate()"></datepicker>
+            </div>
+        </div>                
+        <div class="row">
+            <div class="col-sm-4 form-label filter-label">Termination Date:</div>
+            <div class="col-sm-4">
+                <input [ngClass]="{valid: !terminationDateInvalid,invalid: terminationDateInvalid}" class="form-control input-sm" placeholder="Termination Date" #terminationDateStart (blur)="terminationDateString($event.target)" [value]="TerminationDateString" />                                
+            </div>
+            <div class="col-sm-1">
+                <button class="btn btn-xs calendar-button" (click)="toggleTerminationDate();"><span class="glyphicon glyphicon-calendar"></span></button>
+                <datepicker class="popup" *ngIf="showTerminationDatePicker" [showWeeks]="false" [(ngModel)]="terminationDate" (ngModelChange)="hideTerminationDate()"></datepicker>
+            </div>
+        </div>
+        <div class="form-group clearfix">
+            <div class="btn-toolbar">
+                <button type="button" class="btn btn-primary pull-right" [disabled]="!isValid()" (click)="save($event)">Save</button>
+            </div>
+        </div>    
+    </div>
+</div>

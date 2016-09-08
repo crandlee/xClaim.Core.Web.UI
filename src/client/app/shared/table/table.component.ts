@@ -128,6 +128,7 @@ export class NgTableComponent {
     if (colDef && colDef.dateFormat) {
       val = moment(Date.parse(val)).format(colDef.dateFormat);
     }
+    
     return val;
   }
 

@@ -15,12 +15,13 @@ import { Observable } from 'rxjs/Observable';
 import { UiSwitchComponent } from 'angular2-ui-switch';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
 import { OrderByPipe } from '../shared/pipe/orderby.pipe';
+import { DefaultValuesComponent } from './defaultValues.component';
 
 @Component({
     moduleId: module.id,
     templateUrl: 'namespace.component.html',
     providers: [NamespaceService, NamespaceValidationService],
-    directives: [ValidationComponent, UiSwitchComponent],
+    directives: [ValidationComponent, UiSwitchComponent, DefaultValuesComponent],
     pipes: [OrderByPipe]
 })
 export class NamespaceComponent extends XCoreBaseComponent  {
@@ -31,6 +32,8 @@ export class NamespaceComponent extends XCoreBaseComponent  {
     public controlDataDescriptions: string[];
     public id: string;
     public namespaceValueTypes: IEnumViewModel[] = [];
+
+    @ViewChild(DefaultValuesComponent) DefaultValuesView: DefaultValuesComponent;
 
     constructor(protected baseService: BaseService, private service: NamespaceService, 
         private builder: FormBuilder, private validationService: NamespaceValidationService, private routeSegment: RouteSegment)     
@@ -98,6 +101,8 @@ export class NamespaceComponent extends XCoreBaseComponent  {
             trace(TraceMethodPosition.CallbackStart);
             this.viewModel = this.service.toViewModel(up);
             //Load any subviews here
+            this.DefaultValuesView.load(this.viewModel);
+
             trace(TraceMethodPosition.CallbackEnd);            
         }); 
         

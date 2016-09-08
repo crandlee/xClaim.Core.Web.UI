@@ -11,6 +11,10 @@ import { IDefaultValueViewModel, DefaultValuesService } from './defaultValues.se
 import { TraceMethodPosition } from '../shared/logging/logging.service';
 import { INgTableColumn, INgTableConfig, INgTableRow, INgTableChangeMessage, NgTableComponent } from '../shared/table/table.component';
 import { OrderByPipe } from '../shared/pipe/orderby.pipe';
+import { IEnumViewModel } from '../shared/service/base.service';
+import { DATEPICKER_DIRECTIVES } from 'ng2-bootstrap/components/datepicker'
+
+import * as moment from 'moment';
 
 
 @Component({
@@ -19,14 +23,16 @@ import { OrderByPipe } from '../shared/pipe/orderby.pipe';
     styleUrls: ['defaultValues.component.css'],
     templateUrl: 'defaultValues.component.html',
     providers: [NamespaceService, DefaultValuesService],
-    directives: [NgTableComponent],
+    directives: [DATEPICKER_DIRECTIVES, NgTableComponent],
     pipes: [OrderByPipe]
 })
 export class DefaultValuesComponent extends XCoreBaseComponent {
 
     public columns: INgTableColumn[] = [
-        { name: "entityTypeDesc", title: "Entity Type", colWidth: 3, sort: "asc" },
-        { name: "value", title: "Claim Value", colWidth: 8 },
+        { name: "entityTypeDescription", title: "Entity Type", colWidth: 2, sort: "asc" },
+        { name: "value", title: "Default Value", colWidth: 3 },
+        { name: "effectiveDate", title: "Effective Date", colWidth: 3 },
+        { name: "terminationDate", title: "Termination Date", colWidth: 3 },
         { name: "Delete", title: "", deleteRow: true, deleteMessage: "Delete this default value?", colWidth: 1}
     ];
 
@@ -34,8 +40,18 @@ export class DefaultValuesComponent extends XCoreBaseComponent {
         sorting: { columns: this.columns  }
     }
     public defaultValues: IDefaultValueViewModel[] = [];
-    public entityType: string;
+    public id: string;
+    public entityType: number;
     public value: string;
+    public effectiveDate: Date;
+    public terminationDate: Date;
+    public entityTypes: IEnumViewModel[] = [];
+    public valueValid: boolean = false;
+     
+    public effectiveDateInvalid: boolean = true;
+    public terminationDateInvalid: boolean = false;
+    public showEffectiveDatePicker: boolean = false;
+    public showTerminationDatePicker: boolean = false;
 
     @Input() public parentVm: INamespaceViewModel;
     @ViewChild(NgTableComponent) tableComponent: NgTableComponent;
@@ -51,16 +67,17 @@ export class DefaultValuesComponent extends XCoreBaseComponent {
         super(baseService);
         
         this.initializeTrace("DefaultValuesComponent");
-
     }
     
     public load(parentVm: INamespaceViewModel) {
         this.parentVm = parentVm;
-        this.tableComponent.load(this.tableLoadFunction());
-        this.defaultValuesService.get(0,10, {namespaceId: this.parentVm.id}).subscribe(vm => {
-            this.defaultValues = vm.rows;
-        });
-
+        this.defaultValuesService.getNamespaceEntityTypes().subscribe(vm => {
+            this.entityTypes = vm;
+            this.defaultValuesService.get(0, 10, {namespaceId: this.parentVm.id}).subscribe(vm => {
+                this.defaultValues = vm.rows;
+                this.tableComponent.load(this.tableLoadFunction());
+            });
+        });        
     }
     
     public delete(row: IDefaultValueViewModel): void {
@@ -71,7 +88,7 @@ export class DefaultValuesComponent extends XCoreBaseComponent {
         this.defaultValuesService.deleteDefaultValue(row.id).subscribe(d => {
            if (d) {
              this.baseService.loggingService.success(`Default Value deleted successfully`);
-             _.remove(this.user.claims, cd =>  cd.id === row.id && cd.value.toLowerCase() === row.value.toLowerCase());  
+             _.remove(this.defaultValues, vm =>  vm.id === row.id);  
              this.tableComponent.load(this.tableLoadFunction());
            } 
         });
@@ -79,25 +96,113 @@ export class DefaultValuesComponent extends XCoreBaseComponent {
 
     }
 
-    public addClaim(event: any): void {
-        var trace = this.classTrace("addClaim");
+    public save(event: any): void {
+        var trace = this.classTrace("save");
         trace(TraceMethodPosition.Entry);
-        var claimLookup: IClaimDefinitionViewModel = _.find(this.claimDefinitions, cd => cd.id === this.claimType);
-        var existingUserClaim: IUserClaimViewModel = _.find(this.user.claims, cd => cd.definitionId === this.claimType && cd.value.toLowerCase() === this.claimValue.toLowerCase());
-        if (existingUserClaim) this.baseService.loggingService.warn("This claim/value already exist on the user");
-        if (claimLookup && !existingUserClaim) {
-            var vm = <IUserClaimViewModel>{ id: "", value: this.claimValue, definitionId: claimLookup.id, description: claimLookup.description, name: claimLookup.name, userId: this.user.id };            
-            this.userService.saveUserClaim(vm).subscribe(vm => {
-                this.baseService.loggingService.success(`Successfully added new ${vm.description} claim `);
-                this.user.claims.push(vm);
-                this.tableComponent.load(this.tableLoadFunction());
-                this.claimType = null;
-                this.claimValue = null;
-            });
-        }    
+        var lookup: IDefaultValueViewModel = _.find(this.defaultValues, vm => vm.entityType == this.entityType 
+            && new Date(vm.effectiveDate).getTime() === this.effectiveDate.getTime());
+        var vm = <IDefaultValueViewModel>{ id: (lookup && lookup.id) || "", namespaceId: this.parentVm.id, 
+            keyCompositeId: (lookup && lookup.keyCompositeId) || "", effectiveDate: this.effectiveDate.toString(), 
+            terminationDate: this.terminationDate && this.terminationDate.toString(), entityType: this.entityType, value: this.value};
+        this.defaultValuesService.saveDefaultValue(vm).subscribe(vm => {
+            this.baseService.loggingService.success(`Successfully saved the default value for ${vm.entityTypeDescription}`);
+            if (lookup == null) 
+                this.defaultValues.push(vm);
+            else {
+                lookup.value = vm.value;
+                lookup.effectiveDate = vm.value;
+                lookup.terminationDate = vm.value;
+            }
+            this.tableComponent.load(this.tableLoadFunction());
+            this.clear();
+        });
         trace(TraceMethodPosition.Exit);
     }
 
+    private clear(): void {
+        this.entityType = null;
+        this.id == null;
+        this.effectiveDate == null;
+        this.terminationDate == null;
+    }
 
+    public isValid(): boolean {
+        return this.entityType !== undefined 
+            && this.effectiveDate !== undefined
+            && (!this.effectiveDateInvalid && !this.terminationDateInvalid)
+            && this.valueValid;
+    }
+
+    private isDate(dateString: string): boolean {
+        var date = new Date(dateString);
+        return date instanceof Date && !isNaN(date.valueOf())
+    }
+
+
+    get EffectiveDateString(): string {
+        if (this.effectiveDate)
+            return moment(this.effectiveDate).format("MM/DD/YYYY hh:mm:ss a");
+        return null;
+    }
+
+    private effectiveDateString(targetInput:any): void {
+        this.effectiveDateInvalid = true;
+        if (!targetInput.value) return;
+        if (this.isDate(targetInput.value)) {
+            this.effectiveDateInvalid = false;
+            this.effectiveDate = new Date(targetInput.value);            
+        }             
+        else {
+            this.effectiveDateInvalid = true;
+        }
+    }
+
+    get TerminationDateString(): string {
+        if (this.terminationDate)
+            return moment(this.terminationDate).format("MM/DD/YYYY hh:mm:ss a");
+        return null;
+    }
+    private terminationDateString(targetInput:any): void {
+        this.terminationDateInvalid = false;
+        if (!targetInput.value) return;
+        if (this.isDate(targetInput.value)) 
+            this.terminationDate = new Date(targetInput.value);
+        else {
+            this.terminationDateInvalid = true;
+        }
+            
+    }
+
+    public toggleEffectiveDate(): void {
+        this.showEffectiveDatePicker = !this.showEffectiveDatePicker;
+        this.showTerminationDatePicker = false;
+    }
+
+    public hideEffectiveDate(): void {
+        this.effectiveDateString({value:this.effectiveDate});
+        this.showEffectiveDatePicker = false;
+    }
+
+    public toggleTerminationDate(): void {
+        this.showTerminationDatePicker = !this.showTerminationDatePicker;
+        this.showEffectiveDatePicker = false;
+    }
+
+    public hideTerminationDate(): void {
+        this.effectiveDateString({value:this.terminationDate});
+        this.showTerminationDatePicker = false;
+    }
+
+
+    public validateDefaultValue(): void {
+        this.defaultValuesService.isDefaultValueValid(this.parentVm.type, this.parentVm.validationPattern, this.value)            
+            .subscribe(valid => {
+                this.valueValid = valid;
+            });
+    }
+
+    public entityTypeInvalid(): boolean {        
+        return (this.entityType === undefined);
+    }
 }
 
