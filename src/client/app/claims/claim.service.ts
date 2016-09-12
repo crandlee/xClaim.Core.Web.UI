@@ -270,6 +270,7 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
         if (model.matchedServiceProviderIds) matched += `${this.getSeparator(matched)}Pharmacies: ${model.matchedServiceProviderIds}\n`;
         if (model.matchedProductServiceIds) matched += `${this.getSeparator(matched)}NDCs: ${model.matchedProductServiceIds}\n`;
         if (model.matchedMemberIds) matched += `${this.getSeparator(matched)}Members: ${model.matchedMemberIds}\n`;
+        if (!matched) matched += model.referenceType;
         return matched;
     }
 
@@ -563,6 +564,8 @@ export interface ISubordinateData {
     matchedServiceProviderIds: string;
     matchedProductServiceIds: string;
     matchedMemberIds: string;
+    type: string;
+    referenceType: string;
 }
 
 

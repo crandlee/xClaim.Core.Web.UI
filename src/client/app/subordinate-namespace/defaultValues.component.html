@@ -1,5 +1,5 @@
 <div class="container">
-    <div [hidden]="!defaultValues || defaultValues.length === 0" class="edit-panel" >
+    <div [hidden]="!parentVm" class="edit-panel" >
         <div class="navbar navbar-inverse center">
             <h4>Default Values for {{parentVm?.name}}</h4>
         </div>

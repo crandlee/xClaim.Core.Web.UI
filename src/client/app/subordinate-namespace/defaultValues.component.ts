@@ -195,7 +195,8 @@ export class DefaultValuesComponent extends XCoreBaseComponent {
 
 
     public validateDefaultValue(): void {
-        this.defaultValuesService.isDefaultValueValid(this.parentVm.type, this.parentVm.validationPattern, this.value)            
+        console.log(this.parentVm);
+        this.defaultValuesService.isDefaultValueValid(this.parentVm.type, this.parentVm.validationPattern, this.value, this.parentVm.allowNull, this.parentVm.precision, this.parentVm.length)            
             .subscribe(valid => {
                 this.valueValid = valid;
             });
