@@ -189,13 +189,12 @@ export class DefaultValuesComponent extends XCoreBaseComponent {
     }
 
     public hideTerminationDate(): void {
-        this.effectiveDateString({value:this.terminationDate});
+        this.terminationDateString({value:this.terminationDate});
         this.showTerminationDatePicker = false;
     }
 
 
     public validateDefaultValue(): void {
-        console.log(this.parentVm);
         this.defaultValuesService.isDefaultValueValid(this.parentVm.type, this.parentVm.validationPattern, this.value, this.parentVm.allowNull, this.parentVm.precision, this.parentVm.length)            
             .subscribe(valid => {
                 this.valueValid = valid;

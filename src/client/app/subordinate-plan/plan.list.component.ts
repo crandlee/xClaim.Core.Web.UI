@@ -7,41 +7,43 @@ import { INgTableColumn, INgTableConfig, INgTableRow, INgTableChangeMessage } fr
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { IDataService, ICollectionViewModel } from '../shared/service/base.service';
-import { NamespaceService, INamespace, INamespaceViewModel, INamespacesToClientFilter } from './namespace.service';
-import { NamespaceFilterComponent } from './namespace.filter.component';
-import { NamespaceFilterService, INamespacesToServerFilter } from './namespace.filter.service';
+import { PlanService, IPlan, IPlanViewModel, IPlansToClientFilter } from './plan.service';
+import { PlanFilterComponent } from './plan.filter.component';
+import { PlanFilterService, IPlansToServerFilter } from './plan.filter.service';
 import { Observable } from 'rxjs';
 import { IFilterDefinition, IFilterService } from '../shared/filtering/filter.service';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
 
 @Component({
     moduleId: module.id,    
-    styleUrls: ['namespace.list.component.css'],
-    templateUrl: 'namespace.list.component.html',
-    providers: [NamespaceService, NamespaceFilterService],
-    directives: [NgTableComponent, NamespaceFilterComponent]
+    styleUrls: ['plan.list.component.css'],
+    templateUrl: 'plan.list.component.html',
+    providers: [PlanService, PlanFilterService],
+    directives: [NgTableComponent, PlanFilterComponent]
 })
-export class NamespaceListComponent extends XCoreListComponent<INamespace, INamespaceViewModel, INamespacesToServerFilter, INamespacesToClientFilter> {
+export class PlanListComponent extends XCoreListComponent<IPlan, IPlanViewModel, IPlansToServerFilter, IPlansToClientFilter> {
     
     @ViewChild(NgTableComponent) tableComponent: NgTableComponent;
 
 
-    constructor(protected baseService: BaseService, private service: NamespaceService, private specificfilterService: NamespaceFilterService) {
+    constructor(protected baseService: BaseService, private service: PlanService, private specificfilterService: PlanFilterService) {
         super(baseService);
-        this.initializeTrace("NamespaceListComponent");
+        this.initializeTrace("PlanListComponent");
     }
 
     public ngOnInit() {
         this.initializeWith([
-            { title: "Name", name: "name", colWidth: 5, sort: "asc" },
-            { title: "Description", name: "description", colWidth: 5 },
+            { title: "BIN", name: "bin", colWidth: 2 },
+            { title: "PCN", name: "pcn", colWidth: 2 },
+            { title: "Group Id", name: "groupId", colWidth: 2, sort: "asc" },
+            { title: "Name", name: "name", colWidth: 4 },
             { title: "Edit", name: "Edit", colWidth: 1, editRow: true },        
             { title: "Delete", name: "Delete", colWidth: 1, deleteRow: true, deleteMessage: 'Do you want to delete this namespace?' }
         ], this.specificfilterService, this.service);  
     }
 
     public ngAfterViewInit() {
-        this.NotifyLoaded("NamespacesList");
+        this.NotifyLoaded("PlanList");
         super.initialize(this.tableComponent);
     }
 
@@ -49,7 +51,7 @@ export class NamespaceListComponent extends XCoreListComponent<INamespace, IName
         event.preventDefault();
         var trace = this.classTrace("addNew");
         trace(TraceMethodPosition.Entry);
-        this.baseService.router.navigate(['/newnamespace'])
+        this.baseService.router.navigate(['/newplan'])
         trace(TraceMethodPosition.Exit);            
     }
     
@@ -57,7 +59,7 @@ export class NamespaceListComponent extends XCoreListComponent<INamespace, IName
         var trace = this.classTrace("edit");
         trace(TraceMethodPosition.Entry);
         if (!row || !row.id) throw Error("Invalid row");
-        var url = `/namespaces/${row.id}`;
+        var url = `/plans/${row.id}`;
         this.baseService.router.navigate([url]);
         trace(TraceMethodPosition.Exit);            
     }
@@ -68,7 +70,7 @@ export class NamespaceListComponent extends XCoreListComponent<INamespace, IName
         if (!row || !row.id) throw Error("Invalid row");
         this.service.delete(row.id).subscribe(d => {
            if (d) {
-             this.baseService.loggingService.success("Namespace deleted successfully");
+             this.baseService.loggingService.success("Plan deleted successfully");
              _.remove(this.dataViewModel.rows, u => u.id === row.id);  
              this.tableComponent.load({ rows: this.dataViewModel.rows, config: this.tableConfig });
            } 

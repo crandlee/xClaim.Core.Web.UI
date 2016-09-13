@@ -294,6 +294,11 @@ export interface IEnumViewModel {
     description: string;
 }
 
+export interface IDropdownOptionViewModel {
+    id: string;
+    description: string;
+}
+
 export interface IEntity {
     id: string;
 }

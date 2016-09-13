@@ -10,8 +10,10 @@ export class ValidationService {
 
     private static passwordNotStrong: string = "passwordNotStrong";
     private static required: string = "required";
+    private static exceedsLength: string = "maxlength";
     private static invalidEmailAddress: string = "invalidEmailAddress";
     private static notNumeric: string = "notNumeric";
+    private static notDate: string = "notDate";
     private static notInteger: string = "notInteger";
     private static lessThanOne: string = "lessThanOne";
     private static lessThanZero: string = "lessThanZero";
@@ -22,9 +24,11 @@ export class ValidationService {
             [ValidationService.invalidEmailAddress]: "Invalid email address",
             [ValidationService.passwordNotStrong]: "The password must be at least 9 characters containing one upper, lower, numeric, and symbol character",
             [ValidationService.notNumeric]: "Value must be numeric",
+            [ValidationService.notDate]: "Value must be a date",
             [ValidationService.notInteger]: "Value must be an integer",
             [ValidationService.lessThanOne]: "Value must be greater than zero",
             [ValidationService.lessThanZero]: "Value must be greater than or equal to zero",
+            [ValidationService.exceedsLength]: "Value exceeds maximum length"
         };
 
         return config[code] || `Unknown Error (key = ${code})`;
@@ -33,6 +37,7 @@ export class ValidationService {
     constructor() {
         
     }
+
 
     public static isGreaterThanOrEqualToZero(canBeEmpty: boolean = false, control: AbstractControl): IValidationResult {
         
@@ -54,6 +59,21 @@ export class ValidationService {
             return null;
         } else {
             return { [ValidationService.lessThanOne]: true };
+        }
+        
+    }
+
+    private static isDateString(dateString: string): boolean {
+        var date = new Date(dateString);
+        return date instanceof Date && !isNaN(date.valueOf())
+    }
+
+    public static isDate(canBeEmpty: boolean = false, control: AbstractControl): IValidationResult {
+        if (canBeEmpty && (!control || !control.value)) return null;
+        if (ValidationService.isDateString(control.value)) {
+            return null;
+        } else {
+            return { [ValidationService.notDate]: true };
         }
         
     }
@@ -90,6 +110,16 @@ export class ValidationService {
             return null;
         } else {
             return { [ValidationService.passwordNotStrong]: true };
+        }
+        
+    }
+
+    public static valueLength(control: AbstractControl, expectedLength: number): IValidationResult {
+        
+        if (control.value.length <= expectedLength) {
+            return null;
+        } else {
+            return { [ValidationService.exceedsLength]: true };
         }
         
     }

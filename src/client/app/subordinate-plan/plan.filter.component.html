@@ -1,0 +1,52 @@
+<div class="filter-container" [offClick]="onOutsideClick(self)" id="filterContainer" >
+    <div class="filter-header" id="filterHeader" (click)="onFilterClick(self)()"><i id="filterLink" class="glyphicon glyphicon-filter"></i>{{summaryText}}</div>
+    <div class="filter-body animate-show" [ngClass]="{'hide-class':!filterOptions.filterVisible}">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="panel-group" id="filterPanel">
+                    <div class="panel-heading clearfix">
+                        <div class="inline pull-left">
+                            Filter:
+                        </div>                                                
+                        <div class="btn-toolbar inline pull-right">
+                            <a class="btn btn-primary btn-sm" href="#" (click)="resetFilter($event)">Reset Filter</a>
+                            <a class="btn btn-primary btn-sm" href="#" (click)="applyFilter($event)">Apply Filter</a>
+                        </div>
+                    </div>
+                    <!--All Filters-->
+                    <accordion [closeOthers]="false" class="col-xs-12">
+                        <accordion-group heading="Plan Information" [isOpen]="true" [isDisabled]="false">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-4 form-label filter-label">Group Id:</div>
+                                    <div class="col-sm-8">
+                                        <input class="form-control input-sm" placeholder="Group Id" #groupId [(ngModel)]="toServerFilter.groupId" />
+                                    </div>
+                                </div>                                
+                                <div class="row">
+                                    <div class="col-sm-4 form-label filter-label">Name:</div>
+                                    <div class="col-sm-8">
+                                        <input class="form-control input-sm" placeholder="Name" #name [(ngModel)]="toServerFilter.name" />
+                                    </div>
+                                </div>                                
+                                <div class="row">
+                                    <div class="col-sm-4 form-label filter-label">BIN:</div>
+                                    <div class="col-sm-8">
+                                        <input class="form-control input-sm" placeholder="BIN" #bin [(ngModel)]="toServerFilter.bin" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4 form-label filter-label">PCN:</div>
+                                    <div class="col-sm-8">
+                                        <input class="form-control input-sm" placeholder="PCN" #pcn [(ngModel)]="toServerFilter.pcn" />
+                                    </div>
+                                </div>
+                            </div>
+                        </accordion-group>
+                    </accordion>
+                    <!--<div class="col-xs-12 filter-divider"></div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
