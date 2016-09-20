@@ -112,15 +112,21 @@ export class EntityValuesComponent extends XCoreBaseComponent {
         // var nameValidator = AsyncValidator.debounceControl(nameControl, control => this.validationService.isNameDuplicate(control, 
         //     this.service, this.viewModel.id));
         var planControl = new Control("");
-        var planValidator = AsyncValidator.debounceControl(planControl, control => this.validationService.isEntityIdValid.bind(this, EntityType.Plan));
+        var planValidator = AsyncValidator.debounceControl(planControl, control => this.validationService.isEntityIdValid(EntityType.Plan, control, this.service));
+        var pharmacyControl = new Control("");
+        var pharmacyValidator = AsyncValidator.debounceControl(pharmacyControl, control => this.validationService.isEntityIdValid(EntityType.ServiceProvider, control, this.service));
+        var drugControl = new Control("");
+        var drugValidator = AsyncValidator.debounceControl(drugControl, control => this.validationService.isEntityIdValid(EntityType.ProductService, control, this.service));
+        var memberControl = new Control("");
+        var memberValidator = AsyncValidator.debounceControl(memberControl, control => this.validationService.isEntityIdValid(EntityType.Member, control, this.service));
         
         //Set up controls            
         var buildReturn = this.validationService.buildControlGroup(builder, [
             { controlName: "NamespaceControl", description: "Property Name", control: new Control("", Validators.compose([Validators.required])) },
             { controlName: "PlanControl", description: "BIN/PCN/Group Id", control: planControl },
-            { controlName: "PharmacyControl", description: "Pharmacy Id", control: new Control("") },
-            { controlName: "DrugControl", description: "Drug Id (NDC)", control: new Control("") },
-            { controlName: "MemberControl", description: "Member Id", control: new Control("") },
+            { controlName: "PharmacyControl", description: "Pharmacy Id", control: pharmacyControl },
+            { controlName: "DrugControl", description: "Drug Id (NDC)", control: drugControl },
+            { controlName: "MemberControl", description: "Member Id", control: memberControl },
             { controlName: "ValueControl", description: "Value", control: new Control("") },
             { controlName: "IndexControl", description: "Index", control: new Control("", Validators.compose([EntityValuesValidationService.isGreaterThanOrEqualToZero.bind(this, false)])) },
             { controlName: "PriorityControl", description: "Priority", control: new Control("", Validators.compose([EntityValuesValidationService.isGreaterThanZero.bind(this, false)])) },
@@ -134,7 +140,7 @@ export class EntityValuesComponent extends XCoreBaseComponent {
         this.form.valueChanges.subscribe(form => {
             trace(TraceMethodPosition.CallbackStart, "FormChangesEvent");
             var flv = Validators.compose([]);
-            var flav = Validators.composeAsync([]);
+            var flav = Validators.composeAsync([planValidator, pharmacyValidator, drugValidator, memberValidator]);
             this.validationService.getValidationResults(this.form, this.controlDataDescriptions, flv, flav).then(results => {
                 this.validationMessages = results;
             });
@@ -163,6 +169,7 @@ export class EntityValuesComponent extends XCoreBaseComponent {
                 this.tableComponent.load(this.tableLoadFunction());
                 if (vm.rows.length > 0) {
                     this.viewModel = vm.rows[0];
+                    if (this.viewModel.priority === 0) this.viewModel.priority = 1;
                     this.tableComponent.highlight(vm.rows[0].id);
                 }
             });

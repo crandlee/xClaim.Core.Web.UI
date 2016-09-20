@@ -13,18 +13,17 @@ import * as moment from 'moment';
 export class EntityValuesService implements IDataService<IEntityValueModel, IEntityValueViewModel, IEntityValuesToServerFilter, IEntityValuesToClientFilter> {
 
     constructor(private baseService: BaseService) {
-        
          this.baseService.classTrace = this.baseService.loggingService.getTraceFunction("EntityValuesService");
     }
 
     private endpointKey: string = 'xClaim.Core.Web.Api.Claims';
 
     private testEntityModels: IEntityValueModel[] = [];
-    
+
     public get(skip?: number, take?: number, toServerFilter?: IEntityValuesToServerFilter): Observable<IEntityValuesToClientFilter> {
         var trace = this.baseService.classTrace("get");
         trace(TraceMethodPosition.Entry);
-        
+
         if (!skip) skip = 0;
         if (!take) take = this.baseService.appSettings.DefaultPageSize;
         var entityId = toServerFilter && toServerFilter.entityId;
@@ -38,7 +37,7 @@ export class EntityValuesService implements IDataService<IEntityValueModel, IEnt
         var obs = this.baseService.getObjectData<ICollectionViewModel<IEntityValueModel>>(this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error retrieving the entity values"), url)
         .map(m => {
             var vm = _.map(m.rows, m => this.toViewModel(m));
-            return { rows: vm }; 
+            return { rows: vm };
         });
         trace(TraceMethodPosition.Exit);
         return obs;
@@ -48,7 +47,7 @@ export class EntityValuesService implements IDataService<IEntityValueModel, IEnt
 
     public isEntityIdValid(entityId: string, entityType: EntityType): Observable<boolean> {
         var trace = this.baseService.classTrace("isEntityIdValid");
-        trace(TraceMethodPosition.Entry);                
+        trace(TraceMethodPosition.Entry);
         var obs = this.baseService.getObjectData<boolean>(this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error valdiating the name"), `entityidvalid/${entityId}/${entityType}`);
         trace(TraceMethodPosition.Exit);
         return obs;
@@ -76,7 +75,7 @@ export class EntityValuesService implements IDataService<IEntityValueModel, IEnt
 
     public getEmptyViewModel(): IEntityValueViewModel {
         return {
-            id: "", effectiveDate: "", terminationDate: "", namespaceId: "", value: "", planId: "", productServiceId: "", serviceProviderId: "", memberId: "", namespaceDescription: "",
+            id: "", effectiveDate: "1/1/2001", terminationDate: "", namespaceId: "", value: "", planId: "", productServiceId: "", serviceProviderId: "", memberId: "", namespaceDescription: "",
             isDefault: false, index: 0, priority: 1, parentId: "", parentEntityType: EntityType.Unknown, secondary: ""
         };
     }
@@ -86,7 +85,7 @@ export class EntityValuesService implements IDataService<IEntityValueModel, IEnt
             id: vm.id || this.baseService.appSettings.EmptyGuid,
             effectiveDate: moment(new Date(vm.effectiveDate)).utc().toDate(),
             terminationDate: vm.terminationDate ? moment(new Date(vm.terminationDate)).utc().toDate() : null,
-            namespaceId: vm.namespaceId || this.baseService.appSettings.EmptyGuid,            
+            namespaceId: vm.namespaceId || this.baseService.appSettings.EmptyGuid,
             value: vm.value,
             planId: vm.planId,
             productServiceId: vm.productServiceId,
@@ -127,7 +126,7 @@ export class EntityValuesService implements IDataService<IEntityValueModel, IEnt
             value: model.value,
             parentId: model.parentId,
             secondary: this.getSecondaryText(model),
-            parentEntityType: model.parentEntityType            
+            parentEntityType: model.parentEntityType
         };
     }
 
@@ -135,7 +134,7 @@ export class EntityValuesService implements IDataService<IEntityValueModel, IEnt
     public getNamespacesForDropdown(): Observable<ICollectionViewModel<INamespaceOption>> {
         var trace = this.baseService.classTrace("getNamespaceValueTypes");
         trace(TraceMethodPosition.Entry);
-        var obs = this.baseService.getObjectData<ICollectionViewModel<INamespaceOption>>(this.baseService.getOptions(this.baseService.hubService, 
+        var obs = this.baseService.getObjectData<ICollectionViewModel<INamespaceOption>>(this.baseService.getOptions(this.baseService.hubService,
             this.endpointKey, "There was an error retrieving the value types"), `namespaces`);
         trace(TraceMethodPosition.Exit);
         return obs;
@@ -143,10 +142,10 @@ export class EntityValuesService implements IDataService<IEntityValueModel, IEnt
 
     public isEntityValueValid(namespaceId: string, value:string): Observable<boolean> {
         var trace = this.baseService.classTrace("isEntityValueValid");
-        trace(TraceMethodPosition.Entry);       
-        // var obs: Observable<boolean> = Observable.create((observer: Observer<boolean>) => {            
+        trace(TraceMethodPosition.Entry);
+        // var obs: Observable<boolean> = Observable.create((observer: Observer<boolean>) => {
         //    observer.next(true);
-        //});        
+        //});
         var obs = this.baseService.postData<IValidateEntityValueStruct, boolean>({ value: value, namespaceId: namespaceId }, this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error validating the entity value"), `entityvalues/validate`);
         trace(TraceMethodPosition.Exit)
         return obs;
@@ -154,31 +153,31 @@ export class EntityValuesService implements IDataService<IEntityValueModel, IEnt
 
     public deleteEntityValue(id: string): Observable<boolean> {
         var trace = this.baseService.classTrace("deleteEntityValue");
-        trace(TraceMethodPosition.Entry);                
+        trace(TraceMethodPosition.Entry);
         var obs = this.baseService.deleteData(this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error deleting the entity value"), `entityvalues/${id}`);
         // var obs: Observable<boolean> = Observable.create((observer: Observer<boolean>) => {
         //     _.remove(this.testEntityModels, m => m.id == id);
         //     observer.next(true);
-        // });                        
+        // });
         trace(TraceMethodPosition.Exit)
         return obs;
-        
+
     }
 
     public saveEntityValue(vm: IEntityValueViewModel): Observable<IEntityValueViewModel> {
         var trace = this.baseService.classTrace("saveEntityValue");
-        trace(TraceMethodPosition.Entry);   
+        trace(TraceMethodPosition.Entry);
         //vm.id = this.guid();
         // var obs: Observable<IEntityValueViewModel> = Observable.create((observer: Observer<IEntityValueModel>) => {
         //     var m = this.toModel(vm);
-        //     this.testEntityModels.push(m);                        
+        //     this.testEntityModels.push(m);
         //     observer.next(m);
         // }).map((m: IEntityValueModel) => {
-        var obs = this.baseService.postData<IEntityValueModel, IEntityValueModel>(this.toModel(vm), 
+        var obs = this.baseService.postData<IEntityValueModel, IEntityValueModel>(this.toModel(vm),
         this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error saving the entity value"), 'entityvalues')
         .map(m => {
             return this.toViewModel(m);
-        });        
+        });
         trace(TraceMethodPosition.Exit)
         return obs;
     }
@@ -236,7 +235,7 @@ export interface IEntityValueViewModel extends IEntity {
     isDefault: boolean;
     index: number;
     priority: number;
-    value: string;    
+    value: string;
     secondary: string;
 }
 

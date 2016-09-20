@@ -8,20 +8,20 @@ import 'rxjs/add/operator/toPromise';
 export class EntityValuesValidationService extends ValidationService {
     
     
-    constructor(private service: EntityValuesService) {
+    constructor() {
         super();
     }
     
     private static idIsNotValid: string = "idIsNotValid";
 
-    public isEntityIdValid(entityType: EntityType, nameControl: AbstractControl): Promise<IValidationResult> {
+    public isEntityIdValid(entityType: EntityType, ctrl: AbstractControl, service: EntityValuesService): Promise<IValidationResult> {
         
-        if (!entityType || !nameControl.value) return Promise.resolve(null);
+        if (!entityType || !ctrl.value) return Promise.resolve(null);
         
-        var svc = this.service.isEntityIdValid(nameControl.value, entityType);                            
+        var svc = service.isEntityIdValid(ctrl.value, entityType);                            
         var p = new Promise<IValidationResult>(resolve => {
             svc.subscribe(isValid => {
-                resolve(isValid ? {[EntityValuesValidationService.idIsNotValid] : true}: null);                                
+                resolve(!isValid ? {[EntityValuesValidationService.idIsNotValid] : true}: null);                                
             });            
         });  
         
