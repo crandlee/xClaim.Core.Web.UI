@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { Injectable } from '@angular/core';
 import { LoggingService, TraceMethodPosition } from '../logging/logging.service';
 import { ValidatorFn, AsyncValidatorFn } from '@angular/common/src/forms/directives/validators';
+import * as moment from 'moment';
 
 @Injectable()
 export class ValidationService {
@@ -63,19 +64,25 @@ export class ValidationService {
         
     }
 
-    private static isDateString(dateString: string): boolean {
-        var date = new Date(dateString);
-        return date instanceof Date && !isNaN(date.valueOf())
-    }
 
     public static isDate(canBeEmpty: boolean = false, control: AbstractControl): IValidationResult {
         if (canBeEmpty && (!control || !control.value)) return null;
-        if (ValidationService.isDateString(control.value)) {
+        if (ValidationService.isValidDate(control.value)) {
             return null;
         } else {
             return { [ValidationService.notDate]: true };
         }
         
+    }
+
+    public static isValidDate(str: string): boolean {
+        var d = moment(str,'M/D/YYYY');
+        if(d == null || !d.isValid()) return false;
+
+        return str.indexOf(d.format('M/D/YYYY')) >= 0 
+            || str.indexOf(d.format('MM/DD/YYYY')) >= 0
+            || str.indexOf(d.format('M/D/YY')) >= 0 
+            || str.indexOf(d.format('MM/DD/YY')) >= 0;
     }
 
     public static isInteger(canBeEmpty: boolean = false, control: AbstractControl): IValidationResult {

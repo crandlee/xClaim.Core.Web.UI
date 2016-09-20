@@ -38,7 +38,7 @@ export class PlanListComponent extends XCoreListComponent<IPlan, IPlanViewModel,
             { title: "Group Id", name: "groupId", colWidth: 2, sort: "asc" },
             { title: "Name", name: "name", colWidth: 4 },
             { title: "Edit", name: "Edit", colWidth: 1, editRow: true },        
-            { title: "Delete", name: "Delete", colWidth: 1, deleteRow: true, deleteMessage: 'Do you want to delete this namespace?' }
+            { title: "Delete", name: "Delete", colWidth: 1, deleteRow: true, deleteMessage: 'Do you want to delete this plan?' }
         ], this.specificfilterService, this.service);  
     }
 

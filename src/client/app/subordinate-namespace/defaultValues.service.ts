@@ -75,7 +75,7 @@ export class DefaultValuesService implements IDataService<IDefaultValueModel, ID
 
 
     public isDefaultValueValid(valueType: number, pattern: string, value:string, allowNulls: boolean, precision: number, length: number): Observable<boolean> {
-        var trace = this.baseService.classTrace("deleteDefaultValue");
+        var trace = this.baseService.classTrace("isDefaultValueValid");
         trace(TraceMethodPosition.Entry);       
         var obs = this.baseService.postData<IValidateNamespaceValueStruct, boolean>({ value: value, pattern: pattern, valueType: valueType, allowNulls: allowNulls, precision: precision, length: length },
             this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error validating the default value"), `namespacevalues/validate`);

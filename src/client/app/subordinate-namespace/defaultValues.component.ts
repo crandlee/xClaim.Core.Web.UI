@@ -13,6 +13,10 @@ import { INgTableColumn, INgTableConfig, INgTableRow, INgTableChangeMessage, NgT
 import { OrderByPipe } from '../shared/pipe/orderby.pipe';
 import { IEnumViewModel } from '../shared/service/base.service';
 import { DATEPICKER_DIRECTIVES } from 'ng2-bootstrap/components/datepicker'
+import { IFormValidationResult } from '../shared/validation/validation.service';
+import { ValidationComponent } from '../shared/validation/validation.component';
+import { AsyncValidator } from '../shared/validation/async-validator.service';
+import { PlanValidationService } from '..//plan.validation';
 
 import * as moment from 'moment';
 
@@ -110,8 +114,8 @@ export class DefaultValuesComponent extends XCoreBaseComponent {
                 this.defaultValues.push(vm);
             else {
                 lookup.value = vm.value;
-                lookup.effectiveDate = vm.value;
-                lookup.terminationDate = vm.value;
+                lookup.effectiveDate = vm.effectiveDate;
+                lookup.terminationDate = vm.terminationDate;
             }
             this.tableComponent.load(this.tableLoadFunction());
             this.clear();

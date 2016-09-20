@@ -20,6 +20,7 @@ import * as moment from 'moment';
 export class NgTableComponent {
 
   private _columns: INgTableColumn[] = [];
+  public rowSelected: { [key:string]: boolean } = {};
 
   constructor(public modal: Modal, viewContainer: ViewContainerRef) {
     modal.defaultViewContainer = viewContainer;
@@ -57,6 +58,18 @@ export class NgTableComponent {
     return this._columns;
   }
 
+  public clearHighlight(): void {
+      this.rowSelected = {};
+  }
+
+  public highlight(id: string) {
+      this.rowSelected[id] = true;
+  }
+
+  public unhighlight(id: string) {
+      this.rowSelected[id] = false;
+  }
+  
   public getRowTooltip(row: INgTableRow): string {
     var id = "R" + row.id;
     if (!this.tooltipTemplate) return id;
@@ -74,6 +87,13 @@ export class NgTableComponent {
     return `col-xs-${column.colWidth}`;
   }
 
+
+  public onRowClick(event: any, row: INgTableRow) {
+    if (this.config.selectOn) {
+      this.config.selectOn(row.id);
+      this.highlight(row.id);
+    }
+  }
 
   public onEditClick(event: any, row: INgTableRow, column: INgTableColumn) {
     event.preventDefault();
@@ -128,7 +148,6 @@ export class NgTableComponent {
     if (colDef && colDef.dateFormat) {
       val = moment(Date.parse(val)).format(colDef.dateFormat);
     }
-    
     return val;
   }
 
@@ -198,6 +217,8 @@ export interface INgTableColumn {
 
 export interface INgTableConfig {
   sorting: { columns: INgTableColumn[] };
+  selectOn?: (id: string) => void;
+  deleteOn?: (id: string) => boolean;
 }
 
 export interface INgTableRow {

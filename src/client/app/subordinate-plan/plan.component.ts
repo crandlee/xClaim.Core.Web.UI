@@ -18,13 +18,15 @@ import { OrderByPipe } from '../shared/pipe/orderby.pipe';
 import { DropdownService } from '../shared/common/dropdowns';
 import * as moment from 'moment';
 import { DATEPICKER_DIRECTIVES } from 'ng2-bootstrap/components/datepicker'
+import { EntityValuesComponent } from '../subordinate-entityvalues/entityValues.component';
+import { EntityType } from '../subordinate-entityvalues/entityValues.service';
 
 @Component({
     moduleId: module.id,
     templateUrl: 'plan.component.html',
     styleUrls: ['plan.component.css'],
     providers: [PlanService, PlanValidationService, DropdownService],
-    directives: [DATEPICKER_DIRECTIVES, ValidationComponent, UiSwitchComponent],
+    directives: [DATEPICKER_DIRECTIVES, ValidationComponent, UiSwitchComponent, EntityValuesComponent],
     pipes: [OrderByPipe]
 })
 export class PlanComponent extends XCoreBaseComponent  {
@@ -42,10 +44,13 @@ export class PlanComponent extends XCoreBaseComponent  {
     public effectiveDate: Date;
     public terminationDate: Date;
     
+    @ViewChild(EntityValuesComponent) EntityValuesView: EntityValuesComponent;
+
     constructor(protected baseService: BaseService, private service: PlanService,
         private builder: FormBuilder, private validationService: PlanValidationService, private routeSegment: RouteSegment, private dropdownService: DropdownService)     
     {  
         super(baseService);
+
         this.initializeTrace("PlanComponent");
         this.id = routeSegment.getParam("id");
         this.viewModel = this.service.getEmptyViewModel();
@@ -63,10 +68,11 @@ export class PlanComponent extends XCoreBaseComponent  {
         var nameValidator = AsyncValidator.debounceControl(nameControl, control => this.validationService.isNameDuplicate(control, 
             this.service, this.viewModel.id));
 
-        //Set up controls            
+        //Set up controls
+        var binControl = new Control("", Validators.maxLength(6));
         var buildReturn = this.validationService.buildControlGroup(builder, [
             { controlName: "NameControl", description: "Name", control: nameControl},
-            { controlName: "BinControl", description: "BIN", control: new Control("", Validators.maxLength(6))},
+            { controlName: "BinControl", description: "BIN", control: binControl},
             { controlName: "PcnControl", description: "PCN", control: new Control("", Validators.maxLength(10))},
             { controlName: "GroupIdControl", description: "Group Id", control: new Control("", Validators.maxLength(15))},
             { controlName: "Address1Control", description: "Address 1", control: new Control("", Validators.maxLength(128))},
@@ -85,11 +91,13 @@ export class PlanComponent extends XCoreBaseComponent  {
         this.form = buildReturn.controlGroup;
         this.controlDataDescriptions = buildReturn.controlDataDescriptions;
         
+        var identValidator = AsyncValidator.debounceControl(this.form, form => PlanValidationService.isIdentDuplicate(this.service, this.viewModel.id, form));
+
         //Initialize all validation
         this.form.valueChanges.subscribe(form => {
             trace(TraceMethodPosition.CallbackStart, "FormChangesEvent");
-            var flv = Validators.compose([PlanValidationService.bind(this, this.service, this.id), PlanValidationService.identRequired]);
-            var flav = Validators.composeAsync([nameValidator]);
+            var flv = Validators.compose([PlanValidationService.identRequired]);
+            var flav = Validators.composeAsync([nameValidator, identValidator ]);
             this.validationService.getValidationResults(this.form, this.controlDataDescriptions, flv, flav).then(results => {
                 this.validationMessages = results;
             });
@@ -112,6 +120,8 @@ export class PlanComponent extends XCoreBaseComponent  {
             this.viewModel = this.service.toViewModel(up);
             
             //Load any subviews here
+            this.EntityValuesView.load(true, this.id, EntityType.Plan, this.viewModel.name, (this.viewModel.bin || "") + "/" + (this.viewModel.pcn || "") + "/" + (this.viewModel.groupId || ""));
+
             trace(TraceMethodPosition.CallbackEnd);            
         }); 
         
@@ -145,17 +155,10 @@ export class PlanComponent extends XCoreBaseComponent  {
     }
 
 
-    private isDate(dateString: string): boolean {
-        var date = new Date(dateString);
-        return date instanceof Date && !isNaN(date.valueOf())
-    }
-
-
-
     private effectiveDateString(targetInput:any): void {
         this.effectiveDateInvalid = true;
         if (!targetInput.value) return;
-        if (this.isDate(targetInput.value)) {
+        if (PlanValidationService.isValidDate(targetInput.value)) {
             this.effectiveDateInvalid = false;
             this.viewModel.effectiveDate = targetInput.value;            
         }             
@@ -167,7 +170,7 @@ export class PlanComponent extends XCoreBaseComponent  {
     private terminationDateString(targetInput:any): void {
         this.terminationDateInvalid = false;
         if (!targetInput.value) return;
-        if (this.isDate(targetInput.value)) 
+        if (PlanValidationService.isValidDate(targetInput.value)) 
             this.viewModel.terminationDate = targetInput.value;
         else {
             this.terminationDateInvalid = true;

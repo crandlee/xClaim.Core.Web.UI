@@ -32,20 +32,25 @@ export class PlanValidationService extends ValidationService {
     }
     
     
-    public static isIdentDuplicate(planService: PlanService, id: string, form: ControlGroup): Promise<IValidationResult> {
+    public static isIdentDuplicate(planService: PlanService, id: string, ctl: AbstractControl): Promise<IValidationResult> {
+        var form = <ControlGroup>ctl;
         var binControl: AbstractControl = form.controls["BinControl"];
         var pcnControl: AbstractControl = form.controls["PcnControl"];
         var groupIdControl: AbstractControl = form.controls["GroupIdControl"];
         var effectiveDateControl: AbstractControl = form.controls["EffectiveDateControl"];
-
-        var svc = planService.isIdentDuplicate(id, binControl.value, pcnControl.value, groupIdControl.value, effectiveDateControl.value);                            
-        var p = new Promise<IValidationResult>(resolve => {
-            svc.subscribe(isDuplicate => {
-                resolve(isDuplicate ? {[PlanValidationService.idsNotUnique] : true}: null);                                
-            });            
-        });  
-        
-        return p;
+        if (binControl.value || pcnControl.value || groupIdControl.value || effectiveDateControl.value) {
+            var svc = planService.isIdentDuplicate(id, binControl.value, pcnControl.value, groupIdControl.value, effectiveDateControl.value);                            
+            var p = new Promise<IValidationResult>(resolve => {
+                svc.subscribe(isDuplicate => {
+                    resolve(isDuplicate ? {[PlanValidationService.idsNotUnique] : true}: null);                                
+                });            
+            });  
+            return p;
+        } else {
+            return new Promise<IValidationResult>(resolve => {
+                resolve(null);
+            });
+        }
     }
 
     public static identRequired(form: ControlGroup): IValidationResult {

@@ -35,7 +35,6 @@ export class OrderByPipe implements PipeTransform {
     	//make a copy of the input's reference
     	this.value = [...input];
     	var value = this.value;
-        
         if(!Array.isArray(value)) return value;
 
         if(!Array.isArray(config) || (Array.isArray(config) && config.length == 1)){

@@ -1,0 +1,10 @@
+<div class="container">
+    <div [hidden]="!parentId" class="edit-panel" >
+        <div class="navbar navbar-inverse center">
+            <h4>Values for {{parentEntityTypeDesc + ": " + parentEntityName}}</h4>
+        </div>
+    </div>
+    <div [hidden]="viewModel" class="loading-message">
+        Loading Entity Values
+    </div>        
+</div>

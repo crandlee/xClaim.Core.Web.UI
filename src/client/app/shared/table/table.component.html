@@ -10,11 +10,11 @@
     </tr>
     </thead>
     <tbody>      
-    <tr [attr.id]="getRowTooltip(row)" *ngFor="let row of rows">
+    <tr [ngClass]="{ selected: config.selectOn && rowSelected[row.id] }" [attr.id]="getRowTooltip(row)" *ngFor="let row of rows" (click)="onRowClick($event, row)">
     <td *ngFor="let column of columns">
         <span style="display:inline-block; width:100%" *ngIf="!column.deleteRow && !column.editRow">{{getData(row, column.name)}}</span>
         <span style="display:inline-block; width:100%; cursor: pointer;" *ngIf="column.editRow" (click)="onEditClick($event, row, column)"><i class="fa fa-edit"></i></span>
-        <span style="display:inline-block; width:100%; cursor: pointer;" *ngIf="column.deleteRow" (click)="onDeleteClick($event, row, column)"><i class="fa fa-remove"></i></span>          
+        <span style="display:inline-block; width:100%; cursor: pointer;" *ngIf="column.deleteRow && (!config.deleteOn || config.deleteOn(row.id))" (click)="onDeleteClick($event, row, column)"><i class="fa fa-remove"></i></span>          
     </td>
     </tr>
     </tbody>

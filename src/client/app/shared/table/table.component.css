@@ -20,3 +20,10 @@
     color: #FFFFFF; 
     background-color: #647299;
 }
+
+
+:host .selected 
+{ 
+    color: #FFFFFF; 
+    background-color: #206C7F !important;
+}

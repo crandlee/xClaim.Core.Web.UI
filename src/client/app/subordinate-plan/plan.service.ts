@@ -52,8 +52,11 @@ export class PlanService implements IDataService<IPlan, IPlanViewModel, IPlansTo
 
     public isIdentDuplicate(id: string, bin: string, pcn: string, groupId: string, effectiveDate: string): Observable<boolean> {
         var trace = this.baseService.classTrace("isIdentDuplicate");
-        trace(TraceMethodPosition.Entry);                
-        var obs = this.baseService.getObjectData<boolean>(this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error valdiating the identifiers"), `planfromidents/${bin}/${pcn}/${groupId}/${effectiveDate}/isduplicated/${id}`);
+        trace(TraceMethodPosition.Entry);
+        var planFromIdents = { id: id, bin: bin, pcn: pcn, groupId: groupId, effectiveDate: moment(new Date(effectiveDate)).utc().toDate()};      
+        var obs = this.baseService.postData<IPlanFromIdentsStruct, boolean>(
+            planFromIdents
+            , this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error valdiating the identifiers"), `planfromidents`);
         trace(TraceMethodPosition.Exit);
         return obs;
     }
@@ -216,6 +219,13 @@ export interface IAddress {
     zipCode: string;
 }
 
+export interface IPlanFromIdentsStruct {
+    id: string;
+    bin: string;
+    pcn: string;
+    groupId: string;
+    effectiveDate: Date;
+}
 export interface IPlansFromServer extends ICollectionViewModel<IPlan> {
 
 }
