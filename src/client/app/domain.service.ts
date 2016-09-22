@@ -6,6 +6,7 @@ import { ClaimRoutes } from './claims/routes';
 import { NamespaceRoutes } from './subordinate-namespace/routes';
 import { WelcomeComponent } from './welcome/index';
 import { PlanRoutes } from './subordinate-plan/routes';
+import { MemberRoutes } from './subordinate-member/routes';
 
 @Injectable()
 export class DomainService {
@@ -18,6 +19,7 @@ export class DomainService {
             .concat(UserManagementRoutes)
             .concat(NamespaceRoutes)
             .concat(PlanRoutes)
+            .concat(MemberRoutes)
             .concat([{ path: '/', component: WelcomeComponent }, { path: '/**', component: WelcomeComponent }]);
             return retRoutes;
     }

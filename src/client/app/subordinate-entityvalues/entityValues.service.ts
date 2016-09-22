@@ -48,6 +48,7 @@ export class EntityValuesService implements IDataService<IEntityValueModel, IEnt
     public isEntityIdValid(entityId: string, entityType: EntityType): Observable<boolean> {
         var trace = this.baseService.classTrace("isEntityIdValid");
         trace(TraceMethodPosition.Entry);
+        entityId = entityId.replace(new RegExp("/","g"), "%5c");
         var obs = this.baseService.getObjectData<boolean>(this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error valdiating the name"), `entityidvalid/${entityId}/${entityType}`);
         trace(TraceMethodPosition.Exit);
         return obs;
@@ -58,6 +59,7 @@ export class EntityValuesService implements IDataService<IEntityValueModel, IEnt
         var trace = this.baseService.classTrace("getSingle");
         trace(TraceMethodPosition.Entry);
 
+        parentId = parentId.replace(new RegExp("/","g"), "%5c");
         var url = `entityvalues/${id}/${parentId}/${parentType}`;
 
         // var obs: Observable<IEntityValueViewModel> = Observable.create((observer: Observer<IEntityValueModel>) => {

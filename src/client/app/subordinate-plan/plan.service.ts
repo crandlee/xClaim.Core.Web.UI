@@ -71,7 +71,7 @@ export class PlanService implements IDataService<IPlan, IPlanViewModel, IPlansTo
 
     
     public getExisting(id: string): Observable<IPlan> {  
-        var trace = this.baseService.classTrace("getNamespace");
+        var trace = this.baseService.classTrace("getExisting");
         trace(TraceMethodPosition.Entry);
         var obs = this.baseService.getObjectData<IPlan>(this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error retrieving the item"), `plans/${id}`);
         trace(TraceMethodPosition.Exit);
@@ -79,10 +79,10 @@ export class PlanService implements IDataService<IPlan, IPlanViewModel, IPlansTo
     }
 
     public save(vm: IPlanViewModel): Observable<IPlanViewModel> {
-        var trace = this.baseService.classTrace("saveUser");
+        var trace = this.baseService.classTrace("save");
         trace(TraceMethodPosition.Entry);                
         var obs = this.baseService.postData<IPlan, IPlan>(this.toModel(vm), 
-            this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error saving the namespace"), 'plans')
+            this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error saving the item"), 'plans')
                 .map(m => this.toViewModel(m));        
         trace(TraceMethodPosition.Exit)
         return obs;
@@ -104,9 +104,9 @@ export class PlanService implements IDataService<IPlan, IPlanViewModel, IPlansTo
             bin: viewModel.bin,
             pcn: viewModel.pcn,
             groupId: viewModel.groupId,
-            addressId: viewModel.addressId,
+            addressId: viewModel.addressId || this.baseService.appSettings.EmptyGuid,
             address: {
-                id: (viewModel.address && viewModel.address.id),
+                id: (viewModel.address && (viewModel.address.id  || this.baseService.appSettings.EmptyGuid)),
                 address1: (viewModel.address && viewModel.address.address1),
                 address2: (viewModel.address && viewModel.address.address2),
                 address3: (viewModel.address && viewModel.address.address3),

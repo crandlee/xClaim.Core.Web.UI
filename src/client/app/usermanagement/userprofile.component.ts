@@ -35,7 +35,7 @@ export class UserProfileComponent extends XCoreBaseComponent implements OnInit  
         var trace = this.classTrace("initializeForm");
         trace(TraceMethodPosition.Entry);
         //Set up any async validators
-        var emailControl = new Control("", Validators.compose([Validators.required, this.validationService.emailValidator]));
+        var emailControl = new Control("", Validators.compose([Validators.required, UserProfileValidationService.isEmailValid]));
         var emailAsyncValidator = AsyncValidator.debounceControl(emailControl, control => this.validationService.isEmailDuplicate(control, this.userService, this.userProfile.id));
         
         //Set up controls            

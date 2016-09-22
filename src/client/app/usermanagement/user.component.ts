@@ -45,7 +45,7 @@ export class UserComponent extends XCoreBaseComponent  {
         trace(TraceMethodPosition.Entry);
         
         //Set up any async validators
-        var emailControl = new Control("", Validators.compose([Validators.required, this.validationService.emailValidator]));
+        var emailControl = new Control("", Validators.compose([Validators.required, UserProfileValidationService.isEmailValid]));
         var emailAsyncValidator = AsyncValidator.debounceControl(emailControl, control => this.validationService.isEmailDuplicate(control, this.userService, this.userProfile.id));
         var userNameControl = new Control("", Validators.compose([Validators.required]));
         var userNameValidator = AsyncValidator.debounceControl(userNameControl, control => this.validationService.isUserNameDuplicate(control, this.userService, this.userProfile.id));

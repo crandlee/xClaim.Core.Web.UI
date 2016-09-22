@@ -3,9 +3,9 @@ import { Validators, ControlGroup, Control, FormBuilder } from '@angular/common'
 import { IFormValidationResult } from '../shared/validation/validation.service';
 import { ValidationComponent } from '../shared/validation/validation.component';
 import { AsyncValidator } from '../shared/validation/async-validator.service';
-import { PlanValidationService } from './plan.validation';
-import { BaseService } from '../shared/service/base.service';
-import { PlanService, IPlan, IPlanViewModel } from './plan.service';
+import { MemberValidationService } from './member.validation';
+import { BaseService, IEnumViewModel } from '../shared/service/base.service';
+import { MemberService, IMember, IMemberViewModel } from './member.service';
 import { XCoreBaseComponent } from '../shared/component/base.component';
 import { HubService } from '../shared/hub/hub.service';
 import { IDropdownOptionViewModel } from '../shared/service/base.service';
@@ -23,35 +23,40 @@ import { EntityType } from '../subordinate-entityvalues/entityValues.service';
 
 @Component({
     moduleId: module.id,
-    templateUrl: 'plan.component.html',
-    styleUrls: ['plan.component.css'],
-    providers: [PlanService, PlanValidationService, DropdownService],
+    templateUrl: 'member.component.html',
+    styleUrls: ['member.component.css'],
+    providers: [MemberService, MemberValidationService, DropdownService],
     directives: [DATEPICKER_DIRECTIVES, ValidationComponent, UiSwitchComponent, EntityValuesComponent],
     pipes: [OrderByPipe]
 })
-export class PlanComponent extends XCoreBaseComponent  {
+export class MemberComponent extends XCoreBaseComponent  {
 
-    public viewModel: IPlanViewModel;
+    public viewModel: IMemberViewModel;
     public form: ControlGroup;
     public validationMessages: IFormValidationResult[] = [];
     public controlDataDescriptions: string[];
     public id: string;
     public states: IDropdownOptionViewModel[] = [];
+    public plans: IDropdownOptionViewModel[] = [];
+    public genderCodes: IEnumViewModel[] = [];
+    public relationshipCodes: IEnumViewModel[] = [];
     public effectiveDateInvalid: boolean = true;
     public terminationDateInvalid: boolean = false;
+    public dateOfBirthInvalid: boolean = true;
     public showEffectiveDatePicker: boolean = false;
     public showTerminationDatePicker: boolean = false;
+    public showDateOfBirthPicker: boolean = false;
     public effectiveDate: Date;
     public terminationDate: Date;
-    
+    public dob: Date;
+
     @ViewChild(EntityValuesComponent) EntityValuesView: EntityValuesComponent;
 
-    constructor(protected baseService: BaseService, private service: PlanService,
-        private builder: FormBuilder, private validationService: PlanValidationService, private routeSegment: RouteSegment, private dropdownService: DropdownService)     
+    constructor(protected baseService: BaseService, private service: MemberService,
+        private builder: FormBuilder, private validationService: MemberValidationService, private routeSegment: RouteSegment, private dropdownService: DropdownService)     
     {  
         super(baseService);
-
-        this.initializeTrace("PlanComponent");
+        this.initializeTrace("MemberComponent");
         this.id = routeSegment.getParam("id");
         this.viewModel = this.service.getEmptyViewModel();
         this.states = this.dropdownService.getStates();
@@ -64,40 +69,41 @@ export class PlanComponent extends XCoreBaseComponent  {
         trace(TraceMethodPosition.Entry);
         
         //Set up any async validators
-        var nameControl = new Control("", Validators.compose([Validators.required, Validators.maxLength(50)]));
-        var nameValidator = AsyncValidator.debounceControl(nameControl, control => this.validationService.isNameDuplicate(control, 
-            this.service, this.viewModel.id));
+        var memberIdControl = new Control("", Validators.compose([Validators.required, Validators.maxLength(20)]));
 
         //Set up controls
         var binControl = new Control("", Validators.maxLength(6));
         var buildReturn = this.validationService.buildControlGroup(builder, [
-            { controlName: "NameControl", description: "Name", control: nameControl},
-            { controlName: "BinControl", description: "BIN", control: binControl},
-            { controlName: "PcnControl", description: "PCN", control: new Control("", Validators.maxLength(10))},
-            { controlName: "GroupIdControl", description: "Group Id", control: new Control("", Validators.maxLength(15))},
-            { controlName: "Address1Control", description: "Address 1", control: new Control("", Validators.compose([Validators.maxLength(128), Validators.required]))},
+            { controlName: "MemberIdControl", description: "Member Id", control: memberIdControl},
+            { controlName: "PlanControl", description: "Plan", control: new Control("", Validators.required)},
+            { controlName: "DateOfBirthControl", description: "Date Of Birth", control: new Control("", Validators.compose([MemberValidationService.isDate.bind(this, false)]))},
+            { controlName: "PersonCodeControl", description: "Person Code", control: new Control("", Validators.compose([Validators.required, MemberValidationService.isGreaterThanOrEqualToZero.bind(this, false)]))},
+            { controlName: "EligibilityCodeControl", description: "Eligibility Code", control: new Control("", Validators.maxLength(1))},
+            { controlName: "FirstNameControl", description: "First Name", control: new Control("", Validators.maxLength(50))},
+            { controlName: "MiddleNameControl", description: "Middle Name", control: new Control("", Validators.maxLength(50))},
+            { controlName: "LastNameControl", description: "Last Name", control: new Control("", Validators.maxLength(50))},
+            { controlName: "LocationControl", description: "Location", control: new Control("", Validators.maxLength(50))},
+            { controlName: "Address1Control", description: "Address 1", control: new Control("", Validators.compose([Validators.required, Validators.maxLength(128)]))},
             { controlName: "Address2Control", description: "Address 2", control: new Control("", Validators.maxLength(128))},
             { controlName: "Address3Control", description: "Address 3", control: new Control("", Validators.maxLength(128))},
             { controlName: "CityControl", description: "City", control: new Control("", Validators.compose([Validators.maxLength(64), Validators.required]))},
-            { controlName: "StateControl", description: "State", control: new Control("", Validators.required)},
+            { controlName: "StateControl", description: "State", control: new Control("", Validators.compose([Validators.required, Validators.maxLength(2)]))},
             { controlName: "ZipCodeControl", description: "Zip Code", control: new Control("", Validators.compose([Validators.maxLength(10), Validators.required]))},
             { controlName: "PhoneControl", description: "Phone", control: new Control("", Validators.maxLength(15))},
-            { controlName: "FaxControl", description: "Fax", control: new Control("", Validators.maxLength(15))},
-            { controlName: "ContactControl", description: "Contact", control: new Control("", Validators.maxLength(25))},
-            { controlName: "CommentsControl", description: "Comments", control: new Control("", Validators.maxLength(1000))},
-            { controlName: "EffectiveDateControl", description: "Effective Date", control: new Control("", Validators.compose([PlanValidationService.isDate.bind(this, false)]))},
-            { controlName: "TerminationDateControl", description: "Termination Date", control: new Control("", Validators.compose([PlanValidationService.isDate.bind(this, true)]))}
+            { controlName: "EmailControl", description: "Email Address", control: new Control("", Validators.compose([Validators.maxLength(256), MemberValidationService.isEmailValid]))},
+            { controlName: "EffectiveDateControl", description: "Effective Date", control: new Control("", Validators.compose([MemberValidationService.isDate.bind(this, false)]))},
+            { controlName: "TerminationDateControl", description: "Termination Date", control: new Control("", Validators.compose([MemberValidationService.isDate.bind(this, true)]))}
         ]);                
         this.form = buildReturn.controlGroup;
         this.controlDataDescriptions = buildReturn.controlDataDescriptions;
         
-        var identValidator = AsyncValidator.debounceControl(this.form, form => PlanValidationService.isIdentDuplicate(this.service, this.viewModel.id, form));
+        var identValidator = AsyncValidator.debounceControl(this.form, form => MemberValidationService.isIdentDuplicate(this.service, this.viewModel.id, form));
 
         //Initialize all validation
         this.form.valueChanges.subscribe(form => {
             trace(TraceMethodPosition.CallbackStart, "FormChangesEvent");
-            var flv = Validators.compose([PlanValidationService.identRequired]);
-            var flav = Validators.composeAsync([nameValidator, identValidator ]);
+            var flv = Validators.compose([]);
+            var flav = Validators.composeAsync([identValidator ]);
             this.validationService.getValidationResults(this.form, this.controlDataDescriptions, flv, flav).then(results => {
                 this.validationMessages = results;
             });
@@ -109,23 +115,41 @@ export class PlanComponent extends XCoreBaseComponent  {
     }
     
     
-    private getInitialData(service: PlanService, id: string): void {        
+    private getInitialData(service: MemberService, id: string): void {        
         var trace = this.classTrace("getInitialData");
-        var fn: () => Observable<IPlan> = (!this.id) 
+        var fn: () => Observable<IMember> = (!this.id) 
             ? service.getNew.bind(service) 
             : service.getExisting.bind(service, this.id);
-                            
+        
         fn().subscribe(up => {
             trace(TraceMethodPosition.CallbackStart);
             this.viewModel = this.service.toViewModel(up);
             if (!this.id) {
+                this.viewModel.dateOfBirth = "";
                 this.viewModel.effectiveDate = "";
+                this.viewModel.planId = null;
             }
+            
+            this.service.getGenderCodes().subscribe(gc => {
+                this.genderCodes = gc;
 
-            //Load any subviews here
-            this.EntityValuesView.load(true, this.id, EntityType.Plan, this.viewModel.name, (this.viewModel.bin || "") + "/" + (this.viewModel.pcn || "") + "/" + (this.viewModel.groupId || ""));
+                this.service.getRelationshipCodes().subscribe(rc => {
+                    this.relationshipCodes = rc;
 
-            trace(TraceMethodPosition.CallbackEnd);            
+                    this.service.getPlans().subscribe(plans => {
+                        this.plans = plans;
+
+
+                        //Load any subviews here
+                        this.EntityValuesView.load(true, this.id, EntityType.Member, this.viewModel.lastName + ", " + this.viewModel.firstName
+                            , this.viewModel.memberId);
+                        trace(TraceMethodPosition.CallbackEnd);            
+                    });
+
+                });
+
+
+            });
         }); 
         
         trace(TraceMethodPosition.Exit);
@@ -136,7 +160,7 @@ export class PlanComponent extends XCoreBaseComponent  {
     }
 
     ngOnInit() {        
-        super.NotifyLoaded("Plan");   
+        super.NotifyLoaded("Member");   
         this.initializeForm(this.builder);     
     }
 
@@ -146,22 +170,22 @@ export class PlanComponent extends XCoreBaseComponent  {
         this.service.save(this.viewModel).subscribe(vm => {
             trace(TraceMethodPosition.Callback);
             this.viewModel = vm;
-            this.baseService.loggingService.success("Plan successfully saved");
-            this.baseService.router.navigate([`/plans/${this.viewModel.id}`]);
+            this.baseService.loggingService.success("Member successfully saved");
+            this.baseService.router.navigate([`/members/${this.viewModel.id}`]);
         });
         
         trace(TraceMethodPosition.Exit);
     }
     
     public cancel(): void {
-        this.baseService.router.navigate(["/planlist"]);
+        this.baseService.router.navigate(["/memberlist"]);
     }
 
 
     private effectiveDateString(targetInput:any): void {
         this.effectiveDateInvalid = true;
         if (!targetInput.value) return;
-        if (PlanValidationService.isValidDate(targetInput.value)) {
+        if (MemberValidationService.isValidDate(targetInput.value)) {
             this.effectiveDateInvalid = false;
             this.viewModel.effectiveDate = targetInput.value;            
         }             
@@ -173,7 +197,7 @@ export class PlanComponent extends XCoreBaseComponent  {
     private terminationDateString(targetInput:any): void {
         this.terminationDateInvalid = false;
         if (!targetInput.value) return;
-        if (PlanValidationService.isValidDate(targetInput.value)) 
+        if (MemberValidationService.isValidDate(targetInput.value)) 
             this.viewModel.terminationDate = targetInput.value;
         else {
             this.terminationDateInvalid = true;
@@ -181,9 +205,22 @@ export class PlanComponent extends XCoreBaseComponent  {
             
     }
 
+    private dateOfBirthString(targetInput:any): void {
+        this.dateOfBirthInvalid = true;
+        if (!targetInput.value) return;
+        if (MemberValidationService.isValidDate(targetInput.value)) {
+            this.dateOfBirthInvalid = false;
+            this.viewModel.dateOfBirth = targetInput.value;            
+        }             
+        else {
+            this.dateOfBirthInvalid = true;
+        }
+    }
+
     public toggleEffectiveDate(event: any): void {
         this.showEffectiveDatePicker = !this.showEffectiveDatePicker;
         this.showTerminationDatePicker = false;
+        this.showDateOfBirthPicker = false;
         event.preventDefault();
     }
 
@@ -195,12 +232,25 @@ export class PlanComponent extends XCoreBaseComponent  {
     public toggleTerminationDate(event: any): void {
         this.showTerminationDatePicker = !this.showTerminationDatePicker;
         this.showEffectiveDatePicker = false;
+        this.showDateOfBirthPicker = false;
         event.preventDefault();
     }
 
     public hideTerminationDate(): void {
         this.terminationDateString({value:this.terminationDate ? moment.utc(this.terminationDate).local().format('MM/DD/YYYY hh:mm:ss a'): null});
         this.showTerminationDatePicker = false;
+    }
+
+    public toggleDateOfBirth(event: any): void {
+        this.showDateOfBirthPicker = !this.showDateOfBirthPicker;
+        this.showTerminationDatePicker = false;
+        this.showEffectiveDatePicker = false;
+        event.preventDefault();
+    }
+
+    public hideDateOfBirth(): void {
+        this.dateOfBirthString({value:this.dob ? moment(this.dob).format('MM/DD/YYYY'): null});
+        this.showDateOfBirthPicker = false;
     }
 
 }

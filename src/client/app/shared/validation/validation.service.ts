@@ -130,8 +130,9 @@ export class ValidationService {
         
     }
 
-    public emailValidator(control: AbstractControl): IValidationResult {
+    public static isEmailValid(control: AbstractControl): IValidationResult {
         var ret:any = null;
+        if (!control.value) return null;
         if (!control.value.match(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/)) {
             ret = { [ValidationService.invalidEmailAddress]: true };
         }

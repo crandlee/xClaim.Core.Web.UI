@@ -1,0 +1,14 @@
+:host .popup {
+    position: absolute;
+    border-radius: 3px;
+    height: 251px;
+    top: -200px;
+    z-index: 10000;
+}
+
+:host .calendar-button {
+    position:absolute;
+    right:85px; 
+    top:0; 
+    height: 35px;
+}

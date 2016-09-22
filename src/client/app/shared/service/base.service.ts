@@ -109,8 +109,8 @@ export class BaseService {
         return false;
     }    
     
-    private getCleanRoutePath(routePath: string): string {        
-        return routePath ? `/${routePath}` : '';
+    private getCleanRoutePath(routePath: string): string {  
+        return routePath ? `/${encodeURI(routePath)}` : '';
     }
 
     private getCleanApiRoot(apiRoot: string): string {        

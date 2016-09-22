@@ -4,6 +4,12 @@
             <h4>Namespace Information for: {{viewModel.name || "New Namespace"}}</h4>
         </div>
         <form (ngSubmit)="onSubmit()" [ngFormModel]="form">
+            <div class="form-group clearfix">
+                <div class="btn-toolbar pull-right">
+                    <button type="submit" class="btn btn-default" [disabled]="validationMessages.length > 0">Save</button>
+                    <button type="button" class="btn btn-primary" (click)="cancel()">Namespace List</button>
+                </div>
+            </div>    
             <div class="form-group">
                 <label for="name">Name:</label>
                 <input type="text" placeholder="Name" name="name" class="form-control" ngControl="NameControl" [(ngModel)]="viewModel.name" required />
@@ -37,12 +43,6 @@
                 </div>
             </div>    
             <validation [validationMessages]='validationMessages'></validation>
-            <div class="form-group clearfix">
-                <div class="btn-toolbar pull-right">
-                    <button type="submit" class="btn btn-default" [disabled]="validationMessages.length > 0">Save</button>
-                    <button type="button" class="btn btn-primary" (click)="cancel()">Namespace List</button>
-                </div>
-            </div>    
         </form>    
     </div>
     <div [hidden]="viewModel && viewModel.id" class="loading-message">

@@ -1,0 +1,21 @@
+<div class="container">
+    <div [hidden]="!dataViewModel" class="edit-panel" >
+        <div class="navbar navbar-inverse center">
+            <div class="list-header" (click)="reload()">Members</div>
+            <ul class="nav navbar-nav pull-right list-header-button-bar">
+                <li>
+                    <p class="navbar-btn list-new-button">
+                        <a href="#" (click)="addNew($event)" class="btn btn-primary">Add New</a>
+                    </p>
+                </li>
+            </ul>            
+        </div>
+        <memberfilter></memberfilter>
+        <ng-table [config]="tableConfig" [rows]="dataViewModel.rows" [columns]="columns" (editClicked)="edit($event)" (deleteClicked)="delete($event)">
+        </ng-table>
+    </div>
+    <div class="row-count-tag">{{(dataViewModel.rows && dataViewModel.rows.length) || 0}} of {{dataViewModel.rowCount}}</div>
+    <div [hidden]="dataViewModel" class="loading-message">
+        Loading Members
+    </div>
+</div>

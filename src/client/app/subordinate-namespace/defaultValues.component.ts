@@ -16,7 +16,7 @@ import { DATEPICKER_DIRECTIVES } from 'ng2-bootstrap/components/datepicker'
 import { IFormValidationResult } from '../shared/validation/validation.service';
 import { ValidationComponent } from '../shared/validation/validation.component';
 import { AsyncValidator } from '../shared/validation/async-validator.service';
-import { PlanValidationService } from '..//plan.validation';
+import { PlanValidationService } from '../subordinate-plan/plan.validation';
 
 import * as moment from 'moment';
 

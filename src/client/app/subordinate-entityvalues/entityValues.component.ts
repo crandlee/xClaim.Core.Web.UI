@@ -205,15 +205,19 @@ export class EntityValuesComponent extends XCoreBaseComponent {
             && vm.memberId === this.viewModel.memberId && vm.productServiceId === this.viewModel.productServiceId && vm.isDefault === false);
 
         var vm = lookup || this.service.getEmptyViewModel();
-
+        var planId = this.parentEntityType === EntityType.Plan ? this.parentEntityId : this.viewModel.planId;
+        var memberId = this.parentEntityType === EntityType.Member ? this.parentEntityId : this.viewModel.memberId;
+        var productServiceId = this.parentEntityType == EntityType.ProductService ? this.parentEntityId : this.viewModel.productServiceId;
+        var serviceProviderId = this.parentEntityType == EntityType.ServiceProvider ? this.parentEntityId : this.viewModel.serviceProviderId;
         vm = <IEntityValueViewModel>_.extend(vm, {
             id: (lookup && lookup.id) || "", namespaceId: this.viewModel.namespaceId, namespaceDescription: this.getNamespaceDescription(this.viewModel.namespaceId),
             parentId: this.parentId, parentEntityType: this.parentEntityType,
-            serviceProviderId: this.viewModel.serviceProviderId, productServiceId: this.viewModel.productServiceId,
-            memberId: this.viewModel.memberId, index: this.viewModel.index, priority: this.viewModel.priority, isDefault: this.viewModel.isDefault,
+            serviceProviderId: serviceProviderId, productServiceId: productServiceId,
+            memberId: memberId, index: this.viewModel.index, priority: this.viewModel.priority, isDefault: this.viewModel.isDefault,
             effectiveDate: this.viewModel.effectiveDate,
             terminationDate: this.viewModel.terminationDate, value: this.viewModel.value,
-            planId: this.parentEntityId
+            planId: planId,
+            
         });
         this.service.saveEntityValue(vm).subscribe(vm => {
             this.baseService.loggingService.success(`Successfully saved the value for ${vm.namespaceDescription}`);
