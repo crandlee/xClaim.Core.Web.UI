@@ -10,65 +10,67 @@
                     <button type="button" class="btn btn-primary" (click)="cancel()">Plan List</button>
                 </div>
             </div>                
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="name">Name:</label>
-                <input type="text" placeholder="Name" name="name" class="form-control" ngControl="NameControl" [(ngModel)]="viewModel.name" required />
+                <input type="text" placeholder="Name" name="name" class="form-control input-sm" ngControl="NameControl" [(ngModel)]="viewModel.name" required />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="bin">BIN:</label>
-                <input type="text" placeholder="BIN" name="bin" class="form-control" ngControl="BinControl" [(ngModel)]="viewModel.bin" required />
+                <input type="text" placeholder="BIN" name="bin" class="form-control input-sm" ngControl="BinControl" [(ngModel)]="viewModel.bin" required />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="pcn">PCN:</label>
-                <input type="text" placeholder="PCN" name="pcn" class="form-control" ngControl="PcnControl" [(ngModel)]="viewModel.pcn" />
+                <input type="text" placeholder="PCN" name="pcn" class="form-control input-sm" ngControl="PcnControl" [(ngModel)]="viewModel.pcn" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="groupId">Group Id:</label>
-                <input type="text" placeholder="Group Id" name="groupid" class="form-control" ngControl="GroupIdControl" [(ngModel)]="viewModel.groupId" />
+                <input type="text" placeholder="Group Id" name="groupid" class="form-control input-sm" ngControl="GroupIdControl" [(ngModel)]="viewModel.groupId" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="address1">Address 1:</label>
-                <input type="text" placeholder="Address 1" name="address1" class="form-control" ngControl="Address1Control" [(ngModel)]="viewModel.address.address1" required />
+                <input type="text" placeholder="Address 1" name="address1" class="form-control input-sm" ngControl="Address1Control" [(ngModel)]="viewModel.address.address1" required />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="address2">Address 2:</label>
-                <input type="text" placeholder="Address 2" name="address2" class="form-control" ngControl="Address2Control" [(ngModel)]="viewModel.address.address2" />
+                <input type="text" placeholder="Address 2" name="address2" class="form-control input-sm" ngControl="Address2Control" [(ngModel)]="viewModel.address.address2" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="address3">Address 3:</label>
-                <input type="text" placeholder="Address 3" name="address3" class="form-control" ngControl="Address3Control" [(ngModel)]="viewModel.address.address3" />
+                <input type="text" placeholder="Address 3" name="address3" class="form-control input-sm" ngControl="Address3Control" [(ngModel)]="viewModel.address.address3" />
             </div>    
-            <div class="form-group">
-                <label for="city">City:</label>
-                <input type="text" placeholder="City" name="city" class="form-control" ngControl="CityControl" [(ngModel)]="viewModel.address.city" />
-            </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
+                <div class="col-sm-4">
+                    <label for="city">City:</label>
+                    <input type="text" placeholder="City" name="city" class="form-control input-sm" ngControl="CityControl" [(ngModel)]="viewModel.address.city" />
+                </div>
+                <div class="col-sm-4">
                 <label for="state">State</label>
-                <select ngControl="StateControl" class="form-control input-sm" [(ngModel)]="viewModel.address.state" required>
-                    <option *ngFor="let val of states | orderBy : '+description'" [value]="val.id">{{val.description}}</option>
-                </select>                                
-            </div>
-            <div class="form-group">
-                <label for="zipCode">Zip Code:</label>
-                <input type="text" placeholder="Zip Code" name="zipCode" class="form-control" ngControl="ZipCodeControl" [(ngModel)]="viewModel.address.zipCode" />
+                    <select ngControl="StateControl" class="form-control input-sm" [(ngModel)]="viewModel.address.state" required>
+                        <option *ngFor="let val of states | orderBy : '+description'" [value]="val.id">{{val.description}}</option>
+                    </select>                                
+                </div>
+                <div class="col-sm-4">
+                    <label for="zipCode">Zip Code:</label>
+                    <input type="text" placeholder="Zip Code" name="zipCode" class="form-control input-sm" ngControl="ZipCodeControl" [(ngModel)]="viewModel.address.zipCode" />
+                </div>
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="phone">Phone:</label>
-                <input type="text" placeholder="Phone" name="phone" class="form-control" ngControl="PhoneControl" [(ngModel)]="viewModel.phone" />
+                <input type="text" placeholder="Phone" name="phone" class="form-control input-sm" ngControl="PhoneControl" [(ngModel)]="viewModel.phone" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="fax">Fax:</label>
-                <input type="text" placeholder="Fax" name="fax" class="form-control" ngControl="FaxControl" [(ngModel)]="viewModel.fax" />
+                <input type="text" placeholder="Fax" name="fax" class="form-control input-sm" ngControl="FaxControl" [(ngModel)]="viewModel.fax" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="contact">Contact:</label>
-                <input type="text" placeholder="Contact" name="contact" class="form-control" ngControl="ContactControl" [(ngModel)]="viewModel.contact" />
+                <input type="text" placeholder="Contact" name="contact" class="form-control input-sm" ngControl="ContactControl" [(ngModel)]="viewModel.contact" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="comments">Comments:</label>
-                <textarea placeholder="Comments" name="comments" class="form-control" ngControl="CommentsControl" [(ngModel)]="viewModel.comments"></textarea>
+                <textarea placeholder="Comments" name="comments" class="form-control input-sm" ngControl="CommentsControl" [(ngModel)]="viewModel.comments"></textarea>
             </div>    
-            <div class="row">
+            <div class="form-group  col-sm-12">
                 <div class="col-sm-4 form-label filter-label">Effective Date:</div>
                 <div class="col-sm-4">
                     <input ngControl="EffectiveDateControl" class="form-control input-sm" [(ngModel)]="viewModel.effectiveDate" placeholder="Effective Date" #effectiveDateStart (blur)="effectiveDateString($event.target)" />                     
@@ -78,7 +80,7 @@
                     <datepicker class="popup" *ngIf="showEffectiveDatePicker" [showWeeks]="false" [(ngModel)]="effectiveDate" (ngModelChange)="hideEffectiveDate()"></datepicker>
                 </div>
             </div>                
-            <div class="row">
+            <div class="form-group  col-sm-12">
                 <div class="col-sm-4 form-label filter-label">Termination Date:</div>
                 <div class="col-sm-4">
                     <input ngControl="TerminationDateControl"  class="form-control input-sm" [(ngModel)]="viewModel.terminationDate" placeholder="Termination Date" #terminationDateStart (blur)="terminationDateString($event.target)" />                                
@@ -88,7 +90,7 @@
                     <datepicker class="popup" *ngIf="showTerminationDatePicker" [showWeeks]="false" [(ngModel)]="terminationDate" (ngModelChange)="hideTerminationDate()"></datepicker>
                 </div>
             </div>    
-            <validation [validationMessages]='validationMessages'></validation>                    
+            <div class="form-group col-sm-12"><validation [validationMessages]='validationMessages'></validation></div>                    
         </form>    
     </div>
     <div [hidden]="viewModel && viewModel.id" class="loading-message">

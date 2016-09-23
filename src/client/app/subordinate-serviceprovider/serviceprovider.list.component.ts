@@ -7,43 +7,43 @@ import { INgTableColumn, INgTableConfig, INgTableRow, INgTableChangeMessage } fr
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { IDataService, ICollectionViewModel } from '../shared/service/base.service';
-import { MemberService, IMember, IMemberViewModel, IMembersToClientFilter } from './member.service';
-import { MemberFilterComponent } from './member.filter.component';
-import { MemberFilterService, IMembersToServerFilter } from './member.filter.service';
+import { ServiceProviderService, IServiceProvider, IServiceProviderViewModel, IServiceProvidersToClientFilter } from './serviceprovider.service';
+import { ServiceProviderFilterComponent } from './serviceprovider.filter.component';
+import { ServiceProviderFilterService, IServiceProvidersToServerFilter } from './serviceprovider.filter.service';
 import { Observable } from 'rxjs';
 import { IFilterDefinition, IFilterService } from '../shared/filtering/filter.service';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
 
 @Component({
     moduleId: module.id,    
-    styleUrls: ['member.list.component.css'],
-    templateUrl: 'member.list.component.html',
-    providers: [MemberService, MemberFilterService],
-    directives: [NgTableComponent, MemberFilterComponent]
+    styleUrls: ['serviceprovider.list.component.css'],
+    templateUrl: 'serviceprovider.list.component.html',
+    providers: [ServiceProviderService, ServiceProviderFilterService],
+    directives: [NgTableComponent, ServiceProviderFilterComponent]
 })
-export class MemberListComponent extends XCoreListComponent<IMember, IMemberViewModel, IMembersToServerFilter, IMembersToClientFilter> {
+export class ServiceProviderListComponent extends XCoreListComponent<IServiceProvider, IServiceProviderViewModel, IServiceProvidersToServerFilter, IServiceProvidersToClientFilter> {
     
     @ViewChild(NgTableComponent) tableComponent: NgTableComponent;
 
 
-    constructor(protected baseService: BaseService, private service: MemberService, private specificfilterService: MemberFilterService) {
+    constructor(protected baseService: BaseService, private service: ServiceProviderService, private specificfilterService: ServiceProviderFilterService) {
         super(baseService);
-        this.initializeTrace("MemberListComponent");
+        this.initializeTrace("ServiceProviderListComponent");
     }
 
     public ngOnInit() {
         this.initializeWith([
-            { title: "Member Id", name: "memberId", colWidth: 2, sort: "asc" },
-            { title: "First Name", name: "firstName", colWidth: 2 },
-            { title: "Last Name", name: "lastName", colWidth: 3 },
-            { title: "Plan", name: "planName", colWidth: 3 },
+            { title: "NPI", name: "npi", colWidth: 2, sort: "asc" },
+            { title: "Store Name", name: "name", colWidth: 2 },
+            { title: "Store Number", name: "storeNumber", colWidth: 3 },
+            { title: "Pharmacy Type", name: "typeName", colWidth: 3 },
             { title: "Edit", name: "Edit", colWidth: 1, editRow: true },        
-            { title: "Delete", name: "Delete", colWidth: 1, deleteRow: true, deleteMessage: 'Do you want to delete this member?' }
+            { title: "Delete", name: "Delete", colWidth: 1, deleteRow: true, deleteMessage: 'Do you want to delete this pharmacy?' }
         ], this.specificfilterService, this.service);  
     }
 
     public ngAfterViewInit() {
-        this.NotifyLoaded("MemberList");
+        this.NotifyLoaded("ServiceProviderList");
         super.initialize(this.tableComponent);
     }
 
@@ -51,7 +51,7 @@ export class MemberListComponent extends XCoreListComponent<IMember, IMemberView
         event.preventDefault();
         var trace = this.classTrace("addNew");
         trace(TraceMethodPosition.Entry);
-        this.baseService.router.navigate(['/newmember'])
+        this.baseService.router.navigate(['/newserviceprovider'])
         trace(TraceMethodPosition.Exit);            
     }
     
@@ -59,7 +59,7 @@ export class MemberListComponent extends XCoreListComponent<IMember, IMemberView
         var trace = this.classTrace("edit");
         trace(TraceMethodPosition.Entry);
         if (!row || !row.id) throw Error("Invalid row");
-        var url = `/members/${row.id}`;
+        var url = `/serviceproviders/${row.id}`;
         this.baseService.router.navigate([url]);
         trace(TraceMethodPosition.Exit);            
     }
@@ -70,7 +70,7 @@ export class MemberListComponent extends XCoreListComponent<IMember, IMemberView
         if (!row || !row.id) throw Error("Invalid row");
         this.service.delete(row.id).subscribe(d => {
            if (d) {
-             this.baseService.loggingService.success("Member deleted successfully");
+             this.baseService.loggingService.success("Pharmacy deleted successfully");
              _.remove(this.dataViewModel.rows, u => u.id === row.id);  
              this.tableComponent.load({ rows: this.dataViewModel.rows, config: this.tableConfig });
            } 

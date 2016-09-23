@@ -12,3 +12,7 @@
     top:0; 
     height: 35px;
 }
+
+:host .edit-panel {
+    float: left;
+}

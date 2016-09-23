@@ -7,3 +7,17 @@ export interface IAddress {
     state: string;
     zipCode: string;
 }
+
+export interface IPaymentEntity {
+    id: string;
+    remittanceAddressId: string;
+    remittanceAddress: IAddress;
+    ein: string;
+}
+
+export interface IPaymentEntityViewModel {
+    id: string;
+    remittanceAddressId: string;
+    remittanceAddress: IAddress;
+    ein: string;
+}

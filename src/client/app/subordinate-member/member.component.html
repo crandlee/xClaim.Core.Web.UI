@@ -10,29 +10,29 @@
                     <button type="button" class="btn btn-primary" (click)="cancel()">Member List</button>
                 </div>
             </div>                
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="memberId">Member Id:</label>
-                <input type="text" placeholder="Member Id" name="memberId" class="form-control" ngControl="MemberIdControl" [(ngModel)]="viewModel.memberId" required />
+                <input type="text" placeholder="Member Id" name="memberId" class="form-control input-sm" ngControl="MemberIdControl" [(ngModel)]="viewModel.memberId" required />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="plan">Plan</label>
                 <select ngControl="PlanControl" class="form-control input-sm" [(ngModel)]="viewModel.planId" required>
                     <option *ngFor="let val of plans | orderBy : '+description'" [value]="val.id">{{val.description}}</option>
                 </select>                                
             </div>                
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="firstName">First Name:</label>
-                <input type="text" placeholder="First Name" name="firstName" class="form-control" ngControl="FirstNameControl" [(ngModel)]="viewModel.firstName" />
+                <input type="text" placeholder="First Name" name="firstName" class="form-control input-sm" ngControl="FirstNameControl" [(ngModel)]="viewModel.firstName" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="middleName">Middle Name:</label>
-                <input type="text" placeholder="Middle Name" name="middleName" class="form-control" ngControl="MiddleNameControl" [(ngModel)]="viewModel.middleName" />
+                <input type="text" placeholder="Middle Name" name="middleName" class="form-control input-sm" ngControl="MiddleNameControl" [(ngModel)]="viewModel.middleName" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="lastName">Last Name:</label>
-                <input type="text" placeholder="Last Name" name="lastName" class="form-control" ngControl="LastNameControl" [(ngModel)]="viewModel.lastName" />
+                <input type="text" placeholder="Last Name" name="lastName" class="form-control input-sm" ngControl="LastNameControl" [(ngModel)]="viewModel.lastName" />
             </div>    
-            <div class="row">
+            <div class="form-group  col-sm-12">
                 <div class="col-sm-4"><label for="dateOfBirth">Date of Birth:</label></div>
                 <div class="col-sm-4">
                     <input ngControl="DateOfBirthControl" name="dateOfBirth" class="form-control input-sm" [(ngModel)]="viewModel.dateOfBirth" placeholder="Date of Birth" #dateOfBirth (blur)="dateOfBirthString($event.target)" />                     
@@ -42,65 +42,67 @@
                     <datepicker class="popup" *ngIf="showDateOfBirthPicker" [showWeeks]="false" [(ngModel)]="dob" (ngModelChange)="hideDateOfBirth()"></datepicker>
                 </div>
             </div>                
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="personCode">Person Code:</label>
-                <input type="text" placeholder="Person Code" name="personCode" class="form-control" ngControl="PersonCodeControl" [(ngModel)]="viewModel.personCode" />
+                <input type="text" placeholder="Person Code" name="personCode" class="form-control input-sm" ngControl="PersonCodeControl" [(ngModel)]="viewModel.personCode" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="eligibilityCode">Eligibility Code:</label>
-                <input type="text" placeholder="Eligibility Code" name="eligibilityCode" class="form-control" ngControl="EligibilityCodeControl" [(ngModel)]="viewModel.eligibilityCode" />
+                <input type="text" placeholder="Eligibility Code" name="eligibilityCode" class="form-control input-sm" ngControl="EligibilityCodeControl" [(ngModel)]="viewModel.eligibilityCode" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="relationshipCode">Relationship Code</label>
                 <select class="form-control input-sm" [(ngModel)]="viewModel.relationshipCode" required>
                     <option *ngFor="let val of relationshipCodes | orderBy : '+description'" [value]="val.id">{{val.description}}</option>
                 </select>                                
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="gender">Gender</label>
                 <select class="form-control input-sm" [(ngModel)]="viewModel.sex">
                     <option *ngFor="let val of genderCodes | orderBy : '+description'" [value]="val.id">{{val.description}}</option>
                 </select>                                
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="location">Location:</label>
-                <input type="text" placeholder="Location" name="location" class="form-control" ngControl="LocationControl" [(ngModel)]="viewModel.location" />
+                <input type="text" placeholder="Location" name="location" class="form-control input-sm" ngControl="LocationControl" [(ngModel)]="viewModel.location" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="address1">Address 1:</label>
-                <input type="text" placeholder="Address 1" name="address1" class="form-control" ngControl="Address1Control" [(ngModel)]="viewModel.address.address1" required />
+                <input type="text" placeholder="Address 1" name="address1" class="form-control input-sm" ngControl="Address1Control" [(ngModel)]="viewModel.address.address1" required />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="address2">Address 2:</label>
-                <input type="text" placeholder="Address 2" name="address2" class="form-control" ngControl="Address2Control" [(ngModel)]="viewModel.address.address2" />
+                <input type="text" placeholder="Address 2" name="address2" class="form-control input-sm" ngControl="Address2Control" [(ngModel)]="viewModel.address.address2" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="address3">Address 3:</label>
-                <input type="text" placeholder="Address 3" name="address3" class="form-control" ngControl="Address3Control" [(ngModel)]="viewModel.address.address3" />
+                <input type="text" placeholder="Address 3" name="address3" class="form-control input-sm" ngControl="Address3Control" [(ngModel)]="viewModel.address.address3" />
             </div>    
-            <div class="form-group">
-                <label for="city">City:</label>
-                <input type="text" placeholder="City" name="city" class="form-control" ngControl="CityControl" [(ngModel)]="viewModel.address.city" />
+            <div class="form-group col-sm-12">
+                <div class="col-sm-4">
+                    <label for="city">City:</label>
+                    <input type="text" placeholder="City" name="city" class="form-control input-sm" ngControl="CityControl" [(ngModel)]="viewModel.address.city" />
+                </div>
+                <div class="col-sm-4">
+                    <label for="state">State</label>
+                    <select ngControl="StateControl" class="form-control input-sm" [(ngModel)]="viewModel.address.state" required>
+                        <option *ngFor="let val of states | orderBy : '+description'" [value]="val.id">{{val.description}}</option>
+                    </select>                                
+                </div>
+                <div class="col-sm-4">
+                    <label for="zipCode">Zip Code:</label>
+                    <input type="text" placeholder="Zip Code" name="zipCode" class="form-control input-sm" ngControl="ZipCodeControl" [(ngModel)]="viewModel.address.zipCode" />
+                </div>
             </div>    
-            <div class="form-group">
-                <label for="state">State</label>
-                <select ngControl="StateControl" class="form-control input-sm" [(ngModel)]="viewModel.address.state" required>
-                    <option *ngFor="let val of states | orderBy : '+description'" [value]="val.id">{{val.description}}</option>
-                </select>                                
-            </div>
-            <div class="form-group">
-                <label for="zipCode">Zip Code:</label>
-                <input type="text" placeholder="Zip Code" name="zipCode" class="form-control" ngControl="ZipCodeControl" [(ngModel)]="viewModel.address.zipCode" />
-            </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="phone">Phone:</label>
-                <input type="text" placeholder="Phone" name="phone" class="form-control" ngControl="PhoneControl" [(ngModel)]="viewModel.telephone" />
+                <input type="text" placeholder="Phone" name="phone" class="form-control input-sm" ngControl="PhoneControl" [(ngModel)]="viewModel.telephone" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="email">Email Address:</label>
-                <input type="text" placeholder="Email Address" name="email" class="form-control" ngControl="EmailControl" [(ngModel)]="viewModel.emailAddress" />
+                <input type="text" placeholder="Email Address" name="email" class="form-control input-sm" ngControl="EmailControl" [(ngModel)]="viewModel.emailAddress" />
             </div>    
-            <div class="row">
+            <div class="form-group  col-sm-12">
                 <div class="col-sm-4 form-label filter-label">Effective Date:</div>
                 <div class="col-sm-4">
                     <input ngControl="EffectiveDateControl" class="form-control input-sm" [(ngModel)]="viewModel.effectiveDate" placeholder="Effective Date" #effectiveDateStart (blur)="effectiveDateString($event.target)" />                     
@@ -110,7 +112,7 @@
                     <datepicker class="popup" *ngIf="showEffectiveDatePicker" [showWeeks]="false" [(ngModel)]="effectiveDate" (ngModelChange)="hideEffectiveDate()"></datepicker>
                 </div>
             </div>                
-            <div class="row">
+            <div class="form-group  col-sm-12">
                 <div class="col-sm-4 form-label filter-label">Termination Date:</div>
                 <div class="col-sm-4">
                     <input ngControl="TerminationDateControl"  class="form-control input-sm" [(ngModel)]="viewModel.terminationDate" placeholder="Termination Date" #terminationDateStart (blur)="terminationDateString($event.target)" />                                
@@ -120,7 +122,7 @@
                     <datepicker class="popup" *ngIf="showTerminationDatePicker" [showWeeks]="false" [(ngModel)]="terminationDate" (ngModelChange)="hideTerminationDate()"></datepicker>
                 </div>
             </div> 
-            <validation [validationMessages]='validationMessages'></validation>                       
+            <div class="form-group col-sm-12"><validation [validationMessages]='validationMessages'></validation></div>                       
         </form>    
     </div>
     <div [hidden]="viewModel && viewModel.id" class="loading-message">
