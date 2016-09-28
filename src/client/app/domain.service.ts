@@ -8,6 +8,7 @@ import { WelcomeComponent } from './welcome/index';
 import { PlanRoutes } from './subordinate-plan/routes';
 import { MemberRoutes } from './subordinate-member/routes';
 import { ServiceProviderRoutes } from './subordinate-serviceprovider/routes';
+import { ProductServiceRoutes } from './subordinate-productservice/routes';
 
 @Injectable()
 export class DomainService {
@@ -22,6 +23,7 @@ export class DomainService {
             .concat(PlanRoutes)
             .concat(MemberRoutes)
             .concat(ServiceProviderRoutes)
+            .concat(ProductServiceRoutes)
             .concat([{ path: '/', component: WelcomeComponent }, { path: '/**', component: WelcomeComponent }]);
             return retRoutes;
     }

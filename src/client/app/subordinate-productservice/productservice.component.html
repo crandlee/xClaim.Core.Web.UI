@@ -1,0 +1,148 @@
+<div class="container">
+    <div [hidden]="!viewModel || !viewModel.id" class="edit-panel">
+        <div class="navbar navbar-inverse center">
+            <h4>Drug Information for NDC: {{viewModel.productServiceId}}</h4>
+        </div>
+        <div class="form-group clearfix">
+            <div class="btn-toolbar pull-right">
+                <button type="button" class="btn btn-primary" (click)="cancel()">Drug List</button>
+            </div>
+        </div>
+        <table>
+            <thead class="table-header">
+                <tr>
+                    <th colspan="4">Summary Information</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="header-info-name-2c">NDC</td>
+                    <td class="header-info-value-2c">{{viewModel.productServiceId}}</td>
+                    <td class="header-info-name-2c">Label</td>
+                    <td class="header-info-value-2c">{{dvm.label}}</td>
+                </tr>
+                <tr>
+                    <td class="header-info-name-2c">Extended Label</td>
+                    <td class="header-info-value-2c">{{dvm.extendedLabel}}</td>
+                    <td class="header-info-name-2c">Manufacturer</td>
+                    <td class="header-info-value-2c">{{dvm.manufacturer}}</td>
+                </tr>
+                <tr>
+                    <td class="header-info-name-2c">Form</td>
+                    <td class="header-info-value-2c">{{dvm.form}}</td>
+                    <td class="header-info-name-2c">Generic</td>
+                    <td class="header-info-value-2c">{{dvm.generic}}</td>
+                </tr>
+                <tr>
+                    <td class="header-info-name-2c">GPI</td>
+                    <td class="header-info-value-2c">{{dvm.gpi}}</td>
+                    <td class="header-info-name-2c">AHFS</td>
+                    <td class="header-info-value-2c">{{dvm.ahfs}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <table>
+            <thead class="table-header">
+                <tr>
+                    <th colspan="6">Summary Information</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="header-info-name-3c">Class</td>
+                    <td class="header-info-value-3c">{{dvm.class}}</td>
+                    <td class="header-info-name-3c">Multi-Source Code</td>
+                    <td class="header-info-value-3c">{{dvm.multiSourceCode}}</td>
+                    <td class="header-info-name-3c">3rd Party Code</td>
+                    <td class="header-info-value-3c">{{dvm.thirdPartyCode}}</td>
+                </tr>
+                <tr>
+                    <td class="header-info-name-3c">RxOtc</td>
+                    <td class="header-info-value-3c">{{dvm.rxOtc}}</td>
+                    <td class="header-info-name-3c">Route Of Administration</td>
+                    <td class="header-info-value-3c">{{dvm.routeOfAdministration}}</td>
+                    <td class="header-info-name-3c">Item Status</td>
+                    <td class="header-info-value-3c">{{dvm.itemStatus}}</td>
+                </tr>
+                <tr>
+                    <td class="header-info-name-3c">Unit Of Use</td>
+                    <td class="header-info-value-3c">{{dvm.unitOfUse}}</td>
+                    <td class="header-info-name-3c">Top 500</td>
+                    <td class="header-info-value-3c">{{dvm.top500}}</td>
+                    <td class="header-info-name-3c">Maintenance Indicator</td>
+                    <td class="header-info-value-3c">{{dvm.maintenanceIndicator}}</td>
+                </tr>
+                <tr>
+                    <td class="header-info-name-3c">DEA Code</td>
+                    <td class="header-info-value-3c">{{dvm.deaCode}}</td>
+                    <td class="header-info-name-3c">DESI Code</td>
+                    <td class="header-info-value-3c">{{dvm.desiCode}}</td>
+                    <td class="header-info-name-3c">Repackaged Drugs</td>
+                    <td class="header-info-value-3c">{{dvm.repackagedDrugs}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <table>
+            <thead class="table-header">
+                <tr>
+                    <th colspan="4">Pricing Information</th>
+                </tr>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th>Package Price</th>
+                    <th>Unit Price</th>
+                    <th>Effective Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Current AWP</td>
+                    <td>{{dvm.currentAwpPackagePrice}}</td>
+                    <td>{{dvm.currentAwpUnitPrice}}</td>
+                    <td>{{dvm.currentAwpEffectiveDate}}</td>
+                </tr>
+                <tr>
+                    <td>Previous AWP</td>
+                    <td>{{dvm.previousAwpPackagePrice}}</td>
+                    <td>{{dvm.previousAwpUnitPrice}}</td>
+                    <td>{{dvm.previousAwpEffectiveDate}}</td>
+                </tr>
+                <tr>
+                    <td>AAWP</td>
+                    <td>&nbsp;</td>
+                    <td>{{dvm.aawpUnitPrice}}</td>
+                    <td>{{dvm.aawpEffectiveDate}}</td>
+                </tr>
+                <tr>
+                    <td>HCFA</td>
+                    <td>&nbsp;</td>
+                    <td>{{dvm.hcfaUnitPrice}}</td>
+                    <td>{{dvm.hcfaEffectiveDate}}</td>
+                </tr>
+                <tr>
+                    <td>WAC</td>
+                    <td>&nbsp;</td>
+                    <td>{{dvm.wacUnitPrice}}</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>DP</td>
+                    <td>&nbsp;</td>
+                    <td>{{dvm.dpUnitPrice}}</td>
+                    <td>{{dvm.dpEffectiveDate}}</td>
+                </tr>
+                <tr>
+                    <td>Medispan Markup Rate</td>
+                    <td>{{dvm.medispanMarkupRate}}</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div [hidden]="viewModel && viewModel.id" class="loading-message">
+        Loading Drug
+    </div>
+</div>
+<br/>
+<entity-values></entity-values>

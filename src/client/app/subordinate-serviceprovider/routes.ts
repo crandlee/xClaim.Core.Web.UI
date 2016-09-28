@@ -6,6 +6,7 @@ import { ServiceProviderComponent } from './serviceprovider.component';
 export var ServiceProviderRoutes: RouteMetadata[] =  [
     { path: '/serviceproviderlist', component: ServiceProviderListComponent },
     { path: '/serviceproviders/:id', component: ServiceProviderComponent },
+    { path: '/serviceprovidersbyid/:npi', component: ServiceProviderComponent },
     { path: '/newserviceprovider', component: ServiceProviderComponent }
 ];
 

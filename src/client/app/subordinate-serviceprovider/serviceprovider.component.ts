@@ -47,6 +47,8 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
     public showTerminationDatePicker: boolean = false;
     public effectiveDate: Date;
     public terminationDate: Date;
+    public readOnly: boolean = true;
+    public npi: string;
 
     @ViewChild(EntityValuesComponent) EntityValuesView: EntityValuesComponent;
 
@@ -56,6 +58,9 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
         super(baseService);
         this.initializeTrace("ServiceProviderComponent");
         this.id = routeSegment.getParam("id");
+        this.npi = routeSegment.getParam("npi");
+        if (this.npi) this.readOnly = true;
+
         this.viewModel = this.service.getEmptyViewModel();
         this.states = this.dropdownService.getStates();
 
@@ -129,7 +134,7 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
     private getInitialData(service: ServiceProviderService, id: string): void {        
         var trace = this.classTrace("getInitialData");
         var fn: () => Observable<IServiceProvider> = (!this.id) 
-            ? service.getNew.bind(service) 
+            ? ((!this.npi) ? service.getNew.bind(service) : service.getExistingById.bind(service, this.npi)) 
             : service.getExisting.bind(service, this.id);
         
         fn().subscribe(up => {
@@ -145,7 +150,7 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
                     this.dispenserTypes = data[1];
                     this.pharmacyTypes = data[2];
 
-                    this.EntityValuesView.load(true, this.id, EntityType.ServiceProvider, this.viewModel.name, this.viewModel.npi);
+                    this.EntityValuesView.load(true, this.id, EntityType.Pharmacy, this.viewModel.name, this.viewModel.npi, this.readOnly);
                         trace(TraceMethodPosition.CallbackEnd);
 
                 });
@@ -167,6 +172,9 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
     public onSubmit() {
         var trace = this.classTrace("onSubmit");
         trace(TraceMethodPosition.Entry);
+
+        if (this.readOnly) return;
+
         this.service.save(this.viewModel).subscribe(vm => {
             trace(TraceMethodPosition.Callback);
             this.viewModel = vm;

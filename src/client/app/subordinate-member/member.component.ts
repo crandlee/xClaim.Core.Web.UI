@@ -49,6 +49,8 @@ export class MemberComponent extends XCoreBaseComponent  {
     public effectiveDate: Date;
     public terminationDate: Date;
     public dob: Date;
+    public readOnly: boolean;
+    public memberId: string;
 
     @ViewChild(EntityValuesComponent) EntityValuesView: EntityValuesComponent;
 
@@ -58,6 +60,7 @@ export class MemberComponent extends XCoreBaseComponent  {
         super(baseService);
         this.initializeTrace("MemberComponent");
         this.id = routeSegment.getParam("id");
+        this.memberId = routeSegment.getParam("memberid");
         this.viewModel = this.service.getEmptyViewModel();
         this.states = this.dropdownService.getStates();
 
@@ -118,7 +121,7 @@ export class MemberComponent extends XCoreBaseComponent  {
     private getInitialData(service: MemberService, id: string): void {        
         var trace = this.classTrace("getInitialData");
         var fn: () => Observable<IMember> = (!this.id) 
-            ? service.getNew.bind(service) 
+            ? ((!this.memberId) ? service.getNew.bind(service) : service.getExistingById.bind(service, this.memberId)) 
             : service.getExisting.bind(service, this.id);
         
         fn().subscribe(up => {
@@ -142,7 +145,7 @@ export class MemberComponent extends XCoreBaseComponent  {
 
                         //Load any subviews here
                         this.EntityValuesView.load(true, this.id, EntityType.Member, this.viewModel.lastName + ", " + this.viewModel.firstName
-                            , this.viewModel.memberId);
+                            , this.viewModel.memberId, this.readOnly);
                         trace(TraceMethodPosition.CallbackEnd);            
                     });
 
@@ -167,6 +170,9 @@ export class MemberComponent extends XCoreBaseComponent  {
     public onSubmit() {
         var trace = this.classTrace("onSubmit");
         trace(TraceMethodPosition.Entry);
+
+        if (this.readOnly) return;
+
         this.service.save(this.viewModel).subscribe(vm => {
             trace(TraceMethodPosition.Callback);
             this.viewModel = vm;

@@ -94,6 +94,15 @@ export class ServiceProviderService implements IDataService<IServiceProvider, IS
         return obs;
     }
 
+
+    public getExistingById(npi: string): Observable<IServiceProvider> {  
+        var trace = this.baseService.classTrace("getExistingById");
+        trace(TraceMethodPosition.Entry);
+        var obs = this.baseService.getObjectData<IServiceProvider>(this.baseService
+            .getOptions(this.baseService.hubService, this.endpointKey, "There was an error retrieving the item"), `serviceprovidersbyid/${npi}`);
+        trace(TraceMethodPosition.Exit);
+        return obs;
+    }
     
     public getExisting(id: string): Observable<IServiceProvider> {  
         var trace = this.baseService.classTrace("getExisting");
@@ -135,7 +144,7 @@ export class ServiceProviderService implements IDataService<IServiceProvider, IS
             type: viewModel.type,
             physicalAddressId: viewModel.physicalAddressId || this.baseService.appSettings.EmptyGuid,
             physicalAddress: {
-                id: (viewModel.physicalAddress && viewModel.physicalAddress.id),
+                id: ((viewModel.physicalAddress && viewModel.physicalAddress.id) || this.baseService.appSettings.EmptyGuid),
                 address1: (viewModel.physicalAddress && viewModel.physicalAddress.address1),
                 address2: (viewModel.physicalAddress && viewModel.physicalAddress.address2),
                 address3: (viewModel.physicalAddress && viewModel.physicalAddress.address3),
@@ -145,7 +154,7 @@ export class ServiceProviderService implements IDataService<IServiceProvider, IS
             },
             mailingAddressId: viewModel.mailingAddressId || this.baseService.appSettings.EmptyGuid,
             mailingAddress: {
-                id: (viewModel.mailingAddress && viewModel.mailingAddress.id),
+                id: ((viewModel.mailingAddress && viewModel.mailingAddress.id) || this.baseService.appSettings.EmptyGuid),
                 address1: (viewModel.mailingAddress && viewModel.mailingAddress.address1),
                 address2: (viewModel.mailingAddress && viewModel.mailingAddress.address2),
                 address3: (viewModel.mailingAddress && viewModel.mailingAddress.address3),
@@ -157,9 +166,9 @@ export class ServiceProviderService implements IDataService<IServiceProvider, IS
             paymentEntity: {
                 id: (viewModel.paymentEntity && viewModel.paymentEntity.id) || this.baseService.appSettings.EmptyGuid,
                 ein: (viewModel.paymentEntity && viewModel.paymentEntity.ein),
-                remittanceAddressId: (viewModel.paymentEntity && viewModel.paymentEntity.remittanceAddressId),
+                remittanceAddressId: (viewModel.paymentEntity && viewModel.paymentEntity.remittanceAddressId)  || this.baseService.appSettings.EmptyGuid,
                 remittanceAddress: {
-                    id: (viewModel.paymentEntity && viewModel.paymentEntity.remittanceAddress && viewModel.paymentEntity.remittanceAddress.id),
+                    id: ((viewModel.paymentEntity && viewModel.paymentEntity.remittanceAddress && viewModel.paymentEntity.remittanceAddress.id) || this.baseService.appSettings.EmptyGuid),
                     address1: (viewModel.paymentEntity && viewModel.paymentEntity.remittanceAddress && viewModel.paymentEntity.remittanceAddress.address1),
                     address2: (viewModel.paymentEntity && viewModel.paymentEntity.remittanceAddress && viewModel.paymentEntity.remittanceAddress.address2),
                     address3: (viewModel.paymentEntity && viewModel.paymentEntity.remittanceAddress && viewModel.paymentEntity.remittanceAddress.address3),

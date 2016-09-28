@@ -43,7 +43,11 @@ export class PlanComponent extends XCoreBaseComponent  {
     public showTerminationDatePicker: boolean = false;
     public effectiveDate: Date;
     public terminationDate: Date;
-    
+    public readOnly: boolean;
+    public bin: string;
+    public pcn: string;
+    public groupId: string;
+
     @ViewChild(EntityValuesComponent) EntityValuesView: EntityValuesComponent;
 
     constructor(protected baseService: BaseService, private service: PlanService,
@@ -53,6 +57,11 @@ export class PlanComponent extends XCoreBaseComponent  {
 
         this.initializeTrace("PlanComponent");
         this.id = routeSegment.getParam("id");
+        this.bin = routeSegment.getParam("bin");
+        this.pcn = routeSegment.getParam("pcn");
+        this.groupId = routeSegment.getParam("groupId");
+        if (this.bin) this.readOnly = true;
+
         this.viewModel = this.service.getEmptyViewModel();
         this.states = this.dropdownService.getStates();
 
@@ -112,7 +121,7 @@ export class PlanComponent extends XCoreBaseComponent  {
     private getInitialData(service: PlanService, id: string): void {        
         var trace = this.classTrace("getInitialData");
         var fn: () => Observable<IPlan> = (!this.id) 
-            ? service.getNew.bind(service) 
+            ? ((!this.bin) ? service.getNew.bind(service) : service.getExistingById.bind(service, this.bin, this.pcn, this.groupId)) 
             : service.getExisting.bind(service, this.id);
                             
         fn().subscribe(up => {
@@ -123,7 +132,8 @@ export class PlanComponent extends XCoreBaseComponent  {
             }
 
             //Load any subviews here
-            this.EntityValuesView.load(true, this.id, EntityType.Plan, this.viewModel.name, (this.viewModel.bin || "") + "/" + (this.viewModel.pcn || "") + "/" + (this.viewModel.groupId || ""));
+            this.EntityValuesView.load(true, this.id, EntityType.Plan, this.viewModel.name, 
+                (this.viewModel.bin || "") + "/" + (this.viewModel.pcn || "") + "/" + (this.viewModel.groupId || ""), this.readOnly);
 
             trace(TraceMethodPosition.CallbackEnd);            
         }); 
@@ -143,6 +153,9 @@ export class PlanComponent extends XCoreBaseComponent  {
     public onSubmit() {
         var trace = this.classTrace("onSubmit");
         trace(TraceMethodPosition.Entry);
+
+        if (this.readOnly) return;
+
         this.service.save(this.viewModel).subscribe(vm => {
             trace(TraceMethodPosition.Callback);
             this.viewModel = vm;

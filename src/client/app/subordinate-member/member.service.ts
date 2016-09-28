@@ -91,6 +91,15 @@ export class MemberService implements IDataService<IMember, IMemberViewModel, IM
         return obs;
     }
 
+
+    public getExistingById(memberId: string): Observable<IMember> {  
+        var trace = this.baseService.classTrace("getExistingById");
+        trace(TraceMethodPosition.Entry);
+        var obs = this.baseService.getObjectData<IMember>(this.baseService
+            .getOptions(this.baseService.hubService, this.endpointKey, "There was an error retrieving the item"), `membersbyid/${memberId}`);
+        trace(TraceMethodPosition.Exit);
+        return obs;
+    }
     
     public getExisting(id: string): Observable<IMember> {  
         var trace = this.baseService.classTrace("getExisting");

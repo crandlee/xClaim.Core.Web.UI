@@ -37,12 +37,13 @@ export class EntityValuesComponent extends XCoreBaseComponent {
         { name: "effectiveDate", title: "Effective", colWidth: 2 },
         { name: "secondary", title: "Secondary Ids", colWidth: 2 },
         { name: "priority", title: "Priority", colWidth: 1 },
-        { name: "Delete", title: "", deleteRow: true, deleteMessage: "Delete this value?", colWidth: 1 }
+        { name: "Delete", title: "", deleteRow: !this.readOnly, deleteMessage: "Delete this value?", colWidth: 1 }
     ];
 
     public tableConfig: INgTableConfig = {
         sorting: { columns: this.columns },
         selectOn: this.rowSelect.bind(this),
+        readOnly: false,
         deleteOn: this.deleteSelect.bind(this)
     }
 
@@ -68,6 +69,8 @@ export class EntityValuesComponent extends XCoreBaseComponent {
     public showEffectiveDatePicker: boolean = false;
     public showTerminationDatePicker: boolean = false;
 
+    public readOnly: boolean = true;
+
     @ViewChild(NgTableComponent) tableComponent: NgTableComponent;
 
     private get deleteSelect(): (id: string) => boolean {
@@ -78,8 +81,9 @@ export class EntityValuesComponent extends XCoreBaseComponent {
         }
     }
 
-    private get tableLoadFunction(): () => INgTableChangeMessage {
-        return () => {
+    private get tableLoadFunction(): (readOnly: boolean) => INgTableChangeMessage {
+        return (readOnly: boolean) => {
+            this.tableConfig.readOnly = readOnly;
             return { rows: this.entityValues, config: this.tableConfig }
         };
     }
@@ -114,9 +118,9 @@ export class EntityValuesComponent extends XCoreBaseComponent {
         var planControl = new Control("");
         var planValidator = AsyncValidator.debounceControl(planControl, control => this.validationService.isEntityIdValid(EntityType.Plan, control, this.service));
         var pharmacyControl = new Control("");
-        var pharmacyValidator = AsyncValidator.debounceControl(pharmacyControl, control => this.validationService.isEntityIdValid(EntityType.ServiceProvider, control, this.service));
+        var pharmacyValidator = AsyncValidator.debounceControl(pharmacyControl, control => this.validationService.isEntityIdValid(EntityType.Pharmacy, control, this.service));
         var drugControl = new Control("");
-        var drugValidator = AsyncValidator.debounceControl(drugControl, control => this.validationService.isEntityIdValid(EntityType.ProductService, control, this.service));
+        var drugValidator = AsyncValidator.debounceControl(drugControl, control => this.validationService.isEntityIdValid(EntityType.Drug, control, this.service));
         var memberControl = new Control("");
         var memberValidator = AsyncValidator.debounceControl(memberControl, control => this.validationService.isEntityIdValid(EntityType.Member, control, this.service));
         
@@ -152,7 +156,7 @@ export class EntityValuesComponent extends XCoreBaseComponent {
     }
 
 
-    public load(initial: boolean, parentId: string, parentEntityType: EntityType, parentEntityName: string, parentEntityId: string) {
+    public load(initial: boolean, parentId: string, parentEntityType: EntityType, parentEntityName: string, parentEntityId: string, readOnly: boolean) {
 
         this.parentId = parentId;
         this.parentEntityType = parentEntityType;
@@ -160,13 +164,14 @@ export class EntityValuesComponent extends XCoreBaseComponent {
         this.parentEntityTypeDesc = this.getEntityTypeName();
         this.parentEntityId = parentEntityId;
         this.viewModel = this.service.getEmptyViewModel();
-                
+        this.readOnly = readOnly;
+
         if (initial) this.initializeForm(this.builder);
         this.service.get(0, 0, { entityId: parentId, entityType: parentEntityType }).subscribe(vm => {
             this.service.getNamespacesForDropdown().subscribe(opt => {
                 this.namespaceOptions = opt.rows;
                 this.entityValues = vm.rows;
-                this.tableComponent.load(this.tableLoadFunction());
+                this.tableComponent.load(this.tableLoadFunction(this.readOnly));
                 if (vm.rows.length > 0) {
                     this.viewModel = vm.rows[0];
                     if (this.viewModel.priority === 0) this.viewModel.priority = 1;
@@ -181,6 +186,8 @@ export class EntityValuesComponent extends XCoreBaseComponent {
         var trace = this.classTrace("delete");
         trace(TraceMethodPosition.Entry);
 
+        if (this.readOnly) return;
+        
         this.service.deleteEntityValue(row.id).subscribe(d => {
             if (d) {
                 this.baseService.loggingService.success(`Entity Value deleted successfully`);
@@ -190,7 +197,7 @@ export class EntityValuesComponent extends XCoreBaseComponent {
                     this.tableComponent.highlight(this.viewModel.id);                    
                 }
                 //this.tableComponent.load(this.tableLoadFunction());
-                this.load(false, this.parentId, this.parentEntityType, this.parentEntityName, this.parentEntityId);
+                this.load(false, this.parentId, this.parentEntityType, this.parentEntityName, this.parentEntityId, this.readOnly);
             }
         });
         trace(TraceMethodPosition.Exit);
@@ -200,6 +207,9 @@ export class EntityValuesComponent extends XCoreBaseComponent {
     public save(): void {
         var trace = this.classTrace("save");
         trace(TraceMethodPosition.Entry);
+
+        if (this.readOnly) return;
+
         var lookup: IEntityValueViewModel = _.find(this.entityValues, vm => vm.namespaceId == this.viewModel.namespaceId
             && new Date(vm.effectiveDate).getTime() === new Date(this.viewModel.effectiveDate).getTime() && vm.planId === this.viewModel.planId && vm.serviceProviderId === this.viewModel.serviceProviderId
             && vm.memberId === this.viewModel.memberId && vm.productServiceId === this.viewModel.productServiceId && vm.isDefault === false);
@@ -207,8 +217,8 @@ export class EntityValuesComponent extends XCoreBaseComponent {
         var vm = lookup || this.service.getEmptyViewModel();
         var planId = this.parentEntityType === EntityType.Plan ? this.parentEntityId : this.viewModel.planId;
         var memberId = this.parentEntityType === EntityType.Member ? this.parentEntityId : this.viewModel.memberId;
-        var productServiceId = this.parentEntityType == EntityType.ProductService ? this.parentEntityId : this.viewModel.productServiceId;
-        var serviceProviderId = this.parentEntityType == EntityType.ServiceProvider ? this.parentEntityId : this.viewModel.serviceProviderId;
+        var productServiceId = this.parentEntityType == EntityType.Drug ? this.parentEntityId : this.viewModel.productServiceId;
+        var serviceProviderId = this.parentEntityType == EntityType.Pharmacy ? this.parentEntityId : this.viewModel.serviceProviderId;
         vm = <IEntityValueViewModel>_.extend(vm, {
             id: (lookup && lookup.id) || "", namespaceId: this.viewModel.namespaceId, namespaceDescription: this.getNamespaceDescription(this.viewModel.namespaceId),
             parentId: this.parentId, parentEntityType: this.parentEntityType,
@@ -232,13 +242,16 @@ export class EntityValuesComponent extends XCoreBaseComponent {
             }
             this.newItem();
             //this.tableComponent.load(this.tableLoadFunction());
-            this.load(false, this.parentId, this.parentEntityType, this.parentEntityName, this.parentEntityId);
+            this.load(false, this.parentId, this.parentEntityType, this.parentEntityName, this.parentEntityId, this.readOnly);
         });
         
         trace(TraceMethodPosition.Exit);
     }
 
     private newItem($event?:any): void {
+
+        if (this.readOnly) return;
+
         this.id == null;
         this.viewModel = this.service.getEmptyViewModel();
         this.tableComponent.clearHighlight();

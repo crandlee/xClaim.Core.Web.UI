@@ -6,6 +6,7 @@ import { PlanComponent } from './plan.component';
 export var PlanRoutes: RouteMetadata[] =  [
     { path: '/planlist', component: PlanListComponent },
     { path: '/plans/:id', component: PlanComponent },
+    { path: '/plansbyid/:bin/:pcn/:groupId', component: PlanComponent },
     { path: '/newplan', component: PlanComponent }
 ];
 

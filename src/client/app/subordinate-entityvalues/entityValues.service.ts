@@ -106,8 +106,8 @@ export class EntityValuesService implements IDataService<IEntityValueModel, IEnt
         var secondaryString = "";
         if (model && model.planId && model.parentEntityType !== EntityType.Plan) secondaryString += (secondaryString ? "\r\n" : "") + `Plan: ${model.planId} `;
         if (model && model.memberId && model.parentEntityType !== EntityType.Member) secondaryString += (secondaryString ? "\r\n" : "") + `Member: ${model.memberId} `;
-        if (model && model.productServiceId && model.parentEntityType !== EntityType.ProductService) secondaryString += (secondaryString ? "\r\n" : "") + `NDC: ${model.productServiceId} `;
-        if (model && model.serviceProviderId && model.parentEntityType !== EntityType.ServiceProvider) secondaryString += (secondaryString ? "\r\n" : "") + `Pharmacy: ${model.serviceProviderId} `;
+        if (model && model.productServiceId && model.parentEntityType !== EntityType.Drug) secondaryString += (secondaryString ? "\r\n" : "") + `NDC: ${model.productServiceId} `;
+        if (model && model.serviceProviderId && model.parentEntityType !== EntityType.Pharmacy) secondaryString += (secondaryString ? "\r\n" : "") + `Pharmacy: ${model.serviceProviderId} `;
         return secondaryString;
     }
 
@@ -254,7 +254,7 @@ export enum EntityType {
     Unknown = 0,
     Plan = 1,
     Member = 2,
-    ProductService = 4,
-    ServiceProvider = 5,
+    Drug = 4,
+    Pharmacy = 5,
     Chain = 6
 }

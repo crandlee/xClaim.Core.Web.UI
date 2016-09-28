@@ -219,6 +219,7 @@ export interface INgTableConfig {
   sorting: { columns: INgTableColumn[] };
   selectOn?: (id: string) => void;
   deleteOn?: (id: string) => boolean;
+  readOnly?: boolean;
 }
 
 export interface INgTableRow {

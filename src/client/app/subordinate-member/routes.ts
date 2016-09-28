@@ -6,6 +6,7 @@ import { MemberComponent } from './member.component';
 export var MemberRoutes: RouteMetadata[] =  [
     { path: '/memberlist', component: MemberListComponent },
     { path: '/members/:id', component: MemberComponent },
+    { path: '/membersbyid/:memberid', component: MemberComponent },
     { path: '/newmember', component: MemberComponent }
 ];
 
