@@ -45,6 +45,7 @@ export class DefaultValuesComponent extends XCoreBaseComponent {
     }
     public defaultValues: IDefaultValueViewModel[] = [];
     public id: string;
+    public parentId: string;
     public entityType: number;
     public value: string;
     public effectiveDate: Date;
@@ -75,6 +76,11 @@ export class DefaultValuesComponent extends XCoreBaseComponent {
     
     public load(parentVm: INamespaceViewModel) {
         this.parentVm = parentVm;
+        if (this.parentVm.id === this.baseService.appSettings.EmptyGuid) return;
+
+        this.parentId = parentVm.id;
+
+        
         this.defaultValuesService.getNamespaceEntityTypes().subscribe(vm => {
             this.entityTypes = vm;
             this.defaultValuesService.get(0, 10, {namespaceId: this.parentVm.id}).subscribe(vm => {

@@ -48,8 +48,10 @@ export class ProductServiceService implements IDataService<IProductService, IPro
     public getExistingById(ndc: string): Observable<IProductService> {
         var trace = this.baseService.classTrace("getExistingById");
         trace(TraceMethodPosition.Entry);
-        var obs = this.baseService.getObjectData<IProductService>(this.baseService
-            .getOptions(this.baseService.hubService, this.endpointKey, "There was an error retrieving the item"), `productservicesbyid/${ndc}`);
+        var baseOptions = this.baseService
+            .getOptions(this.baseService.hubService, this.endpointKey, "There was an error retrieving the item");
+        baseOptions.propogateException = true;    
+        var obs = this.baseService.getObjectData<IProductService>(baseOptions, `productservicesbyid/${ndc}`);
         trace(TraceMethodPosition.Exit);
         return obs;
     }

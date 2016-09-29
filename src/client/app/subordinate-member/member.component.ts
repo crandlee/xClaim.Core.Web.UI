@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Validators, ControlGroup, Control, FormBuilder } from '@angular/common';
+import { Validators, ControlGroup, Control, FormBuilder, Location } from '@angular/common';
 import { IFormValidationResult } from '../shared/validation/validation.service';
 import { ValidationComponent } from '../shared/validation/validation.component';
 import { AsyncValidator } from '../shared/validation/async-validator.service';
@@ -31,6 +31,7 @@ import { EntityType } from '../subordinate-entityvalues/entityValues.service';
 })
 export class MemberComponent extends XCoreBaseComponent  {
 
+    public loadingMessage: string = "Loading Member";
     public viewModel: IMemberViewModel;
     public form: ControlGroup;
     public validationMessages: IFormValidationResult[] = [];
@@ -55,13 +56,15 @@ export class MemberComponent extends XCoreBaseComponent  {
     @ViewChild(EntityValuesComponent) EntityValuesView: EntityValuesComponent;
 
     constructor(protected baseService: BaseService, private service: MemberService,
-        private builder: FormBuilder, private validationService: MemberValidationService, private routeSegment: RouteSegment, private dropdownService: DropdownService)     
+        private builder: FormBuilder, private validationService: MemberValidationService, private routeSegment: RouteSegment, 
+        private dropdownService: DropdownService, private location: Location)     
     {  
         super(baseService);
         this.initializeTrace("MemberComponent");
         this.id = routeSegment.getParam("id");
         this.memberId = routeSegment.getParam("memberid");
         this.viewModel = this.service.getEmptyViewModel();
+        this.readOnly = (new Boolean(this.memberId).valueOf());
         this.states = this.dropdownService.getStates();
 
     }
@@ -124,10 +127,13 @@ export class MemberComponent extends XCoreBaseComponent  {
             ? ((!this.memberId) ? service.getNew.bind(service) : service.getExistingById.bind(service, this.memberId)) 
             : service.getExisting.bind(service, this.id);
         
-        fn().subscribe(up => {
+        fn().catch<IMember>(err => {
+            this.loadingMessage = "Member Not Found";
+            return new Observable<IMember>();
+        }).subscribe(up => {
             trace(TraceMethodPosition.CallbackStart);
             this.viewModel = this.service.toViewModel(up);
-            if (!this.id) {
+            if (!this.id && !this.memberId) {
                 this.viewModel.dateOfBirth = "";
                 this.viewModel.effectiveDate = "";
                 this.viewModel.planId = null;
@@ -144,7 +150,7 @@ export class MemberComponent extends XCoreBaseComponent  {
 
 
                         //Load any subviews here
-                        this.EntityValuesView.load(true, this.id, EntityType.Member, this.viewModel.lastName + ", " + this.viewModel.firstName
+                        this.EntityValuesView.load(true, this.viewModel.id, EntityType.Member, this.viewModel.lastName + ", " + this.viewModel.firstName
                             , this.viewModel.memberId, this.readOnly);
                         trace(TraceMethodPosition.CallbackEnd);            
                     });
@@ -183,8 +189,14 @@ export class MemberComponent extends XCoreBaseComponent  {
         trace(TraceMethodPosition.Exit);
     }
     
-    public cancel(): void {
-        this.baseService.router.navigate(["/memberlist"]);
+    public return(): void {
+        this.location.back();
+    }
+
+    public reloadForEdit() {
+        this.id = this.viewModel.id;
+        this.readOnly = false;
+        this.baseService.hubService.callbackWhenLoaded(this.getInitialData.bind(this, this.service, this.id));
     }
 
 

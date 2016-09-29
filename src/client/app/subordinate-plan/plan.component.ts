@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Validators, ControlGroup, Control, FormBuilder } from '@angular/common';
+import { Validators, ControlGroup, Control, FormBuilder, Location } from '@angular/common';
 import { IFormValidationResult } from '../shared/validation/validation.service';
 import { ValidationComponent } from '../shared/validation/validation.component';
 import { AsyncValidator } from '../shared/validation/async-validator.service';
@@ -31,6 +31,7 @@ import { EntityType } from '../subordinate-entityvalues/entityValues.service';
 })
 export class PlanComponent extends XCoreBaseComponent  {
 
+    public loadingMessage: string = "Loading Plan";
     public viewModel: IPlanViewModel;
     public form: ControlGroup;
     public validationMessages: IFormValidationResult[] = [];
@@ -51,7 +52,8 @@ export class PlanComponent extends XCoreBaseComponent  {
     @ViewChild(EntityValuesComponent) EntityValuesView: EntityValuesComponent;
 
     constructor(protected baseService: BaseService, private service: PlanService,
-        private builder: FormBuilder, private validationService: PlanValidationService, private routeSegment: RouteSegment, private dropdownService: DropdownService)     
+        private builder: FormBuilder, private validationService: PlanValidationService, private routeSegment: RouteSegment, 
+        private dropdownService: DropdownService, private location: Location)     
     {  
         super(baseService);
 
@@ -60,7 +62,7 @@ export class PlanComponent extends XCoreBaseComponent  {
         this.bin = routeSegment.getParam("bin");
         this.pcn = routeSegment.getParam("pcn");
         this.groupId = routeSegment.getParam("groupId");
-        if (this.bin) this.readOnly = true;
+        this.readOnly = (new Boolean(this.bin).valueOf());
 
         this.viewModel = this.service.getEmptyViewModel();
         this.states = this.dropdownService.getStates();
@@ -124,7 +126,10 @@ export class PlanComponent extends XCoreBaseComponent  {
             ? ((!this.bin) ? service.getNew.bind(service) : service.getExistingById.bind(service, this.bin, this.pcn, this.groupId)) 
             : service.getExisting.bind(service, this.id);
                             
-        fn().subscribe(up => {
+        fn().catch<IPlan>(err => {
+            this.loadingMessage = "No Plan Found";
+            return new Observable<IPlan>();
+        }).subscribe(up => {
             trace(TraceMethodPosition.CallbackStart);
             this.viewModel = this.service.toViewModel(up);
             if (!this.id) {
@@ -132,7 +137,7 @@ export class PlanComponent extends XCoreBaseComponent  {
             }
 
             //Load any subviews here
-            this.EntityValuesView.load(true, this.id, EntityType.Plan, this.viewModel.name, 
+            this.EntityValuesView.load(true, this.viewModel.id, EntityType.Plan, this.viewModel.name, 
                 (this.viewModel.bin || "") + "/" + (this.viewModel.pcn || "") + "/" + (this.viewModel.groupId || ""), this.readOnly);
 
             trace(TraceMethodPosition.CallbackEnd);            
@@ -166,9 +171,16 @@ export class PlanComponent extends XCoreBaseComponent  {
         trace(TraceMethodPosition.Exit);
     }
     
-    public cancel(): void {
-        this.baseService.router.navigate(["/planlist"]);
+    public reloadForEdit() {
+        this.id = this.viewModel.id;
+        this.readOnly = false;
+        this.baseService.hubService.callbackWhenLoaded(this.getInitialData.bind(this, this.service, this.id));
     }
+
+    public return(): void {
+        this.location.back();
+    }
+
 
 
     private effectiveDateString(targetInput:any): void {

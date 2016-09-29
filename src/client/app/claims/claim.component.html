@@ -7,7 +7,7 @@
                     <input type="checkbox" [(ngModel)]="showDescriptions" class="toggle-descriptions" /><span class="toggle-descriptions-text">Show Detailed Descriptions</span>
                 </div>
             </div>
-            <div class="col-sm-1"><button type="button" class="btn btn-primary pull-right return-btn" (click)="cancel()">Return</button></div>
+            <div class="col-sm-1"><button type="button" class="btn btn-primary pull-right return-btn" (click)="return()">Return</button></div>
         </div>
         <div *ngIf="claim.contents && canViewSummary" class="col-sm-12">
             <table>
@@ -19,13 +19,13 @@
                 <tbody>
                     <tr>
                         <td class="header-info-name-2c">Pharmacy Id</td>
-                        <td class="header-info-value-2c">{{claim.serviceProviderId}}</td>
+                        <td class="header-info-value-2c"><a [routerLink]="['/serviceprovidersbyid/', claim.serviceProviderId.trim()]">{{claim.serviceProviderId}}</a></td>
                         <td class="header-info-name-2c">Name</td>
-                        <td class="header-info-value-2c">[Pharmacy Name]</td>
+                        <td class="header-info-value-2c">{{pharmacyName}}</td>
                     </tr>
                     <tr>
                         <td class="header-info-name-2c">Telephone</td>
-                        <td class="header-info-value-2c">(212)555-1212</td>
+                        <td class="header-info-value-2c">{{pharmacyTelephone}}</td>
                         <td class="header-info-name-2c">Fill/Service Date</td>
                         <td class="header-info-value-2c">{{claim.dateOfService}}</td>
                     </tr>
@@ -46,9 +46,9 @@
                 <tbody>
                     <tr>
                         <td class="header-info-name-2c">Group Id</td>
-                        <td class="header-info-value-2c">{{claim.groupId}}</td>
+                        <td class="header-info-value-2c"><a [routerLink]="['/plansbyid/', claim.bin.trim(), claim.pcn.trim(), claim.groupId.trim()]">{{claim.groupId}}</a></td>
                         <td class="header-info-name-2c">Group Name</td>
-                        <td class="header-info-value-2c">&nbsp;</td>
+                        <td class="header-info-value-2c">{{groupName}}</td>
                     </tr>
                     <tr>
                         <td class="header-info-name-2c">First Name</td>
@@ -60,17 +60,17 @@
                         <td class="header-info-name-2c">Gender</td>
                         <td class="header-info-value-2c">{{genderCode}}</td>
                         <td class="header-info-name-2c">Member Id</td>
-                        <td class="header-info-value-2c">{{memberId}}</td>
+                        <td class="header-info-value-2c"><a [routerLink]="['/membersbyid/', memberId.trim()]">{{memberId}}</a></td>
                     </tr>
                     <tr>
                         <td class="header-info-name-2c">Effective Date</td>
-                        <td class="header-info-value-2c">&nbsp;</td>
+                        <td class="header-info-value-2c">{{memberEffectiveDate}}</td>
                         <td class="header-info-name-2c">Termination Date</td>
-                        <td class="header-info-value-2c">&nbsp;</td>
+                        <td class="header-info-value-2c">{{memberTerminationDate}}</td>
                     </tr>
                     <tr>
                         <td class="header-info-name-2c">Date of Birth</td>
-                        <td class="header-info-value-2c">&nbsp;</td>
+                        <td class="header-info-value-2c">{{dateOfBirth}}</td>
                         <td class="header-info-name-2c">Person</td>
                         <td class="header-info-value-2c">{{personCode}}</td>
                     </tr>
@@ -87,15 +87,15 @@
                 <tbody>
                     <tr>
                         <td class="header-info-name-2c">NDC</td>
-                        <td class="header-info-value-2c"><a [routerLink]="['/productservicesbyid/00052031510']">{{productServiceId}}</a></td>
+                        <td class="header-info-value-2c"><a [routerLink]="['/productservicesbyid/', productServiceId]">{{productServiceId}}</a></td>
                         <td class="header-info-name-2c">Product Name</td>
-                        <td class="header-info-value-2c">&nbsp;</td>
+                        <td class="header-info-value-2c">{{productName}}</td>
                     </tr>
                     <tr>
                         <td class="header-info-name-2c">GPI</td>
-                        <td class="header-info-value-2c">&nbsp;</td>
+                        <td class="header-info-value-2c">{{productGpi}}</td>
                         <td class="header-info-name-2c">Multi-Source Code</td>
-                        <td class="header-info-value-2c">&nbsp;</td>
+                        <td class="header-info-value-2c">{{productMultiSourceCode}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -113,8 +113,8 @@
                         <td class="header-info-value-2c">{{compoundDispensingUnitForm}}</td>
                     </tr>
                     <tr *ngFor="let compound of compounds">
-                        <td class="header-info-name-2c">Compound Product Id</td>
-                        <td class="header-info-value-2c">{{compound.id}}</td>
+                        <td class="header-info-name-2c">Compound Product</td>
+                        <td class="header-info-value-2c"><a [routerLink]="['/productservicesbyid/', compound.id]">{{compound.id}} - {{getProductName(compound.id)}}</a></td>
                         <td class="header-info-name-2c">Cost / Quantity</td>
                         <td class="header-info-value-2c">{{compound.cost}} / {{compound.qty}}</td>
                     </tr>

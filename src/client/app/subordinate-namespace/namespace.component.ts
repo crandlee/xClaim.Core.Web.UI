@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Validators, ControlGroup, Control, FormBuilder } from '@angular/common';
+import { Validators, ControlGroup, Control, FormBuilder, Location } from '@angular/common';
 import { IFormValidationResult } from '../shared/validation/validation.service';
 import { ValidationComponent } from '../shared/validation/validation.component';
 import { AsyncValidator } from '../shared/validation/async-validator.service';
@@ -36,7 +36,8 @@ export class NamespaceComponent extends XCoreBaseComponent  {
     @ViewChild(DefaultValuesComponent) DefaultValuesView: DefaultValuesComponent;
 
     constructor(protected baseService: BaseService, private service: NamespaceService, 
-        private builder: FormBuilder, private validationService: NamespaceValidationService, private routeSegment: RouteSegment)     
+        private builder: FormBuilder, private validationService: NamespaceValidationService, 
+        private routeSegment: RouteSegment, private location: Location)     
     {  
         super(baseService);
         this.initializeTrace("NamespaceComponent");
@@ -131,8 +132,8 @@ export class NamespaceComponent extends XCoreBaseComponent  {
         trace(TraceMethodPosition.Exit);
     }
     
-    public cancel(): void {
-        this.baseService.router.navigate(["/namespacelist"]);
+    public return(): void {
+        this.location.back();
     }
 }
 

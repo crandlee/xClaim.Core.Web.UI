@@ -1,7 +1,7 @@
 <div class="container">
     <div [hidden]="!parentId" class="edit-panel" >
         <div class="navbar navbar-inverse center">
-            <h4>Values for {{parentEntityTypeDesc + ": " + parentEntityName}}</h4>
+            <h4>Other Values for {{parentEntityTypeDesc + ": " + parentEntityName}}</h4>
         </div>
         <ng-table [config]="tableConfig" [columns]="columns" (deleteClicked)="delete($event)"></ng-table>
         <br/>
@@ -13,25 +13,25 @@
                     <button *ngIf="!readOnly" type="button" class="btn btn-primary pull-right" (click)="newItem($event)">Add New</button>
                 </div>
             </div>            
-            <div class="form-group col-sm-12">
+            <div *ngIf="!readOnly" class="form-group col-sm-12">
                 <label for="namespaceId">Property Name:</label>
                 <select [disabled]="readOnly" name="namespaceId" class="form-control input-sm" ngControl="NamespaceControl" [(ngModel)]="viewModel.namespaceId" required>
                     <option *ngFor="let def of namespaceOptions | orderBy : '+description'" [value]="def.id">{{def.description}}</option>
                 </select>                
             </div>
-            <div class="form-group col-sm-12">
+            <div *ngIf="!readOnly" class="form-group col-sm-12">
                 <label for="value">Value:</label>
                 <textarea [disabled]="readOnly" placeholder="Value" name="value" class="form-control" ngControl="ValueControl" [(ngModel)]="viewModel.value" required ></textarea>
             </div>             
-            <div class="form-group col-sm-12">
+            <div *ngIf="!readOnly" class="form-group col-sm-12">
                 <label for="index">Index:</label>
                 <input type="text" [disabled]="readOnly" placeholder="Index" name="index" class="form-control" ngControl="IndexControl" [(ngModel)]="viewModel.index" required />
             </div>           
-            <div class="form-group col-sm-12">
+            <div *ngIf="!readOnly" class="form-group col-sm-12">
                 <label for="priority">Priority:</label>
                 <input type="text" [disabled]="readOnly" placeholder="Priority" name="priority" class="form-control" ngControl="PriorityControl" [(ngModel)]="viewModel.priority" required />
             </div>           
-            <div class="form-group  col-sm-12">
+            <div *ngIf="!readOnly" class="form-group  col-sm-12">
                 <div class="col-sm-4 form-label filter-label">Effective Date:</div>
                 <div class="col-sm-4">
                     <input [disabled]="readOnly" ngControl="EffectiveDateControl" class="form-control input-sm" [(ngModel)]="viewModel.effectiveDate" placeholder="Effective Date" #effectiveDateStart (blur)="effectiveDateString($event.target)" />                     
@@ -41,7 +41,7 @@
                     <datepicker class="popup" *ngIf="showEffectiveDatePicker" [showWeeks]="false" [(ngModel)]="viewModel.effectiveDate" (ngModelChange)="hideEffectiveDate()"></datepicker>
                 </div>
             </div>                
-            <div class="form-group  col-sm-12">
+            <div *ngIf="!readOnly" class="form-group  col-sm-12">
                 <div class="col-sm-4 form-label filter-label">Termination Date:</div>
                 <div class="col-sm-4">
                     <input [disabled]="readOnly" ngControl="TerminationDateControl"  class="form-control input-sm" [(ngModel)]="viewModel.terminationDate" placeholder="Termination Date" #terminationDateStart (blur)="terminationDateString($event.target)" />                                
@@ -51,26 +51,23 @@
                     <datepicker class="popup" *ngIf="showTerminationDatePicker" [showWeeks]="false" [(ngModel)]="viewModel.terminationDate" (ngModelChange)="hideTerminationDate()"></datepicker>
                 </div>
             </div>    
-            <div class="form-group col-sm-12" *ngIf="parentEntityType !== 1">
+            <div *ngIf="!readOnly" class="form-group col-sm-12" *ngIf="parentEntityType !== 1">
                 <label for="planId">BIN/PCN/Group Id (Secondary):</label>
                 <input type="text" [disabled]="readOnly" placeholder="BIN/PCN/Group Id" name="planId" class="form-control" ngControl="PlanControl" [(ngModel)]="viewModel.planId" />
             </div>            
-            <div class="form-group col-sm-12" *ngIf="parentEntityType !== 5">
+            <div *ngIf="!readOnly" class="form-group col-sm-12" *ngIf="parentEntityType !== 5">
                 <label for="pharmacyId">Pharmacy Id (Secondary):</label>
                 <input type="text" [disabled]="readOnly" placeholder="Pharmacy Id" name="pharmacyId" class="form-control" ngControl="PharmacyControl" [(ngModel)]="viewModel.serviceProviderId" />
             </div>            
-            <div class="form-group col-sm-12" *ngIf="parentEntityType !== 2">
+            <div *ngIf="!readOnly" class="form-group col-sm-12" *ngIf="parentEntityType !== 2">
                 <label for="pharmacyId">Member Id (Secondary):</label>
                 <input type="text" [disabled]="readOnly" placeholder="Member Id" name="memberId" class="form-control" ngControl="MemberControl" [(ngModel)]="viewModel.memberId" />
             </div>            
-            <div class="form-group col-sm-12" *ngIf="parentEntityType !== 4">
+            <div *ngIf="!readOnly" class="form-group col-sm-12" *ngIf="parentEntityType !== 4">
                 <label for="drugId">Drug Id (NDC) (Secondary):</label>
                 <input type="text" [disabled]="readOnly" placeholder="Drug Id (NDC)" name="drugId" class="form-control" ngControl="DrugControl" [(ngModel)]="viewModel.productServiceId" />
             </div>                       
             <br/>        
         </form>    
     </div>
-    <div [hidden]="viewModel" class="loading-message">
-        Loading Associated Values
-    </div>        
 </div>

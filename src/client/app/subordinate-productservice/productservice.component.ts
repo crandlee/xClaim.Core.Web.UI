@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Validators, ControlGroup, Control, FormBuilder } from '@angular/common';
+import { Validators, ControlGroup, Control, FormBuilder, Location } from '@angular/common';
 import { IFormValidationResult } from '../shared/validation/validation.service';
 import { ValidationComponent } from '../shared/validation/validation.component';
 import { AsyncValidator } from '../shared/validation/async-validator.service';
@@ -19,6 +19,7 @@ import { DATEPICKER_DIRECTIVES } from 'ng2-bootstrap/components/datepicker'
 import { EntityValuesComponent } from '../subordinate-entityvalues/entityValues.component';
 import { EntityType } from '../subordinate-entityvalues/entityValues.service';
 import 'rxjs/Rx';
+import 'rxjs/add/operator/catch';
 
 @Component({
     moduleId: module.id,
@@ -30,6 +31,7 @@ import 'rxjs/Rx';
 })
 export class ProductServiceComponent extends XCoreBaseComponent  {
 
+    public loadingMessage:string = "Loading Drug";
     public viewModel: IProductServiceViewModel;
     public dvm: IDrugDetailViewModel;
     public id: string;
@@ -39,7 +41,7 @@ export class ProductServiceComponent extends XCoreBaseComponent  {
     @ViewChild(EntityValuesComponent) EntityValuesView: EntityValuesComponent;
 
     constructor(protected baseService: BaseService, private service: ProductServiceService,
-        private builder: FormBuilder, private validationService: ProductServiceValidationService, private routeSegment: RouteSegment)     
+        private builder: FormBuilder, private validationService: ProductServiceValidationService, private routeSegment: RouteSegment, private location: Location)     
     {  
         super(baseService);
         this.initializeTrace("ProductServiceComponent");
@@ -55,7 +57,10 @@ export class ProductServiceComponent extends XCoreBaseComponent  {
         var trace = this.classTrace("getInitialData");
         var fn: () => Observable<IProductService> = (this.id) ? service.getExisting.bind(service, this.id) : service.getExistingById.bind(service, this.ndc);
         
-        fn().subscribe(up => {
+        fn().catch<IProductService>(err => {
+            this.loadingMessage = "Drug Not Found";
+            return new Observable<IProductService>();
+        }).subscribe(up => {
             trace(TraceMethodPosition.CallbackStart);
             this.viewModel = this.service.toViewModel(up);
             this.dvm = this.viewModel.drugDetails;
@@ -76,8 +81,8 @@ export class ProductServiceComponent extends XCoreBaseComponent  {
     }
     
 
-    public cancel(): void {
-        this.baseService.router.navigate(["/productservicelist"]);
+    public return(): void {
+        this.location.back();
     }
 
 

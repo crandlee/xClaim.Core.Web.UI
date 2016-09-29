@@ -73,7 +73,9 @@ export class PlanService implements IDataService<IPlan, IPlanViewModel, IPlansTo
     public getExistingById(bin: string, pcn: string, groupId: string): Observable<IPlan> {  
         var trace = this.baseService.classTrace("getExistingById");
         trace(TraceMethodPosition.Entry);
-        var obs = this.baseService.getObjectData<IPlan>(this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error retrieving the item"), 
+        var opt = this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error retrieving the item");
+        opt.propogateException = true;
+        var obs = this.baseService.getObjectData<IPlan>(opt, 
             `plansbyid/${bin}/${pcn}/${groupId}`);
         trace(TraceMethodPosition.Exit);
         return obs;

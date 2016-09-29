@@ -5,7 +5,7 @@
         </div>
         <div class="form-group clearfix">
             <div class="btn-toolbar pull-right">
-                <button type="button" class="btn btn-primary" (click)="cancel()">Drug List</button>
+                <button type="button" class="btn btn-primary" (click)="return()">Return</button>
             </div>
         </div>
         <table>
@@ -141,7 +141,7 @@
         </table>
     </div>
     <div [hidden]="viewModel && viewModel.id" class="loading-message">
-        Loading Drug
+        {{loadingMessage}}
     </div>
 </div>
 <br/>

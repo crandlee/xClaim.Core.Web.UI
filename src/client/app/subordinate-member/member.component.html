@@ -1,13 +1,14 @@
 <div class="container">
     <div [hidden]="!viewModel || !viewModel.id" class="edit-panel" >
         <div class="navbar navbar-inverse center">
-            <h4>Member Information for: {{viewModel.name || "New Member"}}</h4>
+            <h4>Member Information for: {{viewModel.lastName + ", " + viewModel.firstName || "New Member"}}</h4>
         </div>
         <form (ngSubmit)="onSubmit()" [ngFormModel]="form">
             <div class="form-group clearfix">
                 <div class="btn-toolbar pull-right">
                     <button *ngIf="!readOnly" type="submit" class="btn btn-default" [disabled]="validationMessages.length > 0">Save</button>
-                    <button *ngIf="!readOnly" type="button" class="btn btn-primary" (click)="cancel()">Member List</button>
+                    <button type="button" class="btn btn-primary" *ngIf="readOnly" (click)="reloadForEdit();">Edit</button>
+                    <button type="button" class="btn btn-primary" (click)="return()">Return</button>
                 </div>
             </div>                
             <div class="form-group col-sm-12">
@@ -126,7 +127,7 @@
         </form>    
     </div>
     <div [hidden]="viewModel && viewModel.id" class="loading-message">
-        Loading Member
+        {{loadingMessage}}
     </div>        
 </div>
 <br/>

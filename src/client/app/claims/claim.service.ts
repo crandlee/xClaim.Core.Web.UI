@@ -9,6 +9,11 @@ import { IClaimsToServerFilter } from './claim.filter.service';
 import { IFilterDefinition } from '../shared/filtering/filter.service';
 import { TraceMethodPosition } from '../shared/logging/logging.service'
 import * as moment from 'moment';
+import {IMember} from '../subordinate-member/member.service';
+import {IPlan} from '../subordinate-plan/plan.service';
+import {IServiceProvider} from '../subordinate-serviceprovider/serviceprovider.service';
+import {IProductService} from '../subordinate-productservice/productservice.service';
+
 
 @Injectable()
 export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClaimsToServerFilter, IClaimsToClientFilter> {
@@ -70,6 +75,7 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
             prescriptionRefNumber: model.prescriptionRefNumber,
             bin: model.bin,
             pcn: model.pcn,
+            claimSubordinateData: model.claimSubordinateData,
             groupId: model.groupId,
             transactionCount: model.transactionCount,
             headerResponseStatus: !model.headerResponseStatus ? null : model.headerResponseStatus == 'A'? 'Accepted': 'Rejected',
@@ -106,7 +112,6 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
                             </table>
             `  
         };            
-    
         return vm;
     }
     
@@ -445,6 +450,7 @@ export interface IClaimViewModel {
      headerResponseStatus: string;
      version: string;
      contents: ITransmission;
+     claimSubordinateData: IClaimSubordinateData;
      pairedContents: string;
      tooltipMessage: string;     
      processingLogs: IProcessingLogViewModel[];
@@ -460,6 +466,12 @@ export interface IClaimViewModel {
      correlatedPackets: ICorrelatedPacketViewModel[];
 }
 
+export interface IClaimSubordinateData {
+    member: IMember,
+    plan: IPlan,
+    serviceProvider: IServiceProvider,
+    productServices: IProductService[]
+}
 
 export interface IClaim {
      id: string;
@@ -472,6 +484,7 @@ export interface IClaim {
      pcn: string;
      groupId: string;
      contents: string;
+     claimSubordinateData: IClaimSubordinateData;
      //NOTE: The paired contents field is not JSON, it is a raw packet since we only
      //need a couple of fields from it and it thus not worth converting to JSON on the server side.
      pairedContents: string;

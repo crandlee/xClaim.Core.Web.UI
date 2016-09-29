@@ -98,8 +98,10 @@ export class ServiceProviderService implements IDataService<IServiceProvider, IS
     public getExistingById(npi: string): Observable<IServiceProvider> {  
         var trace = this.baseService.classTrace("getExistingById");
         trace(TraceMethodPosition.Entry);
-        var obs = this.baseService.getObjectData<IServiceProvider>(this.baseService
-            .getOptions(this.baseService.hubService, this.endpointKey, "There was an error retrieving the item"), `serviceprovidersbyid/${npi}`);
+        var opt = this.baseService
+            .getOptions(this.baseService.hubService, this.endpointKey, "There was an error retrieving the item");
+        opt.propogateException = true;
+        var obs = this.baseService.getObjectData<IServiceProvider>(opt, `serviceprovidersbyid/${npi}`);
         trace(TraceMethodPosition.Exit);
         return obs;
     }

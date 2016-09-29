@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Validators, ControlGroup, Control, FormBuilder } from '@angular/common';
+import { Validators, ControlGroup, Control, FormBuilder, Location } from '@angular/common';
 import { IFormValidationResult } from '../shared/validation/validation.service';
 import { ValidationComponent } from '../shared/validation/validation.component';
 import { AsyncValidator } from '../shared/validation/async-validator.service';
@@ -32,6 +32,7 @@ import 'rxjs/Rx';
 })
 export class ServiceProviderComponent extends XCoreBaseComponent  {
 
+    public loadingMessage: string = "Loading Pharmacy";
     public viewModel: IServiceProviderViewModel;
     public form: ControlGroup;
     public validationMessages: IFormValidationResult[] = [];
@@ -49,17 +50,18 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
     public terminationDate: Date;
     public readOnly: boolean = true;
     public npi: string;
-
+    
     @ViewChild(EntityValuesComponent) EntityValuesView: EntityValuesComponent;
 
     constructor(protected baseService: BaseService, private service: ServiceProviderService,
-        private builder: FormBuilder, private validationService: ServiceProviderValidationService, private routeSegment: RouteSegment, private dropdownService: DropdownService)     
+        private builder: FormBuilder, private validationService: ServiceProviderValidationService, 
+        private routeSegment: RouteSegment, private dropdownService: DropdownService, private location: Location)     
     {  
         super(baseService);
         this.initializeTrace("ServiceProviderComponent");
         this.id = routeSegment.getParam("id");
         this.npi = routeSegment.getParam("npi");
-        if (this.npi) this.readOnly = true;
+        this.readOnly = (new Boolean(this.npi).valueOf());
 
         this.viewModel = this.service.getEmptyViewModel();
         this.states = this.dropdownService.getStates();
@@ -137,10 +139,13 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
             ? ((!this.npi) ? service.getNew.bind(service) : service.getExistingById.bind(service, this.npi)) 
             : service.getExisting.bind(service, this.id);
         
-        fn().subscribe(up => {
+        fn().catch<IServiceProvider>(err => {
+            this.loadingMessage = "Pharmacy Not Found";
+            return new Observable<IServiceProvider>();
+        }).subscribe(up => {
             trace(TraceMethodPosition.CallbackStart);
             this.viewModel = this.service.toViewModel(up);
-            if (!this.id) {
+            if (!this.id && !this.npi) {
                 this.viewModel.effectiveDate = "";
             }
             
@@ -150,7 +155,7 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
                     this.dispenserTypes = data[1];
                     this.pharmacyTypes = data[2];
 
-                    this.EntityValuesView.load(true, this.id, EntityType.Pharmacy, this.viewModel.name, this.viewModel.npi, this.readOnly);
+                    this.EntityValuesView.load(true, this.viewModel.id, EntityType.Pharmacy, this.viewModel.name, this.viewModel.npi, this.readOnly);
                         trace(TraceMethodPosition.CallbackEnd);
 
                 });
@@ -169,6 +174,12 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
         this.initializeForm(this.builder);     
     }
 
+    public reloadForEdit() {
+        this.id = this.viewModel.id;
+        this.readOnly = false;
+        this.baseService.hubService.callbackWhenLoaded(this.getInitialData.bind(this, this.service, this.id));
+    }
+
     public onSubmit() {
         var trace = this.classTrace("onSubmit");
         trace(TraceMethodPosition.Entry);
@@ -185,8 +196,8 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
         trace(TraceMethodPosition.Exit);
     }
     
-    public cancel(): void {
-        this.baseService.router.navigate(["/serviceproviderlist"]);
+    public return(): void {
+        this.location.back();
     }
 
 

@@ -201,10 +201,10 @@ export class BaseService {
                 .map<TData>(res => {
                     var j = res.json();
                     if (j.isResult) { 
-                        var err = { _body: ((j.result && j.result.message) || 'An error occured retrieving the data'), status: 500};
+                        var err = { _body: ((j.result && (j.result.message || j.result.value)) || 'An error occured retrieving the data'), status: 500};
                         throw err;
                     }
-                        if (typeof(j.isResult) == "boolean" && !j.isResult) return j.model; 
+                    if (typeof(j.isResult) == "boolean" && !j.isResult) return j.model; 
                     return j});                
             var tailObs = this.getTailGetObservable<TData>(baseObs, serviceOptions, onError);   
         var ret =  this.executeObservable(tailObs);

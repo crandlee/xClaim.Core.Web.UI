@@ -4,10 +4,11 @@
             <h4>Plan Information for: {{viewModel.name || "New Plan"}}</h4>
         </div>
         <form (ngSubmit)="onSubmit()" [ngFormModel]="form">
-            <div *ngIf="!readOnly" class="form-group clearfix">
+            <div class="form-group clearfix">
                 <div class="btn-toolbar pull-right">
-                    <button type="submit" class="btn btn-default" [disabled]="validationMessages.length > 0">Save</button>
-                    <button type="button" class="btn btn-primary" (click)="cancel()">Plan List</button>
+                    <button type="submit" class="btn btn-default" [disabled]="validationMessages.length > 0" *ngIf="!readOnly">Save</button>
+                    <button type="button" class="btn btn-primary" *ngIf="readOnly" (click)="reloadForEdit();">Edit</button>                    
+                    <button type="button" class="btn btn-primary" (click)="return()">Return</button>
                 </div>
             </div>                
             <div class="form-group col-sm-12">
@@ -94,7 +95,7 @@
         </form>    
     </div>
     <div [hidden]="viewModel && viewModel.id" class="loading-message">
-        Loading Plan
+        {{loadingMessage}}
     </div>        
 </div>
 <br/>

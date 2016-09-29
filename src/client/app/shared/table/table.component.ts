@@ -152,18 +152,20 @@ export class NgTableComponent {
   }
 
 
-  private getSortedColumn(config: INgTableConfig): { columnName: string, sort: string } {
+  private getSortedColumn(config: INgTableConfig): { columnName: string, sort: string, isDate: boolean } {
 
     let columns = config.sorting.columns || [];
     let columnName: string = void 0;
     let sort: string = void 0;
+    var isDate: boolean = false;
     for (let i = 0; i < columns.length; i++) {
       if (columns[i].sort) {
         columnName = columns[i].name;
+        isDate = columns[i].isDate;
         sort = columns[i].sort;
       }
     }
-    return { columnName: columnName, sort: sort }
+    return { columnName: columnName, sort: sort, isDate: isDate }
   }
 
   public changeSort(data: INgTableRow[], config: INgTableConfig): INgTableRow[] {
@@ -179,9 +181,11 @@ export class NgTableComponent {
       var prev = previous[sortedColumn.columnName];
       var curr = current[sortedColumn.columnName];
       if (prev === null) prev = "";    
-      if (curr === null) curr = "";
+      if (curr === null) curr = "";      
       if (typeof curr === 'string') curr = curr.toLowerCase();
       if (typeof prev === 'string') prev = prev.toLowerCase();
+      if (sortedColumn.isDate) curr = new Date(curr);
+      if (sortedColumn.isDate) prev = new Date(prev);
       var ret = 0;
       if (prev > curr) {
         ret = sortedColumn.sort === 'desc' ? -1 : 1;
@@ -210,6 +214,7 @@ export interface INgTableColumn {
   transformBool?: (trans: boolean) => string;
   transformString?: (trans: string) => string;
   dateFormat?: string;
+  isDate?: boolean;
   editRow?: boolean;
   deleteRow?: boolean;
   deleteMessage?: string;

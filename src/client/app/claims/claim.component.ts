@@ -4,11 +4,17 @@ import { ClaimService, IClaimViewModel } from './claim.service';
 import { XCoreBaseComponent } from '../shared/component/base.component';
 import { HubService } from '../shared/hub/hub.service';
 import * as _ from 'lodash';
+import { Location } from '@angular/common';
 import { RouteSegment } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
 import { SecurityService } from '../shared/security/security.service';
 import { OverpunchService } from './overpunch.service'
+import {IMember} from '../subordinate-member/member.service';
+import {IPlan} from '../subordinate-plan/plan.service';
+import {IServiceProvider} from '../subordinate-serviceprovider/serviceprovider.service';
+import {IProductService} from '../subordinate-productservice/productservice.service';
+import * as moment from 'moment';
 
 @Component({
     moduleId: module.id,
@@ -67,13 +73,23 @@ export class ClaimComponent extends XCoreBaseComponent  {
     public dateOfInjury: string;
     public workersCompClaimId: string;
 
+    public pharmacyName: string;
+    public pharmacyTelephone: string;
+    public memberEffectiveDate: string;
+    public memberTerminationDate: string;
+    public dateOfBirth: string;
+    public productName: string;
+    public productGpi: string;
+    public productMultiSourceCode: string;
+    public groupName: string;
+
     public canViewSummary: boolean;
     public canViewDetails: boolean;
     public canViewDiagnostics: boolean;
 
     constructor(protected baseService: BaseService, 
         private claimService: ClaimService, private routeSegment: RouteSegment,
-        private securityService: SecurityService)     
+        private securityService: SecurityService, private location: Location)     
     {  
         super(baseService);
         this.initializeTrace("UserComponent");
@@ -124,6 +140,45 @@ export class ClaimComponent extends XCoreBaseComponent  {
         this.copaySubmitted = this.getFieldValue("DX");
         this.copayCalculated = this.getPairedContentsFieldValue("F5", true, 2);
         this.paidAmount = this.getPairedContentsFieldValue("F9", true, 2);
+
+        var serviceProvider = this.getServiceProvider();
+        var plan = this.getPlan();
+        var member = this.getMember();
+        var products = this.getProductServices();
+        this.pharmacyName = serviceProvider && serviceProvider.name;
+        this.pharmacyTelephone = serviceProvider && serviceProvider.telephone;
+        this.memberEffectiveDate = member && member.effectiveDate ? moment.utc(member.effectiveDate).local().format('MM/DD/YYYY hh:mm:ss a') : null;
+        this.memberTerminationDate = member && member.terminationDate ? moment.utc(member.terminationDate).local().format('MM/DD/YYYY hh:mm:ss a') : null
+        this.dateOfBirth = member && member.dob ? moment.utc(member.dob).local().format('MM/DD/YYYY') : null
+        this.groupName = plan && plan.name;
+
+        var foundDrug = _.find(products, ps => ps.productServiceId === this.productServiceId);
+        if (foundDrug) {
+            this.productGpi = foundDrug.drugDetails.gpi;
+            this.productMultiSourceCode = foundDrug.drugDetails.multiSourceCode;
+            this.productName = foundDrug.drugDetails.label;
+            this.wac = foundDrug.drugDetails.wacUnitPrice.toString();
+        }  
+    }
+
+    public getProductName(ndc: string):string {
+        var productServices = this.getProductServices();
+        var found = _.find(productServices, ps => ps.productServiceId === ndc);
+        if (found) return found.drugDetails.label;
+        return "(none)";
+    }
+
+    private getServiceProvider(): IServiceProvider {
+        return this.claim && this.claim.claimSubordinateData && this.claim.claimSubordinateData.serviceProvider     
+    }
+    private getMember(): IMember {
+        return this.claim && this.claim.claimSubordinateData && this.claim.claimSubordinateData.member     
+    }
+    private getPlan(): IPlan {
+        return this.claim && this.claim.claimSubordinateData && this.claim.claimSubordinateData.plan     
+    }
+    private getProductServices(): IProductService[] {
+        return this.claim && this.claim.claimSubordinateData && this.claim.claimSubordinateData.productServices     
     }
 
     private getCompounds(): ICompound[] {
@@ -156,8 +211,8 @@ export class ClaimComponent extends XCoreBaseComponent  {
         return this.claimService.getFieldValues(fieldCode, this.claim.contents, false, true);
     }
 
-    public cancel() {
-        this.baseService.router.navigate(["/packetlist"]);
+    public return() {
+        this.location.back();
     }
 
     ngAfterViewInit() {
