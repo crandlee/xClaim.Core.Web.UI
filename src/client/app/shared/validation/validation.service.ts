@@ -1,8 +1,7 @@
-import { Control, ControlGroup, AbstractControl, FormBuilder } from '@angular/common';
+import { FormControl, FormGroup, AbstractControl, FormBuilder, AsyncValidatorFn, ValidatorFn } from '@angular/forms';
 import * as _ from 'lodash';
 import { Injectable } from '@angular/core';
 import { LoggingService, TraceMethodPosition } from '../logging/logging.service';
-import { ValidatorFn, AsyncValidatorFn } from '@angular/common/src/forms/directives/validators';
 import * as moment from 'moment';
 
 @Injectable()
@@ -139,7 +138,7 @@ export class ValidationService {
         return ret;
     }
 
-    public getValidationResults(controlGroup: ControlGroup, controlDescriptions: string[], 
+    public getValidationResults(controlGroup: FormGroup, controlDescriptions: string[], 
         formLevelValidation?: ValidatorFn, asyncFormLevelValidation?: AsyncValidatorFn, options?: IValidationOptions): Promise<IFormValidationResult[]> {
         
         
@@ -171,12 +170,12 @@ export class ValidationService {
         
     }
     
-    private processControlLevelValidation(controlGroup: ControlGroup, controlDescriptions: string[], dirtyOnly: boolean): IControlLevelErrorResult[] {
+    private processControlLevelValidation(controlGroup: FormGroup, controlDescriptions: string[], dirtyOnly: boolean): IControlLevelErrorResult[] {
                 
         var controlErrors: IControlLevelErrorResult[] = [];
 
         _.chain(controlGroup.controls)
-            .values<Control>()
+            .values<FormControl>()
             .map((c, idx) => {
                 return { control: c,  description: controlDescriptions[idx]}
             })
@@ -190,7 +189,7 @@ export class ValidationService {
         return controlErrors;
     }
     
-    private processFormLevelValidation(controlGroup: ControlGroup, formLevelValidation: ValidatorFn, asyncFormLevelValidation: AsyncValidatorFn): Promise<IFormValidationResult[]> {
+    private processFormLevelValidation(controlGroup: FormGroup, formLevelValidation: ValidatorFn, asyncFormLevelValidation: AsyncValidatorFn): Promise<IFormValidationResult[]> {
         
         var formLevelResultsPromise = new Promise<IFormValidationResult[]>((resolve,reject) => {
             var formLevelResults:any = [];
@@ -228,7 +227,7 @@ export class ValidationService {
         return ret;
     }
     
-    public buildControlGroup(builder: FormBuilder, controlDefinitions: IControlDefinition[]): { controlGroup: ControlGroup, controlDataDescriptions: string[] } {
+    public buildControlGroup(builder: FormBuilder, controlDefinitions: IControlDefinition[]): { controlGroup: FormGroup, controlDataDescriptions: string[] } {
 
 
         if (builder == null) throw new Error("Must provide a form builder");
@@ -260,10 +259,10 @@ interface IControlLevelErrorResult {
 export interface IControlDefinition {
     controlName: string,
     description: string,
-    control: Control
+    control: FormControl
 }
 export interface IFormValidationResult {
-    control: Control;
+    control: FormControl;
     message: string;
     controlDescription: string;
     type: ValidationResultType;

@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
-import { Validators, ControlGroup, Control, FormBuilder, Location } from '@angular/common';
+import { Validators, FormGroup, FormControl, FormBuilder } from '@angular/forms';
+import { Location } from '@angular/common';
 import { IFormValidationResult } from '../shared/validation/validation.service';
 import { ValidationComponent } from '../shared/validation/validation.component';
 import { AsyncValidator } from '../shared/validation/async-validator.service';
@@ -10,14 +11,11 @@ import { XCoreBaseComponent } from '../shared/component/base.component';
 import { HubService } from '../shared/hub/hub.service';
 import { IDropdownOptionViewModel } from '../shared/service/base.service';
 import * as _ from 'lodash';
-import { RouteSegment } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { UiSwitchComponent } from 'angular2-ui-switch';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
-import { OrderByPipe } from '../shared/pipe/orderby.pipe';
 import { DropdownService } from '../shared/common/dropdowns';
 import * as moment from 'moment';
-import { DATEPICKER_DIRECTIVES } from 'ng2-bootstrap/components/datepicker'
 import { EntityValuesComponent } from '../subordinate-entityvalues/entityValues.component';
 import { EntityType } from '../subordinate-entityvalues/entityValues.service';
 import 'rxjs/Rx';
@@ -25,16 +23,13 @@ import 'rxjs/Rx';
 @Component({
     moduleId: module.id,
     templateUrl: 'serviceprovider.component.html',
-    styleUrls: ['serviceprovider.component.css'],
-    providers: [ServiceProviderService, ServiceProviderValidationService, DropdownService],
-    directives: [DATEPICKER_DIRECTIVES, ValidationComponent, UiSwitchComponent, EntityValuesComponent],
-    pipes: [OrderByPipe]
+    styleUrls: ['serviceprovider.component.css']
 })
 export class ServiceProviderComponent extends XCoreBaseComponent  {
 
     public loadingMessage: string = "Loading Pharmacy";
     public viewModel: IServiceProviderViewModel;
-    public form: ControlGroup;
+    public form: FormGroup;
     public validationMessages: IFormValidationResult[] = [];
     public controlDataDescriptions: string[];    
     public id: string;
@@ -55,12 +50,10 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
 
     constructor(protected baseService: BaseService, private service: ServiceProviderService,
         private builder: FormBuilder, private validationService: ServiceProviderValidationService, 
-        private routeSegment: RouteSegment, private dropdownService: DropdownService, private location: Location)     
+        private activatedRoute: ActivatedRoute, private dropdownService: DropdownService, private location: Location)     
     {  
         super(baseService);
         this.initializeTrace("ServiceProviderComponent");
-        this.id = routeSegment.getParam("id");
-        this.npi = routeSegment.getParam("npi");
         this.readOnly = (new Boolean(this.npi).valueOf());
 
         this.viewModel = this.service.getEmptyViewModel();
@@ -74,43 +67,43 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
         trace(TraceMethodPosition.Entry);
         
         //Set up any async validators
-        var npiControl = new Control("", Validators.compose([Validators.required, Validators.maxLength(10)]));
+        var npiControl = new FormControl("", Validators.compose([Validators.required, Validators.maxLength(10)]));
 
         //Set up controls
-        var binControl = new Control("", Validators.maxLength(6));
+        var binControl = new FormControl("", Validators.maxLength(6));
         var buildReturn = this.validationService.buildControlGroup(builder, [
             { controlName: "NPIControl", description: "NPI", control: npiControl},
-            { controlName: "StoreNameControl", description: "Store Name", control: new Control("", Validators.compose([Validators.required, Validators.maxLength(64)]))},
-            { controlName: "StoreNumberControl", description: "Store Number", control: new Control("", Validators.compose([Validators.required, Validators.maxLength(10)]))},
-            { controlName: "PharmacyTypeControl", description: "Pharmacy Type", control: new Control("", Validators.required)},
-            { controlName: "DispenserClassControl", description: "Dispenser Class", control: new Control("", Validators.required)},
-            { controlName: "DispenserTypeControl", description: "Dispenser Type", control: new Control("", Validators.required)},
-            { controlName: "EligibilityCodeControl", description: "Eligibility Code", control: new Control("", Validators.maxLength(1))},
-            { controlName: "PAddress1Control", description: "Physical - Address 1", control: new Control("", Validators.compose([Validators.required, Validators.maxLength(128)]))},
-            { controlName: "PAddress2Control", description: "Physical - Address 2", control: new Control("", Validators.maxLength(128))},
-            { controlName: "PAddress3Control", description: "Physical - Address 3", control: new Control("", Validators.maxLength(128))},
-            { controlName: "PCityControl", description: "Physical - City", control: new Control("", Validators.compose([Validators.maxLength(64), Validators.required]))},
-            { controlName: "PStateControl", description: "Physical - State", control: new Control("", Validators.compose([Validators.required, Validators.maxLength(2)]))},
-            { controlName: "PZipCodeControl", description: "Physical - Zip Code", control: new Control("", Validators.compose([Validators.maxLength(10), Validators.required]))},
-            { controlName: "MAddress1Control", description: "Mailing - Address 1", control: new Control("", Validators.maxLength(128))},
-            { controlName: "MAddress2Control", description: "Mailing - Address 2", control: new Control("", Validators.maxLength(128))},
-            { controlName: "MAddress3Control", description: "Mailing - Address 3", control: new Control("", Validators.maxLength(128))},
-            { controlName: "MCityControl", description: "Mailing - City", control: new Control("", Validators.maxLength(64))},
-            { controlName: "MStateControl", description: "Mailing - State", control: new Control("", Validators.maxLength(2))},
-            { controlName: "MZipCodeControl", description: "Mailing - Zip Code", control: new Control("", Validators.maxLength(10))},
-            { controlName: "EINControl", description: "EIN", control: new Control("", Validators.maxLength(50))},
-            { controlName: "RAddress1Control", description: "Remittance - Address 1", control: new Control("", Validators.maxLength(128))},
-            { controlName: "RAddress2Control", description: "Remittance - Address 2", control: new Control("", Validators.maxLength(128))},
-            { controlName: "RAddress3Control", description: "Remittance - Address 3", control: new Control("", Validators.maxLength(128))},
-            { controlName: "RCityControl", description: "Remittance - City", control: new Control("", Validators.maxLength(64))},
-            { controlName: "RStateControl", description: "Remittance - State", control: new Control("", Validators.maxLength(2))},
-            { controlName: "RZipCodeControl", description: "Remittance - Zip Code", control: new Control("", Validators.maxLength(10))},
-            { controlName: "TelephoneControl", description: "Phone", control: new Control("", Validators.compose([ServiceProviderValidationService.isInteger.bind(this, true),  Validators.maxLength(10)]))},
-            { controlName: "EmailControl", description: "Email Address", control: new Control("", Validators.compose([Validators.maxLength(256), ServiceProviderValidationService.isEmailValid]))},
-            { controlName: "FaxControl", description: "Email Address", control: new Control("", Validators.compose([Validators.maxLength(10), ServiceProviderValidationService.isInteger.bind(this, true)]))},
+            { controlName: "StoreNameControl", description: "Store Name", control: new FormControl("", Validators.compose([Validators.required, Validators.maxLength(64)]))},
+            { controlName: "StoreNumberControl", description: "Store Number", control: new FormControl("", Validators.compose([Validators.required, Validators.maxLength(10)]))},
+            { controlName: "PharmacyTypeControl", description: "Pharmacy Type", control: new FormControl("", Validators.required)},
+            { controlName: "DispenserClassControl", description: "Dispenser Class", control: new FormControl("", Validators.required)},
+            { controlName: "DispenserTypeControl", description: "Dispenser Type", control: new FormControl("", Validators.required)},
+            { controlName: "EligibilityCodeControl", description: "Eligibility Code", control: new FormControl("", Validators.maxLength(1))},
+            { controlName: "PAddress1Control", description: "Physical - Address 1", control: new FormControl("", Validators.compose([Validators.required, Validators.maxLength(128)]))},
+            { controlName: "PAddress2Control", description: "Physical - Address 2", control: new FormControl("", Validators.maxLength(128))},
+            { controlName: "PAddress3Control", description: "Physical - Address 3", control: new FormControl("", Validators.maxLength(128))},
+            { controlName: "PCityControl", description: "Physical - City", control: new FormControl("", Validators.compose([Validators.maxLength(64), Validators.required]))},
+            { controlName: "PStateControl", description: "Physical - State", control: new FormControl("", Validators.compose([Validators.required, Validators.maxLength(2)]))},
+            { controlName: "PZipCodeControl", description: "Physical - Zip Code", control: new FormControl("", Validators.compose([Validators.maxLength(10), Validators.required]))},
+            { controlName: "MAddress1Control", description: "Mailing - Address 1", control: new FormControl("", Validators.maxLength(128))},
+            { controlName: "MAddress2Control", description: "Mailing - Address 2", control: new FormControl("", Validators.maxLength(128))},
+            { controlName: "MAddress3Control", description: "Mailing - Address 3", control: new FormControl("", Validators.maxLength(128))},
+            { controlName: "MCityControl", description: "Mailing - City", control: new FormControl("", Validators.maxLength(64))},
+            { controlName: "MStateControl", description: "Mailing - State", control: new FormControl("", Validators.maxLength(2))},
+            { controlName: "MZipCodeControl", description: "Mailing - Zip Code", control: new FormControl("", Validators.maxLength(10))},
+            { controlName: "EINControl", description: "EIN", control: new FormControl("", Validators.maxLength(50))},
+            { controlName: "RAddress1Control", description: "Remittance - Address 1", control: new FormControl("", Validators.maxLength(128))},
+            { controlName: "RAddress2Control", description: "Remittance - Address 2", control: new FormControl("", Validators.maxLength(128))},
+            { controlName: "RAddress3Control", description: "Remittance - Address 3", control: new FormControl("", Validators.maxLength(128))},
+            { controlName: "RCityControl", description: "Remittance - City", control: new FormControl("", Validators.maxLength(64))},
+            { controlName: "RStateControl", description: "Remittance - State", control: new FormControl("", Validators.maxLength(2))},
+            { controlName: "RZipCodeControl", description: "Remittance - Zip Code", control: new FormControl("", Validators.maxLength(10))},
+            { controlName: "TelephoneControl", description: "Phone", control: new FormControl("", Validators.compose([ServiceProviderValidationService.isInteger.bind(this, true),  Validators.maxLength(10)]))},
+            { controlName: "EmailControl", description: "Email Address", control: new FormControl("", Validators.compose([Validators.maxLength(256), ServiceProviderValidationService.isEmailValid]))},
+            { controlName: "FaxControl", description: "Email Address", control: new FormControl("", Validators.compose([Validators.maxLength(10), ServiceProviderValidationService.isInteger.bind(this, true)]))},
 
-            { controlName: "EffectiveDateControl", description: "Effective Date", control: new Control("", Validators.compose([ServiceProviderValidationService.isDate.bind(this, false)]))},
-            { controlName: "TerminationDateControl", description: "Termination Date", control: new Control("", Validators.compose([ServiceProviderValidationService.isDate.bind(this, true)]))}
+            { controlName: "EffectiveDateControl", description: "Effective Date", control: new FormControl("", Validators.compose([ServiceProviderValidationService.isDate.bind(this, false)]))},
+            { controlName: "TerminationDateControl", description: "Termination Date", control: new FormControl("", Validators.compose([ServiceProviderValidationService.isDate.bind(this, true)]))}
         ]);                
         this.form = buildReturn.controlGroup;
         this.controlDataDescriptions = buildReturn.controlDataDescriptions;
@@ -171,7 +164,11 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
 
     ngOnInit() {        
         super.NotifyLoaded("ServiceProvider");   
-        this.initializeForm(this.builder);     
+        this.activatedRoute.params.subscribe(params => {
+            this.id = params["id"];
+            this.npi = params["npi"];
+            this.initializeForm(this.builder);     
+        });
     }
 
     public reloadForEdit() {

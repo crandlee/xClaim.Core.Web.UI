@@ -8,7 +8,7 @@ import { IServiceProvidersToServerFilter } from './serviceprovider.filter.servic
 import { IFilterDefinition } from '../shared/filtering/filter.service';
 import { TraceMethodPosition } from '../shared/logging/logging.service'
 import * as moment from 'moment';
-import { IAddress, IPaymentEntity, IPaymentEntityViewModel } from '../shared/common/interfaces.ts';
+import { IAddress, IPaymentEntity, IPaymentEntityViewModel } from '../shared/common/interfaces';
 
 @Injectable()
 export class ServiceProviderService implements IDataService<IServiceProvider, IServiceProviderViewModel, IServiceProvidersToServerFilter, IServiceProvidersToClientFilter> {

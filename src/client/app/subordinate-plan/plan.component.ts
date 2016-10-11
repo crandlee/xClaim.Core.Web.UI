@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
-import { Validators, ControlGroup, Control, FormBuilder, Location } from '@angular/common';
+import { Validators, FormGroup, FormControl, FormBuilder } from '@angular/forms';
+import { Location } from '@angular/common';
 import { IFormValidationResult } from '../shared/validation/validation.service';
 import { ValidationComponent } from '../shared/validation/validation.component';
 import { AsyncValidator } from '../shared/validation/async-validator.service';
@@ -10,30 +11,24 @@ import { XCoreBaseComponent } from '../shared/component/base.component';
 import { HubService } from '../shared/hub/hub.service';
 import { IDropdownOptionViewModel } from '../shared/service/base.service';
 import * as _ from 'lodash';
-import { RouteSegment } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { UiSwitchComponent } from 'angular2-ui-switch';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
-import { OrderByPipe } from '../shared/pipe/orderby.pipe';
 import { DropdownService } from '../shared/common/dropdowns';
 import * as moment from 'moment';
-import { DATEPICKER_DIRECTIVES } from 'ng2-bootstrap/components/datepicker'
 import { EntityValuesComponent } from '../subordinate-entityvalues/entityValues.component';
 import { EntityType } from '../subordinate-entityvalues/entityValues.service';
 
 @Component({
     moduleId: module.id,
     templateUrl: 'plan.component.html',
-    styleUrls: ['plan.component.css'],
-    providers: [PlanService, PlanValidationService, DropdownService],
-    directives: [DATEPICKER_DIRECTIVES, ValidationComponent, UiSwitchComponent, EntityValuesComponent],
-    pipes: [OrderByPipe]
+    styleUrls: ['plan.component.css']
 })
 export class PlanComponent extends XCoreBaseComponent  {
 
     public loadingMessage: string = "Loading Plan";
     public viewModel: IPlanViewModel;
-    public form: ControlGroup;
+    public form: FormGroup;
     public validationMessages: IFormValidationResult[] = [];
     public controlDataDescriptions: string[];
     public id: string;
@@ -52,16 +47,12 @@ export class PlanComponent extends XCoreBaseComponent  {
     @ViewChild(EntityValuesComponent) EntityValuesView: EntityValuesComponent;
 
     constructor(protected baseService: BaseService, private service: PlanService,
-        private builder: FormBuilder, private validationService: PlanValidationService, private routeSegment: RouteSegment, 
+        private builder: FormBuilder, private validationService: PlanValidationService, private activatedRoute: ActivatedRoute, 
         private dropdownService: DropdownService, private location: Location)     
     {  
         super(baseService);
 
         this.initializeTrace("PlanComponent");
-        this.id = routeSegment.getParam("id");
-        this.bin = routeSegment.getParam("bin");
-        this.pcn = routeSegment.getParam("pcn");
-        this.groupId = routeSegment.getParam("groupId");
         this.readOnly = (new Boolean(this.bin).valueOf());
 
         this.viewModel = this.service.getEmptyViewModel();
@@ -75,29 +66,29 @@ export class PlanComponent extends XCoreBaseComponent  {
         trace(TraceMethodPosition.Entry);
         
         //Set up any async validators
-        var nameControl = new Control("", Validators.compose([Validators.required, Validators.maxLength(50)]));
+        var nameControl = new FormControl("", Validators.compose([Validators.required, Validators.maxLength(50)]));
         var nameValidator = AsyncValidator.debounceControl(nameControl, control => this.validationService.isNameDuplicate(control, 
             this.service, this.viewModel.id));
 
         //Set up controls
-        var binControl = new Control("", Validators.maxLength(6));
+        var binControl = new FormControl("", Validators.maxLength(6));
         var buildReturn = this.validationService.buildControlGroup(builder, [
             { controlName: "NameControl", description: "Name", control: nameControl},
             { controlName: "BinControl", description: "BIN", control: binControl},
-            { controlName: "PcnControl", description: "PCN", control: new Control("", Validators.maxLength(10))},
-            { controlName: "GroupIdControl", description: "Group Id", control: new Control("", Validators.maxLength(15))},
-            { controlName: "Address1Control", description: "Address 1", control: new Control("", Validators.compose([Validators.maxLength(128), Validators.required]))},
-            { controlName: "Address2Control", description: "Address 2", control: new Control("", Validators.maxLength(128))},
-            { controlName: "Address3Control", description: "Address 3", control: new Control("", Validators.maxLength(128))},
-            { controlName: "CityControl", description: "City", control: new Control("", Validators.compose([Validators.maxLength(64), Validators.required]))},
-            { controlName: "StateControl", description: "State", control: new Control("", Validators.required)},
-            { controlName: "ZipCodeControl", description: "Zip Code", control: new Control("", Validators.compose([Validators.maxLength(10), Validators.required]))},
-            { controlName: "PhoneControl", description: "Phone", control: new Control("", Validators.maxLength(15))},
-            { controlName: "FaxControl", description: "Fax", control: new Control("", Validators.maxLength(15))},
-            { controlName: "ContactControl", description: "Contact", control: new Control("", Validators.maxLength(25))},
-            { controlName: "CommentsControl", description: "Comments", control: new Control("", Validators.maxLength(1000))},
-            { controlName: "EffectiveDateControl", description: "Effective Date", control: new Control("", Validators.compose([PlanValidationService.isDate.bind(this, false)]))},
-            { controlName: "TerminationDateControl", description: "Termination Date", control: new Control("", Validators.compose([PlanValidationService.isDate.bind(this, true)]))}
+            { controlName: "PcnControl", description: "PCN", control: new FormControl("", Validators.maxLength(10))},
+            { controlName: "GroupIdControl", description: "Group Id", control: new FormControl("", Validators.maxLength(15))},
+            { controlName: "Address1Control", description: "Address 1", control: new FormControl("", Validators.compose([Validators.maxLength(128), Validators.required]))},
+            { controlName: "Address2Control", description: "Address 2", control: new FormControl("", Validators.maxLength(128))},
+            { controlName: "Address3Control", description: "Address 3", control: new FormControl("", Validators.maxLength(128))},
+            { controlName: "CityControl", description: "City", control: new FormControl("", Validators.compose([Validators.maxLength(64), Validators.required]))},
+            { controlName: "StateControl", description: "State", control: new FormControl("", Validators.required)},
+            { controlName: "ZipCodeControl", description: "Zip Code", control: new FormControl("", Validators.compose([Validators.maxLength(10), Validators.required]))},
+            { controlName: "PhoneControl", description: "Phone", control: new FormControl("", Validators.maxLength(15))},
+            { controlName: "FaxControl", description: "Fax", control: new FormControl("", Validators.maxLength(15))},
+            { controlName: "ContactControl", description: "Contact", control: new FormControl("", Validators.maxLength(25))},
+            { controlName: "CommentsControl", description: "Comments", control: new FormControl("", Validators.maxLength(1000))},
+            { controlName: "EffectiveDateControl", description: "Effective Date", control: new FormControl("", Validators.compose([PlanValidationService.isDate.bind(this, false)]))},
+            { controlName: "TerminationDateControl", description: "Termination Date", control: new FormControl("", Validators.compose([PlanValidationService.isDate.bind(this, true)]))}
         ]);                
         this.form = buildReturn.controlGroup;
         this.controlDataDescriptions = buildReturn.controlDataDescriptions;
@@ -152,7 +143,14 @@ export class PlanComponent extends XCoreBaseComponent  {
 
     ngOnInit() {        
         super.NotifyLoaded("Plan");   
-        this.initializeForm(this.builder);     
+        this.activatedRoute.params.subscribe(params => {
+            this.id = params["id"];
+            this.bin = params["bin"];
+            this.pcn = params["pcn"];
+            this.groupId = params["groupId"];
+
+            this.initializeForm(this.builder);     
+        });
     }
 
     public onSubmit() {

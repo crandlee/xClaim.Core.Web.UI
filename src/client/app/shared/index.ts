@@ -5,7 +5,7 @@ export * from './component/index';
 export * from './filtering/index';
 export * from './hub/index';
 export * from './logging/index';
-export * from './ng2-toasty/ng2-toasty';
+export * from 'ng2-toasty';
 export * from './off-click/index';
 export * from './pipe/index';
 export * from './scroll/index';

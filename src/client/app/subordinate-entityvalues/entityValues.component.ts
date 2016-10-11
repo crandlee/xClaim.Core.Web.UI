@@ -1,5 +1,5 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { Validators, ControlGroup, Control, FormBuilder } from '@angular/common';
+import { Validators, FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { BaseService } from '../shared/service/base.service';
 import { XCoreBaseComponent } from '../shared/component/base.component';
 import { HubService } from '../shared/hub/hub.service';
@@ -9,11 +9,8 @@ import { Subject } from 'rxjs/Subject';
 import { IEntityValueViewModel, EntityValuesService, EntityType, INamespaceOption } from './entityValues.service';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
 import { INgTableColumn, INgTableConfig, INgTableRow, INgTableChangeMessage, NgTableComponent } from '../shared/table/table.component';
-import { OrderByPipe } from '../shared/pipe/orderby.pipe';
 import { IEnumViewModel } from '../shared/service/base.service';
-import { DATEPICKER_DIRECTIVES } from 'ng2-bootstrap/components/datepicker'
 import { IFormValidationResult } from '../shared/validation/validation.service';
-import { ValidationComponent } from '../shared/validation/validation.component';
 import { AsyncValidator } from '../shared/validation/async-validator.service';
 import { EntityValuesValidationService } from './entityValues.validation';
 
@@ -24,10 +21,7 @@ import * as moment from 'moment';
     moduleId: module.id,
     selector: 'entity-values',
     styleUrls: ['entityValues.component.css'],
-    templateUrl: 'entityValues.component.html',
-    providers: [EntityValuesService, EntityValuesValidationService],
-    directives: [ValidationComponent, DATEPICKER_DIRECTIVES, NgTableComponent],
-    pipes: [OrderByPipe]
+    templateUrl: 'entityValues.component.html'
 })
 export class EntityValuesComponent extends XCoreBaseComponent {
 
@@ -50,7 +44,7 @@ export class EntityValuesComponent extends XCoreBaseComponent {
     public entityValues: IEntityValueViewModel[] = [];
     public id: string;
     public viewModel: IEntityValueViewModel;
-    public form: ControlGroup;
+    public form: FormGroup;
     public validationMessages: IFormValidationResult[] = [];
     public controlDataDescriptions: string[];
 
@@ -115,27 +109,27 @@ export class EntityValuesComponent extends XCoreBaseComponent {
         //var nameControl = new Control("", Validators.compose([Validators.required, Validators.maxLength(50)]));
         // var nameValidator = AsyncValidator.debounceControl(nameControl, control => this.validationService.isNameDuplicate(control, 
         //     this.service, this.viewModel.id));
-        var planControl = new Control("");
+        var planControl = new FormControl("");
         var planValidator = AsyncValidator.debounceControl(planControl, control => this.validationService.isEntityIdValid(EntityType.Plan, control, this.service));
-        var pharmacyControl = new Control("");
+        var pharmacyControl = new FormControl("");
         var pharmacyValidator = AsyncValidator.debounceControl(pharmacyControl, control => this.validationService.isEntityIdValid(EntityType.Pharmacy, control, this.service));
-        var drugControl = new Control("");
+        var drugControl = new FormControl("");
         var drugValidator = AsyncValidator.debounceControl(drugControl, control => this.validationService.isEntityIdValid(EntityType.Drug, control, this.service));
-        var memberControl = new Control("");
+        var memberControl = new FormControl("");
         var memberValidator = AsyncValidator.debounceControl(memberControl, control => this.validationService.isEntityIdValid(EntityType.Member, control, this.service));
         
         //Set up controls            
         var buildReturn = this.validationService.buildControlGroup(builder, [
-            { controlName: "NamespaceControl", description: "Property Name", control: new Control("", Validators.compose([Validators.required])) },
+            { controlName: "NamespaceControl", description: "Property Name", control: new FormControl("", Validators.compose([Validators.required])) },
             { controlName: "PlanControl", description: "BIN/PCN/Group Id", control: planControl },
             { controlName: "PharmacyControl", description: "Pharmacy Id", control: pharmacyControl },
             { controlName: "DrugControl", description: "Drug Id (NDC)", control: drugControl },
             { controlName: "MemberControl", description: "Member Id", control: memberControl },
-            { controlName: "ValueControl", description: "Value", control: new Control("") },
-            { controlName: "IndexControl", description: "Index", control: new Control("", Validators.compose([EntityValuesValidationService.isGreaterThanOrEqualToZero.bind(this, false)])) },
-            { controlName: "PriorityControl", description: "Priority", control: new Control("", Validators.compose([EntityValuesValidationService.isGreaterThanZero.bind(this, false)])) },
-            { controlName: "EffectiveDateControl", description: "Effective Date", control: new Control("", Validators.compose([EntityValuesValidationService.isDate.bind(this, false)])) },
-            { controlName: "TerminationDateControl", description: "Termination Date", control: new Control("", Validators.compose([EntityValuesValidationService.isDate.bind(this, true)])) }
+            { controlName: "ValueControl", description: "Value", control: new FormControl("") },
+            { controlName: "IndexControl", description: "Index", control: new FormControl("", Validators.compose([EntityValuesValidationService.isGreaterThanOrEqualToZero.bind(this, false)])) },
+            { controlName: "PriorityControl", description: "Priority", control: new FormControl("", Validators.compose([EntityValuesValidationService.isGreaterThanZero.bind(this, false)])) },
+            { controlName: "EffectiveDateControl", description: "Effective Date", control: new FormControl("", Validators.compose([EntityValuesValidationService.isDate.bind(this, false)])) },
+            { controlName: "TerminationDateControl", description: "Termination Date", control: new FormControl("", Validators.compose([EntityValuesValidationService.isDate.bind(this, true)])) }
         ]);
         this.form = buildReturn.controlGroup;
         this.controlDataDescriptions = buildReturn.controlDataDescriptions;

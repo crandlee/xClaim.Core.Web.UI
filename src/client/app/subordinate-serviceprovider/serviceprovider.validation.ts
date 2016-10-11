@@ -1,7 +1,6 @@
 import { ValidationService, IValidationOptions, IFormValidationResult, IValidationResult } from '../shared/validation/validation.service';
 import { LoggingService, TraceMethodPosition } from '../shared/logging/logging.service';
-import { Control, ControlGroup, AbstractControl } from '@angular/common';
-import { ValidatorFn, AsyncValidatorFn } from '@angular/common/src/forms/directives/validators';
+import { FormControl, FormGroup, AbstractControl, ValidatorFn, AsyncValidatorFn } from '@angular/forms';
 import { ServiceProviderService } from './serviceprovider.service';
 import 'rxjs/add/operator/toPromise';
 
@@ -15,7 +14,7 @@ export class ServiceProviderValidationService extends ValidationService {
         super();
     }
     
-    public static remittanceAddressCheck(form: ControlGroup): IValidationResult {
+    public static remittanceAddressCheck(form: FormGroup): IValidationResult {
         var einControl: AbstractControl = form.controls["EINControl"];
         var rAddress1Control: AbstractControl = form.controls["RAddress1Control"];
         var rCityControl: AbstractControl = form.controls["RCityControl"];
@@ -28,7 +27,7 @@ export class ServiceProviderValidationService extends ValidationService {
             return null;
     }
 
-    public static mailingAddressCheck(form: ControlGroup): IValidationResult {
+    public static mailingAddressCheck(form: FormGroup): IValidationResult {
         var mAddress1Control: AbstractControl = form.controls["MAddress1Control"];
         var mCityControl: AbstractControl = form.controls["MCityControl"];
         var mStateControl: AbstractControl = form.controls["MStateControl"];
@@ -40,7 +39,7 @@ export class ServiceProviderValidationService extends ValidationService {
     }
 
     public static isIdentDuplicate(service: ServiceProviderService, id: string, ctl: AbstractControl): Promise<IValidationResult> {
-        var form = <ControlGroup>ctl;
+        var form = <FormGroup>ctl;
         var npiControl: AbstractControl = form.controls["NPIControl"];
         var effectiveDateControl: AbstractControl = form.controls["EffectiveDateControl"];
         if (npiControl.value || effectiveDateControl.value) {

@@ -1,7 +1,6 @@
 import { ValidationService, IValidationOptions, IFormValidationResult, IValidationResult } from '../shared/validation/validation.service';
 import { LoggingService, TraceMethodPosition } from '../shared/logging/logging.service';
-import { Control, ControlGroup, AbstractControl } from '@angular/common';
-import { ValidatorFn, AsyncValidatorFn } from '@angular/common/src/forms/directives/validators';
+import { FormControl, FormGroup, AbstractControl, ValidatorFn, AsyncValidatorFn } from '@angular/forms';
 import { NamespaceService } from './namespace.service';
 import 'rxjs/add/operator/toPromise';
 

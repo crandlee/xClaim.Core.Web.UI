@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
-import { Validators, ControlGroup, Control, FormBuilder, Location } from '@angular/common';
+import { Validators, FormGroup, FormControl, FormBuilder } from '@angular/forms';
+import { Location } from '@angular/common';
 import { IFormValidationResult } from '../shared/validation/validation.service';
 import { ValidationComponent } from '../shared/validation/validation.component';
 import { AsyncValidator } from '../shared/validation/async-validator.service';
@@ -10,12 +11,10 @@ import { XCoreBaseComponent } from '../shared/component/base.component';
 import { HubService } from '../shared/hub/hub.service';
 import { IDropdownOptionViewModel } from '../shared/service/base.service';
 import * as _ from 'lodash';
-import { RouteSegment } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
-import { OrderByPipe } from '../shared/pipe/orderby.pipe';
 import * as moment from 'moment';
-import { DATEPICKER_DIRECTIVES } from 'ng2-bootstrap/components/datepicker'
 import { EntityValuesComponent } from '../subordinate-entityvalues/entityValues.component';
 import { EntityType } from '../subordinate-entityvalues/entityValues.service';
 import 'rxjs/Rx';
@@ -24,10 +23,7 @@ import 'rxjs/add/operator/catch';
 @Component({
     moduleId: module.id,
     templateUrl: 'productservice.component.html',
-    styleUrls: ['productservice.component.css'],
-    providers: [ProductServiceService, ProductServiceValidationService],
-    directives: [DATEPICKER_DIRECTIVES, ValidationComponent, EntityValuesComponent],
-    pipes: [OrderByPipe]
+    styleUrls: ['productservice.component.css']
 })
 export class ProductServiceComponent extends XCoreBaseComponent  {
 
@@ -41,14 +37,12 @@ export class ProductServiceComponent extends XCoreBaseComponent  {
     @ViewChild(EntityValuesComponent) EntityValuesView: EntityValuesComponent;
 
     constructor(protected baseService: BaseService, private service: ProductServiceService,
-        private builder: FormBuilder, private validationService: ProductServiceValidationService, private routeSegment: RouteSegment, private location: Location)     
+        private builder: FormBuilder, private validationService: ProductServiceValidationService, private activatedRoute: ActivatedRoute, private location: Location)     
     {  
         super(baseService);
         this.initializeTrace("ProductServiceComponent");
         this.viewModel = this.service.getEmptyViewModel();
         this.dvm = this.viewModel.drugDetails;        
-        this.id = routeSegment.getParam("id");
-        this.ndc = routeSegment.getParam("ndc");
         if (this.ndc) this.readOnly = true;
     }
         
@@ -78,6 +72,12 @@ export class ProductServiceComponent extends XCoreBaseComponent  {
 
     ngOnInit() {        
         super.NotifyLoaded("ProductService");   
+
+        this.activatedRoute.params.subscribe(params => {
+            this.id = params["id"];
+            this.ndc = params["ndc"];
+        });
+        
     }
     
 

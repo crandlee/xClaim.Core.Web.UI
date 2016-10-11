@@ -17,9 +17,7 @@ import { TraceMethodPosition } from '../shared/logging/logging.service';
 @Component({
     moduleId: module.id,    
     styleUrls: ['namespace.list.component.css'],
-    templateUrl: 'namespace.list.component.html',
-    providers: [NamespaceService, NamespaceFilterService],
-    directives: [NgTableComponent, NamespaceFilterComponent]
+    templateUrl: 'namespace.list.component.html'
 })
 export class NamespaceListComponent extends XCoreListComponent<INamespace, INamespaceViewModel, INamespacesToServerFilter, INamespacesToClientFilter> {
     

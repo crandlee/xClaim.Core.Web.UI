@@ -1,7 +1,5 @@
 
 import { Component } from '@angular/core';
-import { DROPDOWN_DIRECTIVES, CollapseDirective } from 'ng2-bootstrap';
-import { CORE_DIRECTIVES } from '@angular/common';
 import * as _ from 'lodash';
 import { TraceMethodPosition, IHubServiceData } from '../index';
 import { BaseService } from '../service/base.service';
@@ -11,9 +9,7 @@ import { XCoreBaseComponent } from '../component/base.component';
     moduleId: module.id,
     selector: 'xcore-security',
     templateUrl: 'security.component.html',
-    styleUrls: ['security.component.css'],
-    directives: [CollapseDirective, DROPDOWN_DIRECTIVES, CORE_DIRECTIVES],
-    providers: []
+    styleUrls: ['security.component.css']
 })
 export class SecurityComponent extends XCoreBaseComponent  {
 

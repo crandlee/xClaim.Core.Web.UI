@@ -1,8 +1,8 @@
 import { AppSettings } from '../appsettings';
-import { RouteMetadata } from '@angular/router/src/metadata/metadata';
 import { UserProfileComponent, UserListComponent, UserComponent } from '../usermanagement/index';
+import { Routes } from '@angular/router';
 
-export var UserManagementRoutes: RouteMetadata[] =  [
+export var UserManagementRoutes: Routes =  [
     { path: '/userprofile', component: UserProfileComponent },
     { path: '/userlist', component: UserListComponent },
     { path: '/user/:id', component: UserComponent },

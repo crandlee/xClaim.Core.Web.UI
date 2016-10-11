@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Validators, ControlGroup, Control, FormBuilder } from '@angular/common';
+import { Validators, FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { XCoreBaseComponent } from '../shared/component/base.component';
 import { IFormValidationResult } from '../shared/validation/validation.service';
 import { ValidationComponent } from '../shared/validation/validation.component';
@@ -11,15 +11,13 @@ import { TraceMethodPosition } from '../shared/logging/logging.service';
 
 @Component({
     moduleId: module.id,
-    templateUrl: 'userprofile.component.html',
-    providers: [UserService, UserProfileValidationService],
-    directives: [ValidationComponent]
+    templateUrl: 'userprofile.component.html'
 })
 export class UserProfileComponent extends XCoreBaseComponent implements OnInit  {
 
     public userProfile: IUserProfileViewModel;
     public active: boolean = false;    
-    public form: ControlGroup;
+    public form: FormGroup;
     public validationMessages: IFormValidationResult[] = [];
     public controlDataDescriptions: string[];
             
@@ -35,14 +33,14 @@ export class UserProfileComponent extends XCoreBaseComponent implements OnInit  
         var trace = this.classTrace("initializeForm");
         trace(TraceMethodPosition.Entry);
         //Set up any async validators
-        var emailControl = new Control("", Validators.compose([Validators.required, UserProfileValidationService.isEmailValid]));
+        var emailControl = new FormControl("", Validators.compose([Validators.required, UserProfileValidationService.isEmailValid]));
         var emailAsyncValidator = AsyncValidator.debounceControl(emailControl, control => this.validationService.isEmailDuplicate(control, this.userService, this.userProfile.id));
         
         //Set up controls            
         var buildReturn = this.validationService.buildControlGroup(builder, [
             { controlName: "EMailControl", description: "EMail", control: emailControl},
-            { controlName: "PasswordControl", description: "Password", control: new Control("", Validators.compose([Validators.required, UserProfileValidationService.passwordStrength]))},
-            { controlName: "ConfirmPasswordControl", description: "Confirm Password", control: new Control("", Validators.compose([Validators.required]))}
+            { controlName: "PasswordControl", description: "Password", control: new FormControl("", Validators.compose([Validators.required, UserProfileValidationService.passwordStrength]))},
+            { controlName: "ConfirmPasswordControl", description: "Confirm Password", control: new FormControl("", Validators.compose([Validators.required]))}
         ]);
         this.form = buildReturn.controlGroup;
         this.controlDataDescriptions = buildReturn.controlDataDescriptions;

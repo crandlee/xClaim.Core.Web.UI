@@ -1,13 +1,10 @@
 import { Component } from '@angular/core';
 import { BaseService, TraceMethodPosition, IHubServiceData, IHubServiceMenuItem, XCoreBaseComponent  } from '../shared/index';
-import { ACCORDION_DIRECTIVES } from 'ng2-bootstrap';
 import * as _ from 'lodash';
 
 @Component({
     moduleId: module.id,
     templateUrl: 'welcome.component.html',
-    directives: [ACCORDION_DIRECTIVES],
-    providers: [],
     styleUrls: ['welcome.component.css']
 })
 export class WelcomeComponent extends XCoreBaseComponent {

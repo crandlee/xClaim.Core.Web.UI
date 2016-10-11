@@ -8,7 +8,7 @@ import { IProductServicesToServerFilter } from './productservice.filter.service'
 import { IFilterDefinition } from '../shared/filtering/filter.service';
 import { TraceMethodPosition } from '../shared/logging/logging.service'
 import * as moment from 'moment';
-import { IAddress, IPaymentEntity, IPaymentEntityViewModel } from '../shared/common/interfaces.ts';
+import { IAddress, IPaymentEntity, IPaymentEntityViewModel } from '../shared/common/interfaces';
 
 @Injectable()
 export class ProductServiceService implements IDataService<IProductService, IProductServiceViewModel, IProductServicesToServerFilter, IProductServicesToClientFilter> {

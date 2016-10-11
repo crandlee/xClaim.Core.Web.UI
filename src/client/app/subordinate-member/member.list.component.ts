@@ -8,7 +8,6 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { IDataService, ICollectionViewModel } from '../shared/service/base.service';
 import { MemberService, IMember, IMemberViewModel, IMembersToClientFilter } from './member.service';
-import { MemberFilterComponent } from './member.filter.component';
 import { MemberFilterService, IMembersToServerFilter } from './member.filter.service';
 import { Observable } from 'rxjs';
 import { IFilterDefinition, IFilterService } from '../shared/filtering/filter.service';
@@ -17,9 +16,7 @@ import { TraceMethodPosition } from '../shared/logging/logging.service';
 @Component({
     moduleId: module.id,    
     styleUrls: ['member.list.component.css'],
-    templateUrl: 'member.list.component.html',
-    providers: [MemberService, MemberFilterService],
-    directives: [NgTableComponent, MemberFilterComponent]
+    templateUrl: 'member.list.component.html'
 })
 export class MemberListComponent extends XCoreListComponent<IMember, IMemberViewModel, IMembersToServerFilter, IMembersToClientFilter> {
     

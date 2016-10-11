@@ -8,7 +8,6 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { IDataService, ICollectionViewModel } from '../shared/service/base.service';
 import { ServiceProviderService, IServiceProvider, IServiceProviderViewModel, IServiceProvidersToClientFilter } from './serviceprovider.service';
-import { ServiceProviderFilterComponent } from './serviceprovider.filter.component';
 import { ServiceProviderFilterService, IServiceProvidersToServerFilter } from './serviceprovider.filter.service';
 import { Observable } from 'rxjs';
 import { IFilterDefinition, IFilterService } from '../shared/filtering/filter.service';
@@ -17,9 +16,7 @@ import { TraceMethodPosition } from '../shared/logging/logging.service';
 @Component({
     moduleId: module.id,    
     styleUrls: ['serviceprovider.list.component.css'],
-    templateUrl: 'serviceprovider.list.component.html',
-    providers: [ServiceProviderService, ServiceProviderFilterService],
-    directives: [NgTableComponent, ServiceProviderFilterComponent]
+    templateUrl: 'serviceprovider.list.component.html'
 })
 export class ServiceProviderListComponent extends XCoreListComponent<IServiceProvider, IServiceProviderViewModel, IServiceProvidersToServerFilter, IServiceProvidersToClientFilter> {
     

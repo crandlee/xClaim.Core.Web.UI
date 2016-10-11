@@ -1,11 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { BaseService } from '../shared/service/base.service';
 import { ClaimService, IClaimViewModel } from './claim.service';
 import { XCoreBaseComponent } from '../shared/component/base.component';
 import { HubService } from '../shared/hub/hub.service';
 import * as _ from 'lodash';
 import { Location } from '@angular/common';
-import { RouteSegment } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
 import { SecurityService } from '../shared/security/security.service';
@@ -20,8 +20,7 @@ import * as moment from 'moment';
     moduleId: module.id,
     styleUrls: ['claim.component.css'],
     templateUrl: 'claim.component.html',
-    providers: [ClaimService, OverpunchService],
-    directives: []
+    providers: [ClaimService, OverpunchService]
 })
 export class ClaimComponent extends XCoreBaseComponent  {
 
@@ -88,12 +87,11 @@ export class ClaimComponent extends XCoreBaseComponent  {
     public canViewDiagnostics: boolean;
 
     constructor(protected baseService: BaseService, 
-        private claimService: ClaimService, private routeSegment: RouteSegment,
+        private claimService: ClaimService, private activatedRoute: ActivatedRoute,
         private securityService: SecurityService, private location: Location)     
     {  
         super(baseService);
         this.initializeTrace("UserComponent");
-        this.id = routeSegment.getParam("id");
         this.claim = this.claimService.getEmptyClaimViewModel();
     }
         
@@ -221,12 +219,18 @@ export class ClaimComponent extends XCoreBaseComponent  {
 
     ngOnInit() {        
         super.NotifyLoaded("Claim");   
-        this.canViewSummary = this.securityService.HasAdminRole()
-            || this.securityService.getTokenValueAsBoolean("xclaim.permissions.claims.summary");
-        this.canViewDetails = this.securityService.HasAdminRole()
-            || this.securityService.getTokenValueAsBoolean("xclaim.permissions.claims.details");
-        this.canViewDiagnostics = this.securityService.HasAdminRole()
-            || this.securityService.getTokenValueAsBoolean("xclaim.permissions.claims.diagnostics");
+
+        this.activatedRoute.params.subscribe(params => {
+            this.id = params['id']; 
+            this.canViewSummary = this.securityService.HasAdminRole()
+                || this.securityService.getTokenValueAsBoolean("xclaim.permissions.claims.summary");
+            this.canViewDetails = this.securityService.HasAdminRole()
+                || this.securityService.getTokenValueAsBoolean("xclaim.permissions.claims.details");
+            this.canViewDiagnostics = this.securityService.HasAdminRole()
+                || this.securityService.getTokenValueAsBoolean("xclaim.permissions.claims.diagnostics");
+
+        });
+
 
     }
  

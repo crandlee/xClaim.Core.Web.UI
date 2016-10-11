@@ -1,23 +1,13 @@
 import { Component, ViewContainerRef } from '@angular/core';
-import { BaseService, OffClickDirective, LoggingService, SecurityService, BusyService  } from './shared/index';
-import { AppSettings } from './appsettings';
-import { CookieService } from 'angular2-cookie/core';
-import { Routes, ROUTER_DIRECTIVES } from '@angular/router';
-import { DomainService } from './domain.service';
-import { ToastyService, ToastyConfig, Toasty, ToastOptions, ToastData, SecurityComponent} from './shared/index';
-import { Http } from '@angular/http';
-import { Router } from '@angular/router';
+import { BaseService, LoggingService, BusyService  } from './shared/index';
 
 
 @Component({
     moduleId: module.id,
     selector: 'xcore-app',
     templateUrl: 'app.component.html',
-    styles: ['app.component.css'],
-    providers: [],
-    directives: [Toasty, OffClickDirective, SecurityComponent, ROUTER_DIRECTIVES]
+    styles: ['app.component.css']
 })
-@Routes([].concat(DomainService.getRoutes()))
 export class AppComponent  {
         
     private currentlyWaitingForScroll: boolean = false;

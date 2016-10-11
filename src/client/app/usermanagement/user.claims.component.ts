@@ -1,5 +1,5 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { Validators, ControlGroup, Control, FormBuilder } from '@angular/common';
+import { Validators, FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { BaseService } from '../shared/service/base.service';
 import { UserService, IUserProfile, IUserProfileViewModel, IUserClaimViewModel } from '../usermanagement/user.service';
 import { XCoreBaseComponent } from '../shared/component/base.component';
@@ -10,17 +10,13 @@ import { Subject } from 'rxjs/Subject';
 import { IClaimDefinitionViewModel, ClaimDefinitionsService } from './claimDefinitions.service';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
 import { INgTableColumn, INgTableConfig, INgTableRow, INgTableChangeMessage, NgTableComponent } from '../shared/table/table.component';
-import { OrderByPipe } from '../shared/pipe/orderby.pipe';
 
 
 @Component({
     moduleId: module.id,
     selector: 'user-claims',
     styleUrls: ['user.claims.component.css'],
-    templateUrl: 'user.claims.component.html',
-    providers: [UserService, ClaimDefinitionsService],
-    directives: [NgTableComponent],
-    pipes: [OrderByPipe]
+    templateUrl: 'user.claims.component.html'
 })
 export class UserClaimsComponent extends XCoreBaseComponent {
 

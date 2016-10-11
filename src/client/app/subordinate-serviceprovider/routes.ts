@@ -1,9 +1,9 @@
 import { AppSettings } from '../appsettings';
-import { RouteMetadata } from '@angular/router/src/metadata/metadata';
 import { ServiceProviderListComponent } from './serviceprovider.list.component';
 import { ServiceProviderComponent } from './serviceprovider.component';
+import { Routes } from '@angular/router';
 
-export var ServiceProviderRoutes: RouteMetadata[] =  [
+export var ServiceProviderRoutes: Routes =  [
     { path: '/serviceproviderlist', component: ServiceProviderListComponent },
     { path: '/serviceproviders/:id', component: ServiceProviderComponent },
     { path: '/serviceprovidersbyid/:npi', component: ServiceProviderComponent },

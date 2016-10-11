@@ -4,17 +4,14 @@ import * as _ from 'lodash';
 import { FilterService, IComponentOptions, IFilterDefinition } from './filter.service';
 import { XCoreBaseComponent } from '../component/base.component';
 import { Subscription, Observable } from 'rxjs';
-import { ACCORDION_DIRECTIVES } from 'ng2-bootstrap/ng2-bootstrap';
 import { TraceMethodPosition } from '../logging/logging.service';
 
 @Component({
     moduleId: module.id,
     styleUrls: ['filter.component.css'],
-    templateUrl: 'filter.component.html',
-    providers: [FilterService],
-    directives: [ACCORDION_DIRECTIVES]
+    templateUrl: 'filter.component.html'
 })
-export abstract class FilterComponent<TFilterToServer, TFilterToClient> extends XCoreBaseComponent  {
+export class FilterComponent<TFilterToServer, TFilterToClient> extends XCoreBaseComponent  {
 
     private unregisterSetupCalled: Subscription;
     private mergedServiceOptions = false;

@@ -1,9 +1,9 @@
 import { AppSettings } from '../appsettings';
-import { RouteMetadata } from '@angular/router/src/metadata/metadata';
 import { NamespaceListComponent } from './namespace.list.component';
 import { NamespaceComponent } from './namespace.component';
+import { Routes } from '@angular/router';
 
-export var NamespaceRoutes: RouteMetadata[] =  [
+export var NamespaceRoutes: Routes =  [
     { path: '/namespacelist', component: NamespaceListComponent },
     { path: '/namespaces/:id', component: NamespaceComponent },
     { path: '/newnamespace', component: NamespaceComponent }

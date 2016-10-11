@@ -8,7 +8,7 @@ import { IMembersToServerFilter } from './member.filter.service';
 import { IFilterDefinition } from '../shared/filtering/filter.service';
 import { TraceMethodPosition } from '../shared/logging/logging.service'
 import * as moment from 'moment';
-import { IAddress } from '../shared/common/interfaces.ts';
+import { IAddress } from '../shared/common/interfaces';
 
 @Injectable()
 export class MemberService implements IDataService<IMember, IMemberViewModel, IMembersToServerFilter, IMembersToClientFilter> {

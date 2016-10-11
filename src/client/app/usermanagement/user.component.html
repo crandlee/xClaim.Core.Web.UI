@@ -3,7 +3,7 @@
         <div class="navbar navbar-inverse center">
             <h4>User Information for: {{userProfile.name || "New User"}}</h4>
         </div>
-        <form (ngSubmit)="onSubmit()" [ngFormModel]="form">
+        <form (ngSubmit)="onSubmit()" [formGroup]="form">
             <div class="form-group">
                 <label for="username">User Name:</label>
                 <input type="text" placeholder="User Name" name="username" class="form-control" ngControl="UserNameControl" [(ngModel)]="userProfile.name" required />

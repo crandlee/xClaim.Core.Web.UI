@@ -1,12 +1,14 @@
 import { Component, ViewChild } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { Observable } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
+
+import { ActivatedRoute, NavigationStart } from '@angular/router';
+
 import { TraceMethodPosition, IDataService, ICollectionViewModel, BaseService,
     IFilterDefinition, IFilterService, INgTableColumn, INgTableConfig, INgTableRow, INgTableChangeMessage, NgTableComponent } from '../index';
 import { XCoreBaseComponent } from './base.component';
 import * as _ from 'lodash';
 
-export abstract class XCoreListComponent<TModel, TViewModel extends INgTableRow, TFilterToServer, TFilterToClient extends ICollectionViewModel<TViewModel>> extends XCoreBaseComponent  {
+export class XCoreListComponent<TModel, TViewModel extends INgTableRow, TFilterToServer, TFilterToClient extends ICollectionViewModel<TViewModel>> extends XCoreBaseComponent  {
     
     protected serviceSubscription: Subscription = null;
     public dataViewModel: ICollectionViewModel<TViewModel> = { rowCount:0, rows:[] };
@@ -24,14 +26,16 @@ export abstract class XCoreListComponent<TModel, TViewModel extends INgTableRow,
         super(baseService);
         this.classTrace = this.baseService.loggingService.getTraceFunction("XCoreListComponent");
 
-        //Unsubscribe from the infinite stream when when change routes
-        this.baseService.router.changes.subscribe(val => {            
-            if (this.serviceSubscription) {
+        this.baseService.router.events.subscribe(event => {
+
+            //Unsubscribe from the infinite stream when when change routes
+            if (event instanceof NavigationStart && this.serviceSubscription) {
                 this.serviceSubscription.unsubscribe();
                 this.serviceSubscription = null;
             }
-        });
 
+        });
+        
      }
 
     protected initializeWith(columns: INgTableColumn[], 

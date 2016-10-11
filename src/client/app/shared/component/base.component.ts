@@ -16,7 +16,7 @@ export class XCoreBaseComponent  {
 
     protected NotifyLoaded(componentName: string) {                            
         this.baseService.loggingService.info(`Component: ${componentName}`, { noToast: true });
-        this.baseService.loggingService.info(`Route: ${this.baseService.router.serializeUrl(this.baseService.router.urlTree) || "root"}`, { noToast: true });            
+        this.baseService.loggingService.info(`Route: ${this.baseService.router.serializeUrl(this.baseService.router.parseUrl(this.baseService.router.url)) || "root"}`, { noToast: true });            
     }
               
 }

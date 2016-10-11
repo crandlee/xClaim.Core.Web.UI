@@ -1,9 +1,9 @@
 import { AppSettings } from '../appsettings';
-import { RouteMetadata } from '@angular/router/src/metadata/metadata';
 import { MemberListComponent } from './member.list.component';
 import { MemberComponent } from './member.component';
+import { Routes } from '@angular/router';
 
-export var MemberRoutes: RouteMetadata[] =  [
+export var MemberRoutes: Routes =  [
     { path: '/memberlist', component: MemberListComponent },
     { path: '/members/:id', component: MemberComponent },
     { path: '/membersbyid/:memberid', component: MemberComponent },

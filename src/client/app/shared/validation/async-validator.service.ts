@@ -3,7 +3,7 @@ import {Observable} from 'rxjs/Observable';
 import {Observer} from 'rxjs/Observer';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
-import {AbstractControl, ControlGroup, Control} from '@angular/common';
+import {AbstractControl, FormGroup, FormControl} from '@angular/forms';
 
 export class AsyncValidator {
 
@@ -21,7 +21,7 @@ constructor(validator: (control: AbstractControl) => any, debounceTime = 1000) {
             (x:any) => { return x.promise.then((resultValue:any) =>  {
                 //Take over error handling for control level validation and handle manually
                 //Form-level validation (instanceOf ControlGroup) will continue to be passed for the pipe
-                if (x.control && x.control instanceof Control && resultValue) {
+                if (x.control && x.control instanceof FormControl && resultValue) {
                     x.control.setErrors(resultValue, false);
                     return x.resolver(null);
                 } 
@@ -59,7 +59,7 @@ static debounceControl(control: AbstractControl, validator: (control: AbstractCo
     return asyncValidator._getValidatorControl(control);
 }
 
-static debounceForm(validator: (form: ControlGroup) => any, debounceTime = 400) {
+static debounceForm(validator: (form: FormGroup) => any, debounceTime = 400) {
     var asyncValidator = new this(validator, debounceTime);
     return asyncValidator._getValidator();
 }

@@ -1,5 +1,5 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { Validators, ControlGroup, Control, FormBuilder } from '@angular/common';
+import { Validators, FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { BaseService } from '../shared/service/base.service';
 import { NamespaceService, INamespace, INamespaceViewModel } from './namespace.service';
 import { XCoreBaseComponent } from '../shared/component/base.component';
@@ -12,11 +12,9 @@ import { TraceMethodPosition } from '../shared/logging/logging.service';
 import { INgTableColumn, INgTableConfig, INgTableRow, INgTableChangeMessage, NgTableComponent } from '../shared/table/table.component';
 import { OrderByPipe } from '../shared/pipe/orderby.pipe';
 import { IEnumViewModel } from '../shared/service/base.service';
-import { DATEPICKER_DIRECTIVES } from 'ng2-bootstrap/components/datepicker'
 import { IFormValidationResult } from '../shared/validation/validation.service';
 import { ValidationComponent } from '../shared/validation/validation.component';
 import { AsyncValidator } from '../shared/validation/async-validator.service';
-import { PlanValidationService } from '../subordinate-plan/plan.validation';
 
 import * as moment from 'moment';
 
@@ -25,10 +23,7 @@ import * as moment from 'moment';
     moduleId: module.id,
     selector: 'default-values',
     styleUrls: ['defaultValues.component.css'],
-    templateUrl: 'defaultValues.component.html',
-    providers: [NamespaceService, DefaultValuesService],
-    directives: [DATEPICKER_DIRECTIVES, NgTableComponent],
-    pipes: [OrderByPipe]
+    templateUrl: 'defaultValues.component.html'
 })
 export class DefaultValuesComponent extends XCoreBaseComponent {
 

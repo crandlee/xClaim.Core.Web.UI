@@ -3,7 +3,7 @@
         <div class="navbar navbar-inverse center">
             <h4>Pharmacy Information for: {{viewModel.name || "New Pharmacy"}}</h4>
         </div>
-        <form (ngSubmit)="onSubmit()" [ngFormModel]="form">
+        <form (ngSubmit)="onSubmit()" [formGroup]="form">
             <div class="form-group clearfix">
                 <div class="btn-toolbar pull-right">
                     <button type="submit" class="btn btn-default" [disabled]="validationMessages.length > 0" *ngIf="!readOnly">Save</button>

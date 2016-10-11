@@ -102,7 +102,8 @@ export class BaseService {
             trace(TraceMethodPosition.Exit);
             return true;
         }        
-        var currentRoute = this.router.serializeUrl(this.router.urlTree);
+        var currentUrlTree = this.router.parseUrl(this.router.url);
+        var currentRoute = this.router.serializeUrl(currentUrlTree);
         this.cookieService.put(this.appSettings.CookieKeys.RouteAfterLoginKey,currentRoute);
         //this.xCoreServices.SecurityService.Authorize();
         trace(TraceMethodPosition.Exit);
@@ -169,8 +170,8 @@ export class BaseService {
                 if (swallowException) return Observable.empty<TData>();
                 throw newError;
             }).share();
-        var ret = currentObservable.finally<TData>(() => {
-            this.busyService.notifyBusy(false);
+        var ret = currentObservable.finally(() => {
+            this.busyService.notifyBusy(false);            
         });
         
         trace(TraceMethodPosition.Exit);

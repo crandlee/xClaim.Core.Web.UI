@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Validators, ControlGroup, Control, FormBuilder } from '@angular/common';
+import { Validators, FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { IFormValidationResult } from '../shared/validation/validation.service';
 import { ValidationComponent } from '../shared/validation/validation.component';
 import { AsyncValidator } from '../shared/validation/async-validator.service';
@@ -9,33 +9,29 @@ import { UserService, IUserProfile, IUserProfileViewModel } from '../usermanagem
 import { XCoreBaseComponent } from '../shared/component/base.component';
 import { HubService } from '../shared/hub/hub.service';
 import * as _ from 'lodash';
-import { RouteSegment } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { UiSwitchComponent } from 'angular2-ui-switch';
 import { UserClaimsComponent } from './user.claims.component';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
 
 @Component({
     moduleId: module.id,
-    templateUrl: 'user.component.html',
-    providers: [UserService, UserProfileValidationService],
-    directives: [ValidationComponent, UiSwitchComponent, UserClaimsComponent]
+    templateUrl: 'user.component.html'
 })
 export class UserComponent extends XCoreBaseComponent  {
 
     public userProfile: IUserProfileViewModel;
-    public form: ControlGroup;
+    public form: FormGroup;
     public validationMessages: IFormValidationResult[] = [];
     public controlDataDescriptions: string[];
     public userId: string;
     @ViewChild(UserClaimsComponent) ClaimsView: UserClaimsComponent;
 
     constructor(protected baseService: BaseService, private userService: UserService, 
-        private builder: FormBuilder, private validationService: UserProfileValidationService, private routeSegment: RouteSegment)     
+        private builder: FormBuilder, private validationService: UserProfileValidationService, private activatedRoute: ActivatedRoute)     
     {  
         super(baseService);
         this.initializeTrace("UserComponent");
-        this.userId = routeSegment.getParam("id");
         this.userProfile = this.userService.getEmptyUserProfileViewModel();
     }
     
@@ -45,19 +41,19 @@ export class UserComponent extends XCoreBaseComponent  {
         trace(TraceMethodPosition.Entry);
         
         //Set up any async validators
-        var emailControl = new Control("", Validators.compose([Validators.required, UserProfileValidationService.isEmailValid]));
+        var emailControl = new FormControl("", Validators.compose([Validators.required, UserProfileValidationService.isEmailValid]));
         var emailAsyncValidator = AsyncValidator.debounceControl(emailControl, control => this.validationService.isEmailDuplicate(control, this.userService, this.userProfile.id));
-        var userNameControl = new Control("", Validators.compose([Validators.required]));
+        var userNameControl = new FormControl("", Validators.compose([Validators.required]));
         var userNameValidator = AsyncValidator.debounceControl(userNameControl, control => this.validationService.isUserNameDuplicate(control, this.userService, this.userProfile.id));
             
         //Set up controls            
         var buildReturn = this.validationService.buildControlGroup(builder, [
             { controlName: "UserNameControl", description: "User Name", control: userNameControl},
-            { controlName: "FullNameControl", description: "Full Name", control: new Control("", Validators.compose([Validators.required]))},
+            { controlName: "FullNameControl", description: "Full Name", control: new FormControl("", Validators.compose([Validators.required]))},
             { controlName: "EMailControl", description: "EMail", control: emailControl},
-            { controlName: "PasswordControl", description: "Password", control: new Control("", Validators.compose([Validators.required, UserProfileValidationService.passwordStrength]))},
-            { controlName: "ConfirmPasswordControl", description: "Confirm Password", control: new Control("", Validators.compose([Validators.required]))},
-            { controlName: "EnabledControl", description: "Enabled", control: new Control("")}
+            { controlName: "PasswordControl", description: "Password", control: new FormControl("", Validators.compose([Validators.required, UserProfileValidationService.passwordStrength]))},
+            { controlName: "ConfirmPasswordControl", description: "Confirm Password", control: new FormControl("", Validators.compose([Validators.required]))},
+            { controlName: "EnabledControl", description: "Enabled", control: new FormControl("")}
         ]);                
         this.form = buildReturn.controlGroup;
         this.controlDataDescriptions = buildReturn.controlDataDescriptions;
@@ -106,7 +102,12 @@ export class UserComponent extends XCoreBaseComponent  {
 
     ngOnInit() {        
         super.NotifyLoaded("User");   
-        this.initializeForm(this.builder);     
+
+        this.activatedRoute.params.subscribe(params => {
+            this.userId = params["id"];
+            this.initializeForm(this.builder);     
+        });
+
     }
 
     public onSubmit() {

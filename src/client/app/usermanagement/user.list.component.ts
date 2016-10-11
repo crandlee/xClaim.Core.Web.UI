@@ -7,7 +7,6 @@ import { INgTableColumn, INgTableConfig, INgTableRow, INgTableChangeMessage } fr
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { IDataService, ICollectionViewModel } from '../shared/service/base.service';
-
 import { UserService, IUserProfile, IUserProfileViewModel, IUsersToClientFilter } from './user.service';
 import { UserFilterComponent } from './user.filter.component';
 import { UserFilterService, IUsersToServerFilter } from './user.filter.service';
@@ -20,8 +19,6 @@ import { TraceMethodPosition } from '../shared/logging/logging.service';
     moduleId: module.id,    
     styleUrls: ['user.list.component.css'],
     templateUrl: 'user.list.component.html',
-    providers: [UserService, UserFilterService],
-    directives: [NgTableComponent, UserFilterComponent]
 })
 export class UserListComponent extends XCoreListComponent<IUserProfile, IUserProfileViewModel, IUsersToServerFilter, IUsersToClientFilter> {
     

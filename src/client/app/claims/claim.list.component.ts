@@ -19,8 +19,7 @@ import { OverpunchService } from './overpunch.service'
     moduleId: module.id,    
     styleUrls: ['claim.list.component.css'],
     templateUrl: 'claim.list.component.html',
-    providers: [ClaimService, ClaimFilterService, OverpunchService],
-    directives: [NgTableComponent, ClaimFilterComponent]
+    providers: [ClaimService, ClaimFilterService, OverpunchService]
 })
 export class ClaimListComponent extends XCoreListComponent<IClaim, IClaimViewModel, IClaimsToServerFilter, IClaimsToClientFilter> {
     

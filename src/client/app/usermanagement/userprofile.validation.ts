@@ -1,7 +1,6 @@
 import { ValidationService, IValidationOptions, IFormValidationResult, IValidationResult } from '../shared/validation/validation.service';
 import { LoggingService, TraceMethodPosition } from '../shared/logging/logging.service';
-import { Control, ControlGroup, AbstractControl } from '@angular/common';
-import { ValidatorFn, AsyncValidatorFn } from '@angular/common/src/forms/directives/validators';
+import { FormControl, FormGroup, AbstractControl, ValidatorFn, AsyncValidatorFn } from '@angular/forms';
 import { UserService } from './user.service';
 import 'rxjs/add/operator/toPromise';
 
@@ -44,7 +43,7 @@ export class UserProfileValidationService extends ValidationService {
         return p;
     }
     
-    public static passwordCompare(form: ControlGroup): IValidationResult {
+    public static passwordCompare(form: FormGroup): IValidationResult {
         var passwordControl: AbstractControl = form.controls["PasswordControl"];
         var confirmPasswordControl: AbstractControl = form.controls["ConfirmPasswordControl"];
         

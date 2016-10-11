@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
-import { Validators, ControlGroup, Control, FormBuilder, Location } from '@angular/common';
+import { Validators, FormGroup, FormControl, FormBuilder } from '@angular/forms';
+import { Location } from '@angular/common';
 import { IFormValidationResult } from '../shared/validation/validation.service';
 import { ValidationComponent } from '../shared/validation/validation.component';
 import { AsyncValidator } from '../shared/validation/async-validator.service';
@@ -10,24 +11,20 @@ import { XCoreBaseComponent } from '../shared/component/base.component';
 import { HubService } from '../shared/hub/hub.service';
 import { IEnumViewModel } from '../shared/service/base.service';
 import * as _ from 'lodash';
-import { RouteSegment } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { UiSwitchComponent } from 'angular2-ui-switch';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
 import { OrderByPipe } from '../shared/pipe/orderby.pipe';
 import { DefaultValuesComponent } from './defaultValues.component';
 
 @Component({
     moduleId: module.id,
-    templateUrl: 'namespace.component.html',
-    providers: [NamespaceService, NamespaceValidationService],
-    directives: [ValidationComponent, UiSwitchComponent, DefaultValuesComponent],
-    pipes: [OrderByPipe]
+    templateUrl: 'namespace.component.html'
 })
 export class NamespaceComponent extends XCoreBaseComponent  {
 
     public viewModel: INamespaceViewModel;
-    public form: ControlGroup;
+    public form: FormGroup;
     public validationMessages: IFormValidationResult[] = [];
     public controlDataDescriptions: string[];
     public id: string;
@@ -37,11 +34,10 @@ export class NamespaceComponent extends XCoreBaseComponent  {
 
     constructor(protected baseService: BaseService, private service: NamespaceService, 
         private builder: FormBuilder, private validationService: NamespaceValidationService, 
-        private routeSegment: RouteSegment, private location: Location)     
+        private activatedRoute: ActivatedRoute, private location: Location)     
     {  
         super(baseService);
         this.initializeTrace("NamespaceComponent");
-        this.id = routeSegment.getParam("id");
         this.viewModel = this.service.getEmptyViewModel();
 
 
@@ -53,21 +49,21 @@ export class NamespaceComponent extends XCoreBaseComponent  {
         trace(TraceMethodPosition.Entry);
         
         //Set up any async validators
-        var nameControl = new Control("", Validators.compose([Validators.required, NamespaceValidationService.noSpaces]));
+        var nameControl = new FormControl("", Validators.compose([Validators.required, NamespaceValidationService.noSpaces]));
         var nameValidator = AsyncValidator.debounceControl(nameControl, control => this.validationService.isNameDuplicate(control, 
             this.service, this.viewModel.id));
             
         //Set up controls            
         var buildReturn = this.validationService.buildControlGroup(builder, [
             { controlName: "NameControl", description: "Name", control: nameControl},
-            { controlName: "DescriptionControl", description: "Description", control: new Control("")},
-            { controlName: "TypeControl", description: "Type", control: new Control("")},
-            { controlName: "ValidationPatternControl", description: "Validation Pattern", control: new Control("")},
-            { controlName: "LengthControl", description: "Length", control: new Control("", 
+            { controlName: "DescriptionControl", description: "Description", control: new FormControl("")},
+            { controlName: "TypeControl", description: "Type", control: new FormControl("")},
+            { controlName: "ValidationPatternControl", description: "Validation Pattern", control: new FormControl("")},
+            { controlName: "LengthControl", description: "Length", control: new FormControl("", 
                 Validators.compose([NamespaceValidationService.isGreaterThanOrEqualToZero.bind(this, false)]))},
-            { controlName: "PrecisionControl", description: "Precision", control: new Control("", 
+            { controlName: "PrecisionControl", description: "Precision", control: new FormControl("", 
                 Validators.compose([NamespaceValidationService.isGreaterThanOrEqualToZero.bind(this, false)]))},
-            { controlName: "AllowNullControl", description: "AllowNull", control: new Control("")}
+            { controlName: "AllowNullControl", description: "AllowNull", control: new FormControl("")}
         ]);                
         this.form = buildReturn.controlGroup;
         this.controlDataDescriptions = buildReturn.controlDataDescriptions;
@@ -116,7 +112,10 @@ export class NamespaceComponent extends XCoreBaseComponent  {
 
     ngOnInit() {        
         super.NotifyLoaded("Namespace");   
-        this.initializeForm(this.builder);     
+        this.activatedRoute.params.subscribe(params => {
+            this.id = params["id"];
+            this.initializeForm(this.builder);     
+        });
     }
 
     public onSubmit() {

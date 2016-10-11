@@ -17,9 +17,7 @@ import { TraceMethodPosition } from '../shared/logging/logging.service';
 @Component({
     moduleId: module.id,    
     styleUrls: ['productservice.list.component.css'],
-    templateUrl: 'productservice.list.component.html',
-    providers: [ProductServiceService, ProductServiceFilterService],
-    directives: [NgTableComponent, ProductServiceFilterComponent]
+    templateUrl: 'productservice.list.component.html'
 })
 export class ProductServiceListComponent extends XCoreListComponent<IProductService, IProductServiceViewModel, IProductServicesToServerFilter, IProductServicesToClientFilter> {
     

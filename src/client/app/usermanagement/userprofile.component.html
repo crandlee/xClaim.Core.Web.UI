@@ -3,7 +3,7 @@
         <div class="navbar navbar-inverse center">
             <h4>User Information for: {{userProfile.name}}</h4>
         </div>
-        <form (ngSubmit)="onSubmit()" [ngFormModel]="form">
+        <form (ngSubmit)="onSubmit()" [formGroup]="form">
             <div class="form-group">
                 <label for="email">EMail</label>
                 <input type="email" placeholder="Email" name="email" class="form-control" ngControl="EMailControl" [(ngModel)]="userProfile.emailAddress" required />

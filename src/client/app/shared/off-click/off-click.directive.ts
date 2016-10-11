@@ -2,7 +2,6 @@ import {Directive, Host, Input} from '@angular/core';
 
 @Directive({
     selector: '[offClick]',
-    inputs: ['offClick'],
     host: {
         '(click)': 'onClick($event)',
     }

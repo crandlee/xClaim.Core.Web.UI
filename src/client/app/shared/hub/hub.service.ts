@@ -87,7 +87,7 @@ export class HubService {
                         var newError = err._body;
                         this.loggingService.error(newError, "Unable to retrieve main menu");
                         return Observable.empty<IHubServiceData>(); 
-                    }).finally<IHubServiceData>(() => {
+                    }).finally(() => {
                         this.busyService.notifyBusy(false);
                     });
 

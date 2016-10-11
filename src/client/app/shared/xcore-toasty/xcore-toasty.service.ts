@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
-import { ToastyService, ToastOptions } from '../ng2-toasty/ng2-toasty';
+import { ToastyService, ToastOptions } from 'ng2-toasty';
 
 @Injectable()
 export class XCoreToastService {

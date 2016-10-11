@@ -1,11 +1,9 @@
-///<reference path="../../../../../typings/jquery/jquery.d.ts" />
-///<reference path="../../../../../typings/bootstrap/bootstrap.d.ts"/>
 
-import {Component, EventEmitter, Input, Output, ViewContainerRef} from '@angular/core';
-import {CORE_DIRECTIVES, NgClass} from '@angular/common';
-import {NgTableSortingDirective} from './table.sorting.directive';
-import {Modal, BS_MODAL_PROVIDERS} from 'angular2-modal/plugins/bootstrap/index';
+import {Component, EventEmitter, Input, Output, ViewContainerRef, ViewEncapsulation, ViewChild} from '@angular/core';
+import {ModalComponent} from 'ng2-bs3-modal/ng2-bs3-modal';
+
 import 'jquery';
+import 'jqueryui';
 import 'bootstrap';
 import * as moment from 'moment';
 
@@ -13,18 +11,18 @@ import * as moment from 'moment';
   moduleId: module.id,
   selector: 'ng-table',
   styleUrls: ['table.component.css'],
-  templateUrl: 'table.component.html',
-  directives: [NgTableSortingDirective, NgClass, CORE_DIRECTIVES],
-  viewProviders: [...BS_MODAL_PROVIDERS]
+  templateUrl: 'table.component.html'
 })
 export class NgTableComponent {
 
+  @ViewChild('modal')
+  modal: ModalComponent;
+
   private _columns: INgTableColumn[] = [];
   public rowSelected: { [key:string]: boolean } = {};
+  public modalMessage: string;
 
-  constructor(public modal: Modal, viewContainer: ViewContainerRef) {
-    modal.defaultViewContainer = viewContainer;
-
+  constructor(viewContainer: ViewContainerRef) {
   }
 
   // Table values
@@ -32,10 +30,6 @@ export class NgTableComponent {
   @Input() public config: INgTableConfig = { sorting: { columns: []} }
 
   @Input() public rowTemplate: string = "";
-  @Input() public tooltipTemplate: string = `<div class="tooltip tooltip-custom">
-                  <div class="tooltip-arrow tooltip-arrow-custom"></div>
-                  <div class="tooltip-inner tooltip-inner-custom"></div>
-                </div>`;
 
   // Outputs (Events)
   @Output() public tableChanged: EventEmitter<INgTableConfig> = new EventEmitter<INgTableConfig>();
@@ -72,13 +66,17 @@ export class NgTableComponent {
   
   public getRowTooltip(row: INgTableRow): string {
     var id = "R" + row.id;
-    if (!this.tooltipTemplate) return id;
+    
     jQuery('#' + id).tooltip({
-      delay: { show: 500, hide: 10 },
-      placement: 'top',
-      html: true,
-      template: this.tooltipTemplate,
-      title: (row && row.tooltipMessage) ? row.tooltipMessage : ""
+      show: { duration: 500 },
+      hide: { duration: 10 },
+      position: 'top',
+      content: `<div class="tooltip tooltip-custom">
+                  <div class="tooltip-arrow tooltip-arrow-custom"></div>
+                  <div class="tooltip-inner tooltip-inner-custom">
+                  ${(row && row.tooltipMessage) ? row.tooltipMessage : ""}
+                  </div>
+                </div>`
     });
     return id;
   }
@@ -106,13 +104,18 @@ export class NgTableComponent {
     event.stopPropagation();
     var msg = "Do you really want to delete this item?";
     if (column.deleteMessage) msg = column.deleteMessage;
-    var box = this.modal.confirm().isBlocking(true).size('sm').message(msg).open();
-    box.then(resultPromise => {
-      return resultPromise.result.then((result) => {
-        this.deleteClicked.emit(row);
-      }, cancel => {});
+    //var box = this.modal.confirm().isBlocking(true).size('sm').message(msg).open();
+    this.modalMessage = msg;
+    var box = this.modal.open('sm');
+    box.then(res => {
+      this.deleteClicked.emit(row);
     });
 
+// resultPromise => {
+//       return resultPromise.o.then((result) => {
+//         
+//       }, cancel => {});
+//     }
   }
 
   public get configColumns(): { columns: INgTableColumn[] } {

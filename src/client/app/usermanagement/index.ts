@@ -1,3 +1,5 @@
+export * from './claimDefinitions.service';
+export * from './user.claims.component';
 export * from './user.component';
 export * from './user.filter.component';
 export * from './user.filter.service';
@@ -5,5 +7,3 @@ export * from './user.list.component';
 export * from './user.service';
 export * from './userprofile.component';
 export * from './userprofile.validation';
-export * from './claimDefinitions.service';
-export * from './user.claims.component';

@@ -8,7 +8,6 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { IDataService, ICollectionViewModel } from '../shared/service/base.service';
 import { PlanService, IPlan, IPlanViewModel, IPlansToClientFilter } from './plan.service';
-import { PlanFilterComponent } from './plan.filter.component';
 import { PlanFilterService, IPlansToServerFilter } from './plan.filter.service';
 import { Observable } from 'rxjs';
 import { IFilterDefinition, IFilterService } from '../shared/filtering/filter.service';
@@ -17,9 +16,7 @@ import { TraceMethodPosition } from '../shared/logging/logging.service';
 @Component({
     moduleId: module.id,    
     styleUrls: ['plan.list.component.css'],
-    templateUrl: 'plan.list.component.html',
-    providers: [PlanService, PlanFilterService],
-    directives: [NgTableComponent, PlanFilterComponent]
+    templateUrl: 'plan.list.component.html'
 })
 export class PlanListComponent extends XCoreListComponent<IPlan, IPlanViewModel, IPlansToServerFilter, IPlansToClientFilter> {
     

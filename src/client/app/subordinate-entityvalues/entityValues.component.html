@@ -5,7 +5,7 @@
         </div>
         <ng-table [config]="tableConfig" [columns]="columns" (deleteClicked)="delete($event)"></ng-table>
         <br/>
-        <form *ngIf="form" (ngSubmit)="save()" [ngFormModel]="form">
+        <form *ngIf="form" (ngSubmit)="save()" [formGroup]="form">
             <validation *ngIf="!readOnly" [validationMessages]='validationMessages'></validation>                                
             <div class="form-group clearfix">
                 <div class="btn-toolbar">

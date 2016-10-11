@@ -1,8 +1,8 @@
 import { AppSettings } from '../appsettings';
-import { RouteMetadata } from '@angular/router/src/metadata/metadata';
+import { Route } from '@angular/router';
 import { ClaimComponent, ClaimListComponent } from '../claims/index';
 
-export var ClaimRoutes: RouteMetadata[] =  [
+export var ClaimRoutes: Route[] =  [
     { path: '/packetlist', component: ClaimListComponent },
     { path: '/packet/:id', component: ClaimComponent }
 ];
