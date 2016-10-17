@@ -63,7 +63,7 @@ export class UserComponent extends XCoreBaseComponent  {
             trace(TraceMethodPosition.CallbackStart, "FormChangesEvent");
             var flv = Validators.compose([UserProfileValidationService.passwordCompare]);
             var flav = Validators.composeAsync([emailAsyncValidator, userNameValidator]);
-            this.validationService.getValidationResults(this.form, this.controlDataDescriptions, flv, flav).then(results => {
+            this.validationService.getValidationResults(this.form, flv, flav).then(results => {
                 this.validationMessages = results;
             });
             trace(TraceMethodPosition.CallbackEnd, "FormChangesEvent");                                    
@@ -89,6 +89,7 @@ export class UserComponent extends XCoreBaseComponent  {
                 this.userProfile.confirmPassword = "";
                 this.userProfile.enabled = true;
             }
+            this.initializeForm(this.builder);   
             this.ClaimsView.load(this.userProfile);
             trace(TraceMethodPosition.CallbackEnd);            
         }); 
@@ -105,7 +106,6 @@ export class UserComponent extends XCoreBaseComponent  {
 
         this.activatedRoute.params.subscribe(params => {
             this.userId = params["id"];
-            this.initializeForm(this.builder);     
         });
 
     }
@@ -128,4 +128,3 @@ export class UserComponent extends XCoreBaseComponent  {
         this.baseService.router.navigate(["/userlist"]);
     }
 }
-

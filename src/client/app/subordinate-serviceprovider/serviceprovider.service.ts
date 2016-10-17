@@ -335,4 +335,3 @@ export interface IServiceProvidersFromServer extends ICollectionViewModel<IServi
 export interface IServiceProvidersToClientFilter extends ICollectionViewModel<IServiceProviderViewModel> {
     
 }
-

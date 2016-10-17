@@ -103,7 +103,7 @@ export class MemberComponent extends XCoreBaseComponent  {
             trace(TraceMethodPosition.CallbackStart, "FormChangesEvent");
             var flv = Validators.compose([]);
             var flav = Validators.composeAsync([identValidator ]);
-            this.validationService.getValidationResults(this.form, this.controlDataDescriptions, flv, flav).then(results => {
+            this.validationService.getValidationResults(this.form, flv, flav).then(results => {
                 this.validationMessages = results;
             });
             trace(TraceMethodPosition.CallbackEnd, "FormChangesEvent");                                    

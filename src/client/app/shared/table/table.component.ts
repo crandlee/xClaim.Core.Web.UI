@@ -1,6 +1,7 @@
 
-import {Component, EventEmitter, Input, Output, ViewContainerRef, ViewEncapsulation, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, Output, ViewContainerRef, ViewEncapsulation, ViewChild, SecurityContext} from '@angular/core';
 import {ModalComponent} from 'ng2-bs3-modal/ng2-bs3-modal';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 import 'jquery';
 import 'jqueryui';
@@ -22,11 +23,11 @@ export class NgTableComponent {
   public rowSelected: { [key:string]: boolean } = {};
   public modalMessage: string;
 
-  constructor(viewContainer: ViewContainerRef) {
+  constructor(viewContainer: ViewContainerRef, private domSanitizer: DomSanitizer) {
   }
 
   // Table values
-  public rows: INgTableRow[] = [];
+  @Input() public rows: INgTableRow[] = [];
   @Input() public config: INgTableConfig = { sorting: { columns: []} }
 
   @Input() public rowTemplate: string = "";
@@ -64,21 +65,9 @@ export class NgTableComponent {
       this.rowSelected[id] = false;
   }
   
-  public getRowTooltip(row: INgTableRow): string {
-    var id = "R" + row.id;
-    
-    jQuery('#' + id).tooltip({
-      show: { duration: 500 },
-      hide: { duration: 10 },
-      position: 'top',
-      content: `<div class="tooltip tooltip-custom">
-                  <div class="tooltip-arrow tooltip-arrow-custom"></div>
-                  <div class="tooltip-inner tooltip-inner-custom">
-                  ${(row && row.tooltipMessage) ? row.tooltipMessage : ""}
-                  </div>
-                </div>`
-    });
-    return id;
+  public getRowTooltip(row: INgTableRow): SafeHtml {
+    var safeHtml = this.domSanitizer.sanitize(SecurityContext.HTML, "<div class='tooltipContainer'>" + row.tooltipMessage + "</div>");
+    return (row && row.tooltipMessage) ?  safeHtml : null;
   }
 
   public getColumnClass(column: any) {
@@ -106,16 +95,13 @@ export class NgTableComponent {
     if (column.deleteMessage) msg = column.deleteMessage;
     //var box = this.modal.confirm().isBlocking(true).size('sm').message(msg).open();
     this.modalMessage = msg;
+
     var box = this.modal.open('sm');
-    box.then(res => {
-      this.deleteClicked.emit(row);
+    this.modal.onClose.subscribe(e => {
+      this.deleteClicked.emit(row); 
+      this.modal.onClose.unsubscribe();     
     });
 
-// resultPromise => {
-//       return resultPromise.o.then((result) => {
-//         
-//       }, cancel => {});
-//     }
   }
 
   public get configColumns(): { columns: INgTableColumn[] } {

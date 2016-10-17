@@ -18,4 +18,4 @@ export const routes: Routes = [
   ...ServiceProviderRoutes,
   ...ProductServiceRoutes
 ]
-.concat([{ path: '/', component: WelcomeComponent }, { path: '/**', component: WelcomeComponent }]);
+.concat([{ path: '', component: WelcomeComponent }, { path: '**', component: WelcomeComponent }]);

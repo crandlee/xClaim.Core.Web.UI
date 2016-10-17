@@ -9,7 +9,7 @@ import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   imports: [CommonModule, AccordionModule, SharedModule, DatepickerModule, FormsModule, ReactiveFormsModule],
-  declarations: [UserComponent, UserProfileComponent, UserFilterComponent, UserListComponent],
+  declarations: [UserComponent, UserProfileComponent, UserFilterComponent, UserListComponent, UserClaimsComponent],
   exports: [],
   providers: [UserService, UserFilterService, ClaimDefinitionsService, UserProfileValidationService]
 })

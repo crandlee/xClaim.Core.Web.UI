@@ -5,30 +5,37 @@ import { RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import { AppComponent } from './app.component';
 import { routes } from './app.routes';
-import { LoggingService, SecurityModule, XCoreToastService, ToastyModule, HubService, BusyService } from './shared/index';
-import { WelcomeModule } from './welcome/welcome.module';
-import { UiSwitchModule } from 'angular2-ui-switch'
+import { LoggingService, SecurityModule, ToastyModule, ToastyService, ToastyConfig } from './shared/index';
+
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from './shared/shared.module';
-
-
+import { WelcomeModule } from './welcome/welcome.module';
 import { MemberModule } from './subordinate-member/member.module';
 import { NamespaceModule } from './subordinate-namespace/namespace.module';
+import { UserModule } from './usermanagement/user.module';
+import { ClaimModule } from './claims/claim.module';
+import { PlanModule } from './subordinate-plan/plan.module';
+import { ProductServiceModule } from './subordinate-productservice/productservice.module';
+import { ServiceProviderModule } from './subordinate-serviceprovider/serviceprovider.module';
 
 export const appModules = [
     BrowserModule,
-    HttpModule,
+    HttpModule,    
     RouterModule.forRoot(routes),
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    ToastyModule,
+    ToastyModule.forRoot(),
     WelcomeModule,
     SecurityModule,
-    UiSwitchModule,
+    UserModule,
     SharedModule.forRoot(),
+    ClaimModule,
     MemberModule,
-    NamespaceModule
+    NamespaceModule,
+    PlanModule,
+    ProductServiceModule,
+    ServiceProviderModule
 ];
 
 
@@ -42,10 +49,8 @@ export const appProviders = [
     useValue: '<%= APP_BASE %>',
     providers: [{provide: ErrorHandler, useClass: RootErrorHandler}]
   }, 
-  LoggingService,
-  XCoreToastService,
-  HubService,
-  BusyService
+  ToastyService,
+  ToastyConfig
 ];
 
 export class RootErrorHandler implements ErrorHandler  {

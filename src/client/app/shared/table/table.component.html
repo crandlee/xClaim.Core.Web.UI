@@ -9,7 +9,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr [ngClass]="{ selected: config.selectOn && rowSelected[row.id] }" [attr.id]="getRowTooltip(row)" *ngFor="let row of rows"
+		<tr [ngClass]="{ selected: config.selectOn && rowSelected[row.id] }" [attr.id]="'R' + row.id" tooltipClass="table-tooltip-class" [tooltipHtml]="getRowTooltip(row)" tooltipPlacement="top" tooltipTrigger="click" *ngFor="let row of rows"
 			(click)="onRowClick($event, row)">
 			<td *ngFor="let column of columns">
 				<span style="display:inline-block; width:100%" *ngIf="!column.deleteRow && !column.editRow">{{getData(row, column.name)}}</span>
@@ -27,5 +27,8 @@
 	<modal-body>
 		{{modalMessage}}
 	</modal-body>
-	<modal-footer [dismiss-button-label]="Delete" [show-default-buttons]="true"></modal-footer>
+	<modal-footer>
+		<button type="button" class="btn btn-default" (click)="modal.dismiss()">Cancel</button>
+		<button type="button" class="btn btn-primary" (click)="modal.close()">Delete</button>
+	</modal-footer>
 </modal>

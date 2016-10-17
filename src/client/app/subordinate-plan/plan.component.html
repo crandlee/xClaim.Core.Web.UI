@@ -3,7 +3,7 @@
         <div class="navbar navbar-inverse center">
             <h4>Plan Information for: {{viewModel.name || "New Plan"}}</h4>
         </div>
-        <form (ngSubmit)="onSubmit()" [formGroup]="form">
+        <form (ngSubmit)="onSubmit()" #form="ngForm">
             <div class="form-group clearfix">
                 <div class="btn-toolbar pull-right">
                     <button type="submit" class="btn btn-default" [disabled]="validationMessages.length > 0" *ngIf="!readOnly">Save</button>
@@ -46,7 +46,7 @@
                 </div>
                 <div class="col-sm-4">
                 <label for="state">State</label>
-                    <select [disabled]="readOnly" ngControl="StateControl" class="form-control input-sm" [(ngModel)]="viewModel.address.state" required>
+                    <select [disabled]="readOnly" ngControl="StateControl" name="state" class="form-control input-sm" [(ngModel)]="viewModel.address.state" required>
                         <option *ngFor="let val of states | orderBy : '+description'" [value]="val.id">{{val.description}}</option>
                     </select>                                
                 </div>
@@ -74,21 +74,21 @@
             <div class="form-group  col-sm-12">
                 <div class="col-sm-4 form-label filter-label">Effective Date:</div>
                 <div class="col-sm-4">
-                    <input [disabled]="readOnly" ngControl="EffectiveDateControl" class="form-control input-sm" [(ngModel)]="viewModel.effectiveDate" placeholder="Effective Date" #effectiveDateStart (blur)="effectiveDateString($event.target)" />                     
+                    <input [disabled]="readOnly" ngControl="EffectiveDateControl" name="effectiveDate" class="form-control input-sm" [(ngModel)]="viewModel.effectiveDate" placeholder="Effective Date" #effectiveDateStart (blur)="effectiveDateString($event.target)" />                     
                 </div>
                 <div *ngIf="!readOnly" class="col-sm-1">
                     <button class="btn btn-xs calendar-button" (click)="toggleEffectiveDate($event);"><span class="glyphicon glyphicon-calendar"></span></button>
-                    <datepicker class="popup" *ngIf="showEffectiveDatePicker" [showWeeks]="false" [(ngModel)]="effectiveDate" (ngModelChange)="hideEffectiveDate()"></datepicker>
+                    <datepicker class="popup" *ngIf="showEffectiveDatePicker" name="effectiveDatePicker" [showWeeks]="false" [(ngModel)]="effectiveDate" (ngModelChange)="hideEffectiveDate()"></datepicker>
                 </div>
             </div>                
             <div class="form-group  col-sm-12">
                 <div class="col-sm-4 form-label filter-label">Termination Date:</div>
                 <div class="col-sm-4">
-                    <input [disabled]="readOnly" ngControl="TerminationDateControl"  class="form-control input-sm" [(ngModel)]="viewModel.terminationDate" placeholder="Termination Date" #terminationDateStart (blur)="terminationDateString($event.target)" />                                
+                    <input [disabled]="readOnly" ngControl="TerminationDateControl" name="terminationDate"  class="form-control input-sm" [(ngModel)]="viewModel.terminationDate" placeholder="Termination Date" #terminationDateStart (blur)="terminationDateString($event.target)" />                                
                 </div>
                 <div *ngIf="!readOnly" class="col-sm-1">
                     <button class="btn btn-xs calendar-button" (click)="toggleTerminationDate($event);"><span class="glyphicon glyphicon-calendar"></span></button>
-                    <datepicker class="popup" *ngIf="showTerminationDatePicker" [showWeeks]="false" [(ngModel)]="terminationDate" (ngModelChange)="hideTerminationDate()"></datepicker>
+                    <datepicker class="popup" *ngIf="showTerminationDatePicker" name="terminationDatePicker" [showWeeks]="false" [(ngModel)]="terminationDate" (ngModelChange)="hideTerminationDate()"></datepicker>
                 </div>
             </div>    
             <div *ngIf="!readOnly" class="form-group col-sm-12"><validation [validationMessages]='validationMessages'></validation></div>                    

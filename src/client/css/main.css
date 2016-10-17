@@ -68,11 +68,11 @@ div.panel-heading {
 
 /*Edit form styles*/
 
-.ng-valid[required] {
-  border-left: 5px solid #42A948; /* green */
+.ng-valid:not(form)  {
+  border-left: 5px solid #42A948 !important; /* green */
 }
 
-.ng-invalid  {
+.ng-invalid:not(form)  {
   border-left: 5px solid #a94442 !important; /* red */
 }
 
@@ -103,4 +103,20 @@ div.panel-heading {
     padding-right: 5px;
     font-size: 1.0em;
     text-align: center;
+}
+
+
+.table-tooltip-class {
+    background-color: none;
+}
+ 
+.table-tooltip-class .tooltip-inner {
+    max-width: none;
+    text-align: left;
+    background-color: #647299;
+}
+
+
+.table-tooltip-class td {
+    padding-right: 20px;
 }

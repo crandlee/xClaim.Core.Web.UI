@@ -139,7 +139,7 @@ export class EntityValuesComponent extends XCoreBaseComponent {
             trace(TraceMethodPosition.CallbackStart, "FormChangesEvent");
             var flv = Validators.compose([]);
             var flav = Validators.composeAsync([planValidator, pharmacyValidator, drugValidator, memberValidator]);
-            this.validationService.getValidationResults(this.form, this.controlDataDescriptions, flv, flav).then(results => {
+            this.validationService.getValidationResults(this.form, flv, flav).then(results => {
                 this.validationMessages = results;
             });
             trace(TraceMethodPosition.CallbackEnd, "FormChangesEvent");
@@ -323,4 +323,3 @@ export class EntityValuesComponent extends XCoreBaseComponent {
     }
 
 }
-

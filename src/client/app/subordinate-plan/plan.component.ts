@@ -100,7 +100,7 @@ export class PlanComponent extends XCoreBaseComponent  {
             trace(TraceMethodPosition.CallbackStart, "FormChangesEvent");
             var flv = Validators.compose([PlanValidationService.identRequired]);
             var flav = Validators.composeAsync([nameValidator, identValidator ]);
-            this.validationService.getValidationResults(this.form, this.controlDataDescriptions, flv, flav).then(results => {
+            this.validationService.getValidationResults(this.form, flv, flav).then(results => {
                 this.validationMessages = results;
             });
             trace(TraceMethodPosition.CallbackEnd, "FormChangesEvent");                                    
@@ -126,7 +126,6 @@ export class PlanComponent extends XCoreBaseComponent  {
             if (!this.id) {
                 this.viewModel.effectiveDate = "";
             }
-
             //Load any subviews here
             this.EntityValuesView.load(true, this.viewModel.id, EntityType.Plan, this.viewModel.name, 
                 (this.viewModel.bin || "") + "/" + (this.viewModel.pcn || "") + "/" + (this.viewModel.groupId || ""), this.readOnly);

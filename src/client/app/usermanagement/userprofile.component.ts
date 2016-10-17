@@ -50,7 +50,7 @@ export class UserProfileComponent extends XCoreBaseComponent implements OnInit  
             trace(TraceMethodPosition.CallbackStart, "FormChangesEvent");
             var flv = Validators.compose([UserProfileValidationService.passwordCompare]);
             var flav = Validators.composeAsync([emailAsyncValidator]);
-            this.validationService.getValidationResults(this.form, this.controlDataDescriptions, flv, flav).then(results => {
+            this.validationService.getValidationResults(this.form, flv, flav).then(results => {
                 this.validationMessages = results;
             });
             trace(TraceMethodPosition.CallbackEnd, "FormChangesEvent");                                    
@@ -102,4 +102,3 @@ export class UserProfileComponent extends XCoreBaseComponent implements OnInit  
         this.baseService.router.navigate(['/']);
     }
 }
-

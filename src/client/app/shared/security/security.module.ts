@@ -8,7 +8,7 @@ import { SharedModule } from '../shared.module';
 @NgModule({
   imports: [CommonModule, SharedModule, DropdownModule, CollapseModule],
   declarations: [SecurityComponent],
-  exports: [],
+  exports: [SecurityComponent],
   providers: [SecurityService]
 })
 export class SecurityModule { }

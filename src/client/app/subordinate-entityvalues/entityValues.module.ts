@@ -9,7 +9,7 @@ import { SharedModule } from '../shared/shared.module';
 @NgModule({
   imports: [CommonModule, AccordionModule, DatepickerModule, FormsModule, SharedModule],
   declarations: [EntityValuesComponent],
-  exports: [],
+  exports: [EntityValuesComponent],
   providers: [EntityValuesService, EntityValuesValidationService]
 })
 

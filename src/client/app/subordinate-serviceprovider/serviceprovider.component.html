@@ -3,7 +3,7 @@
         <div class="navbar navbar-inverse center">
             <h4>Pharmacy Information for: {{viewModel.name || "New Pharmacy"}}</h4>
         </div>
-        <form (ngSubmit)="onSubmit()" [formGroup]="form">
+        <form (ngSubmit)="onSubmit()" #form="ngForm">
             <div class="form-group clearfix">
                 <div class="btn-toolbar pull-right">
                     <button type="submit" class="btn btn-default" [disabled]="validationMessages.length > 0" *ngIf="!readOnly">Save</button>
@@ -13,75 +13,66 @@
             </div>
             <div class="form-group col-sm-12">
                 <label for="npi">NPI:</label>
-                <input [disabled]="readOnly" type="text" placeholder="NPI" name="npi" class="form-control input-sm" ngControl="NPIControl"
-                    [(ngModel)]="viewModel.npi" required />
+                <input [disabled]="readOnly" type="text" placeholder="NPI" name="npi" class="form-control input-sm" [(ngModel)]="viewModel.npi" />
             </div>
             <div class="form-group col-sm-12">
                 <label for="storeName">Store Name:</label>
-                <input [disabled]="readOnly" type="text" placeholder="Store Name" name="storeName" class="form-control input-sm" ngControl="StoreNameControl"
-                    [(ngModel)]="viewModel.name" required />
+                <input [disabled]="readOnly" type="text" placeholder="Store Name" name="storeName" class="form-control input-sm" [(ngModel)]="viewModel.name" />
             </div>
             <div class="form-group col-sm-12">
                 <label for="storeNumber">Store Number:</label>
-                <input [disabled]="readOnly" type="text" placeholder="Store Number" name="storeNumber" class="form-control input-sm" ngControl="StoreNumberControl"
-                    [(ngModel)]="viewModel.storeNumber" required />
+                <input [disabled]="readOnly" type="text" placeholder="Store Number" name="storeNumber" class="form-control input-sm"
+                    [(ngModel)]="viewModel.storeNumber" />
             </div>
             <div class="form-group col-sm-12">
                 <label for="pharmacyType">Pharmacy Type</label>
-                <select [disabled]="readOnly" name="pharmacyType" ngControl="PharmacyTypeControl" class="form-control input-sm" [(ngModel)]="viewModel.type"
-                    required>
+                <select [disabled]="readOnly" name="pharmacyType" class="form-control input-sm" [(ngModel)]="viewModel.type">
                     <option *ngFor="let val of pharmacyTypes | orderBy : '+description'" [value]="val.id">{{val.description}}</option>
                 </select>
             </div>
             <div class="form-group col-sm-12">
                 <label for="dispenserType">Dispenser Type</label>
-                <select [disabled]="readOnly" name="dispenserType" ngControl="DispenserTypeControl" class="form-control input-sm" [(ngModel)]="viewModel.dispenserType"
-                    required>
+                <select [disabled]="readOnly" name="dispenserType" class="form-control input-sm" [(ngModel)]="viewModel.dispenserType">
                     <option *ngFor="let val of dispenserTypes | orderBy : '+description'" [value]="val.id">{{val.description}}</option>
                 </select>
             </div>
             <div class="form-group col-sm-12">
                 <label for="dispenserType">Dispenser Class</label>
-                <select [disabled]="readOnly" name="dispenserClass" ngControl="DispenserClassControl" class="form-control input-sm" [(ngModel)]="viewModel.dispenserClass"
-                    required>
+                <select [disabled]="readOnly" name="dispenserClass" class="form-control input-sm" [(ngModel)]="viewModel.dispenserClass">
                     <option *ngFor="let val of dispenserClasses | orderBy : '+description'" [value]="val.id">{{val.description}}</option>
                 </select>
             </div>
             <div class="form-group col-sm-12">
                 <label for="phone">Phone:</label>
-                <input [disabled]="readOnly" type="text" placeholder="Phone" name="phone" class="form-control input-sm" ngControl="TelephoneControl"
-                    [(ngModel)]="viewModel.telephone" />
+                <input [disabled]="readOnly" type="text" placeholder="Phone" name="phone" class="form-control input-sm" [(ngModel)]="viewModel.telephone" />
             </div>
             <div class="form-group col-sm-12">
                 <label for="fax">Fax:</label>
-                <input [disabled]="readOnly" type="text" placeholder="Fax" name="fax" class="form-control input-sm" ngControl="FaxControl"
-                    [(ngModel)]="viewModel.fax" />
+                <input [disabled]="readOnly" type="text" placeholder="Fax" name="fax" class="form-control input-sm" [(ngModel)]="viewModel.fax" />
             </div>
             <div class="form-group col-sm-12">
                 <label for="email">Email Address:</label>
-                <input [disabled]="readOnly" type="text" placeholder="Email Address" name="email" class="form-control input-sm" ngControl="EmailControl"
+                <input [disabled]="readOnly" type="text" placeholder="Email Address" name="email" class="form-control input-sm"
                     [(ngModel)]="viewModel.eMailAddress" />
             </div>
             <div class="form-group col-sm-12">
                 <div class="col-sm-4 form-label filter-label">Effective Date:</div>
                 <div class="col-sm-4">
-                    <input [disabled]="readOnly" ngControl="EffectiveDateControl" class="form-control input-sm" [(ngModel)]="viewModel.effectiveDate"
-                        placeholder="Effective Date" #effectiveDateStart (blur)="effectiveDateString($event.target)" />
+                    <input [disabled]="readOnly" name="effectiveDate" class="form-control input-sm" [(ngModel)]="viewModel.effectiveDate" placeholder="Effective Date" (blur)="effectiveDateString($event.target)" />
                 </div>
                 <div *ngIf="!readOnly" class="col-sm-1">
                     <button class="btn btn-xs calendar-button" (click)="toggleEffectiveDate($event);"><span class="glyphicon glyphicon-calendar"></span></button>
-                    <datepicker class="popup" *ngIf="showEffectiveDatePicker" [showWeeks]="false" [(ngModel)]="effectiveDate" (ngModelChange)="hideEffectiveDate()"></datepicker>
+                    <datepicker class="popup" name="effectiveDatePicker" [hidden]="!showEffectiveDatePicker" [showWeeks]="false" [(ngModel)]="effectiveDate" (ngModelChange)="hideEffectiveDate()"></datepicker>
                 </div>
             </div>
             <div class="form-group col-sm-12">
                 <div class="col-sm-4 form-label filter-label">Termination Date:</div>
                 <div class="col-sm-4">
-                    <input [disabled]="readOnly" ngControl="TerminationDateControl" class="form-control input-sm" [(ngModel)]="viewModel.terminationDate"
-                        placeholder="Termination Date" #terminationDateStart (blur)="terminationDateString($event.target)" />
+                    <input [disabled]="readOnly" name="terminationDate" class="form-control input-sm" [(ngModel)]="viewModel.terminationDate" placeholder="Termination Date" (blur)="terminationDateString($event.target)" />
                 </div>
                 <div *ngIf="!readOnly" class="col-sm-1">
                     <button class="btn btn-xs calendar-button" (click)="toggleTerminationDate($event);"><span class="glyphicon glyphicon-calendar"></span></button>
-                    <datepicker class="popup" *ngIf="showTerminationDatePicker" [showWeeks]="false" [(ngModel)]="terminationDate" (ngModelChange)="hideTerminationDate()"></datepicker>
+                    <datepicker class="popup" name="terminationDatePicker" [hidden]="!showTerminationDatePicker" [showWeeks]="false" [(ngModel)]="terminationDate" (ngModelChange)="hideTerminationDate()"></datepicker>
                 </div>
             </div>
             <div class="form-group col-sm-12">
@@ -89,36 +80,35 @@
             </div>
             <div class="form-group col-sm-12">
                 <label for="paddress1">Address 1:</label>
-                <input [disabled]="readOnly" type="text" placeholder="Address 1" name="paddress1" class="form-control input-sm" ngControl="PAddress1Control"
-                    [(ngModel)]="viewModel.physicalAddress.address1" required />
+                <input [disabled]="readOnly" type="text" placeholder="Address 1" name="paddress1" class="form-control input-sm" 
+                    [(ngModel)]="viewModel.physicalAddress.address1" />
             </div>
             <div class="form-group col-sm-12">
                 <label for="paddress2">Address 2:</label>
-                <input [disabled]="readOnly" type="text" placeholder="Address 2" name="paddress2" class="form-control input-sm" ngControl="PAddress2Control"
+                <input [disabled]="readOnly" type="text" placeholder="Address 2" name="paddress2" class="form-control input-sm" 
                     [(ngModel)]="viewModel.physicalAddress.address2" />
             </div>
             <div class="form-group col-sm-12">
                 <label for="paddress3">Address 3:</label>
-                <input [disabled]="readOnly" type="text" placeholder="Address 3" name="paddress3" class="form-control input-sm" ngControl="PAddress3Control"
+                <input [disabled]="readOnly" type="text" placeholder="Address 3" name="paddress3" class="form-control input-sm" 
                     [(ngModel)]="viewModel.physicalAddress.address3" />
             </div>
             <div class="form-group col-sm-12">
                 <div class="col-sm-4">
                     <label for="pcity">City:</label>
-                    <input [disabled]="readOnly" type="text" placeholder="City" name="pcity" class="form-control input-sm" ngControl="PCityControl"
+                    <input [disabled]="readOnly" type="text" placeholder="City" name="pcity" class="form-control input-sm"
                         [(ngModel)]="viewModel.physicalAddress.city" />
                 </div>
                 <div class="col-sm-4">
                     <label for="pstate">State</label>
-                    <select [disabled]="readOnly" name="pstate" ngControl="PStateControl" class="form-control input-sm" [(ngModel)]="viewModel.physicalAddress.state"
-                        required>
+                    <select [disabled]="readOnly" name="pstate" class="form-control input-sm" [(ngModel)]="viewModel.physicalAddress.state">
                         <option *ngFor="let val of states | orderBy : '+description'" [value]="val.id">{{val.description}}</option>
                     </select>
                 </div>
                 <div class="col-sm-4">
                     <label for="pzipCode">Zip Code:</label>
-                    <input [disabled]="readOnly" type="text" placeholder="Zip Code" name="pzipCode" class="form-control input-sm" ngControl="PZipCodeControl"
-                        [(ngModel)]="viewModel.physicalAddress.zipCode" required />
+                    <input [disabled]="readOnly" type="text" placeholder="Zip Code" name="pzipCode" class="form-control input-sm"
+                        [(ngModel)]="viewModel.physicalAddress.zipCode" />
                 </div>
             </div>
             <div class="form-group col-sm-12">
@@ -126,34 +116,34 @@
             </div>
             <div class="form-group col-sm-12">
                 <label for="maddress1">Address 1:</label>
-                <input [disabled]="readOnly" type="text" placeholder="Address 1" name="maddress1" class="form-control input-sm" ngControl="MAddress1Control"
+                <input [disabled]="readOnly" type="text" placeholder="Address 1" name="maddress1" class="form-control input-sm" 
                     [(ngModel)]="viewModel.mailingAddress.address1" />
             </div>
             <div class="form-group col-sm-12">
                 <label for="maddress2">Address 2:</label>
-                <input [disabled]="readOnly" type="text" placeholder="Address 2" name="maddress2" class="form-control input-sm" ngControl="MAddress2Control"
+                <input [disabled]="readOnly" type="text" placeholder="Address 2" name="maddress2" class="form-control input-sm" 
                     [(ngModel)]="viewModel.mailingAddress.address2" />
             </div>
             <div class="form-group col-sm-12">
                 <label for="maddress3">Address 3:</label>
-                <input [disabled]="readOnly" type="text" placeholder="Address 3" name="maddress3" class="form-control input-sm" ngControl="MAddress3Control"
+                <input [disabled]="readOnly" type="text" placeholder="Address 3" name="maddress3" class="form-control input-sm" 
                     [(ngModel)]="viewModel.mailingAddress.address3" />
             </div>
             <div class="form-group col-sm-12">
                 <div class="col-sm-4">
                     <label for="mcity">City:</label>
-                    <input [disabled]="readOnly" type="text" placeholder="City" name="mcity" class="form-control input-sm" ngControl="MCityControl"
+                    <input [disabled]="readOnly" type="text" placeholder="City" name="mcity" class="form-control input-sm"
                         [(ngModel)]="viewModel.mailingAddress.city" />
                 </div>
                 <div class="col-sm-4">
                     <label for="mstate">State</label>
-                    <select [disabled]="readOnly" name="mstate" ngControl="MStateControl" class="form-control input-sm" [(ngModel)]="viewModel.mailingAddress.state">
+                    <select [disabled]="readOnly" name="mstate" class="form-control input-sm" [(ngModel)]="viewModel.mailingAddress.state">
                     <option *ngFor="let val of states | orderBy : '+description'" [value]="val.id">{{val.description}}</option>
                 </select>
                 </div>
                 <div class="col-sm-4">
                     <label for="mzipCode">Zip Code:</label>
-                    <input [disabled]="readOnly" type="text" placeholder="Zip Code" name="mzipCode" class="form-control input-sm" ngControl="MZipCodeControl" [(ngModel)]="viewModel.mailingAddress.zipCode"
+                    <input [disabled]="readOnly" type="text" placeholder="Zip Code" name="mzipCode" class="form-control input-sm" [(ngModel)]="viewModel.mailingAddress.zipCode"
                     />
                 </div>
             </div>
@@ -162,7 +152,7 @@
             </div>
             <div class="form-group col-sm-12">
                 <label for="ein">EIN:</label>
-                <input [disabled]="readOnly" type="text" placeholder="EIN" name="ein" class="form-control input-sm" ngControl="EINControl" [(ngModel)]="viewModel.paymentEntity.ein"
+                <input [disabled]="readOnly" type="text" placeholder="EIN" name="ein" class="form-control input-sm" [(ngModel)]="viewModel.paymentEntity.ein"
                 />
             </div>
             <div class="form-group col-sm-12">
@@ -170,12 +160,12 @@
             </div>
             <div class="form-group col-sm-12">
                 <label for="raddress1">Address 1:</label>
-                <input [disabled]="readOnly" type="text" placeholder="Address 1" name="raddress1" class="form-control input-sm" ngControl="RAddress1Control" [(ngModel)]="viewModel.paymentEntity.remittanceAddress.address1"
+                <input [disabled]="readOnly" type="text" placeholder="Address 1" name="raddress1" class="form-control input-sm" [(ngModel)]="viewModel.paymentEntity.remittanceAddress.address1"
                 />
             </div>
             <div class="form-group col-sm-12">
                 <label for="raddress2">Address 2:</label>
-                <input [disabled]="readOnly" type="text" placeholder="Address 2" name="raddress2" class="form-control input-sm" ngControl="RAddress2Control" [(ngModel)]="viewModel.paymentEntity.remittanceAddress.address2"
+                <input [disabled]="readOnly" type="text" placeholder="Address 2" name="raddress2" class="form-control input-sm" [(ngModel)]="viewModel.paymentEntity.remittanceAddress.address2"
                 />
             </div>
             <div class="form-group col-sm-12">
@@ -186,18 +176,18 @@
             <div class="form-group col-sm-12">
                 <div class="col-sm-4">
                     <label for="rcity">City:</label>
-                    <input [disabled]="readOnly" type="text" placeholder="City" name="rcity" class="form-control input-sm" ngControl="RCityControl" [(ngModel)]="viewModel.paymentEntity.remittanceAddress.city"
+                    <input [disabled]="readOnly" type="text" placeholder="City" name="rcity" class="form-control input-sm" [(ngModel)]="viewModel.paymentEntity.remittanceAddress.city"
                     />
                 </div>
                 <div class="col-sm-4">
                     <label for="rstate">State</label>
-                    <select [disabled]="readOnly" name="rstate" ngControl="RStateControl" class="form-control input-sm" [(ngModel)]="viewModel.paymentEntity.remittanceAddress.state">
+                    <select [disabled]="readOnly" name="rstate" class="form-control input-sm" [(ngModel)]="viewModel.paymentEntity.remittanceAddress.state">
                     <option *ngFor="let val of states | orderBy : '+description'" [value]="val.id">{{val.description}}</option>
                 </select>
                 </div>
                 <div class="col-sm-4">
                     <label for="rzipCode">Zip Code:</label>
-                    <input [disabled]="readOnly" type="text" placeholder="Zip Code" name="rzipCode" class="form-control input-sm" ngControl="RZipCodeControl" [(ngModel)]="viewModel.paymentEntity.remittanceAddress.zipCode"
+                    <input [disabled]="readOnly" type="text" placeholder="Zip Code" name="rzipCode" class="form-control input-sm" [(ngModel)]="viewModel.paymentEntity.remittanceAddress.zipCode"
                     />
                 </div>
             </div>

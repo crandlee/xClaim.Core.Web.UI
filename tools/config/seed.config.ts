@@ -339,6 +339,10 @@ export class SeedConfig {
    */
   APP_ASSETS: InjectableDependency[] = [
     { src: `${this.CSS_SRC}/main.${this.getInjectableStyleExtension()}`, inject: true, vendor: false },
+    { src: `${this.CSS_SRC}/bootstrap.min.${this.getInjectableStyleExtension()}`, inject: true, vendor: false },
+    { src: `${this.CSS_SRC}/font-awesome.min.${this.getInjectableStyleExtension()}`, inject: true, vendor: false },
+    { src: `${this.CSS_SRC}/style-default.${this.getInjectableStyleExtension()}`, inject: true, vendor: false },
+    // { src: `${this.CSS_SRC}/jquery-ui.min.${this.getInjectableStyleExtension()}`, inject: true, vendor: false },
     { src: `${this.IMAGE_SRC}/core/loadingSpinner.gif`, inject: true, vendor: false },
     { src: `${this.FONT_SRC}/*`, inject: false, vendor: false }    
   ];
@@ -469,6 +473,10 @@ export class SeedConfig {
         main: 'index.js',
         defaultExtension: 'js'
       },
+      'lodash.clonedeep': {
+        main: 'index.js',
+        defaultExtension: 'js'
+      },
       'angular2-cookie': {
         main: 'bundles/angular2-cookie.min.js',
         defaultExtension: 'js'
@@ -493,14 +501,14 @@ export class SeedConfig {
         main: 'bundles/ng2-bs3-modal.min.js',
         defaultExtension: 'js'
       },
-      'jquery': {
-        main: 'dist/jquery.min.js',
-        defaultExtension: 'js'
-      },                 
-      'jqueryui': {
-        main: 'jquery-ui.min.js',
-        defaultExtension: 'js'
-      },                 
+      // 'jquery': {
+      //   main: 'dist/jquery.min.js',
+      //   defaultExtension: 'js'
+      // },                 
+      // 'jqueryui': {
+      //   main: 'jquery-ui.js',
+      //   defaultExtension: 'js'
+      // },                 
       'ng2-toasty': {
         main: 'bundles/ng2-toasty,min.js',
         defaultExtension: 'js'

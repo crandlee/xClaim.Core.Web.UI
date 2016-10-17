@@ -136,6 +136,7 @@ export class PlanService implements IDataService<IPlan, IPlanViewModel, IPlansTo
     }
     
     public toViewModel(model: IPlan): IPlanViewModel {
+        console.log(model);
         var vm: IPlanViewModel  = {
             id: model.id,
             name: model.name,

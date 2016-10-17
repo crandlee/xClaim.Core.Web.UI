@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, Input } from '@angular/core';
 import { Validators, FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { Location } from '@angular/common';
 import { IFormValidationResult } from '../shared/validation/validation.service';
@@ -29,9 +29,7 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
 
     public loadingMessage: string = "Loading Pharmacy";
     public viewModel: IServiceProviderViewModel;
-    public form: FormGroup;
     public validationMessages: IFormValidationResult[] = [];
-    public controlDataDescriptions: string[];    
     public id: string;
     public states: IDropdownOptionViewModel[] = [];
     public dispenserTypes: IEnumViewModel[] = [];
@@ -45,11 +43,13 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
     public terminationDate: Date;
     public readOnly: boolean = true;
     public npi: string;
-    
+    private validationSet: boolean = false;
+
+    @ViewChild('form') form: FormGroup;
     @ViewChild(EntityValuesComponent) EntityValuesView: EntityValuesComponent;
 
     constructor(protected baseService: BaseService, private service: ServiceProviderService,
-        private builder: FormBuilder, private validationService: ServiceProviderValidationService, 
+        private validationService: ServiceProviderValidationService, 
         private activatedRoute: ActivatedRoute, private dropdownService: DropdownService, private location: Location)     
     {  
         super(baseService);
@@ -61,68 +61,55 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
 
     }
     
-    private initializeForm(builder: FormBuilder): void {
+    
+    public initializeValidation(form:FormGroup) {
 
-        var trace = this.classTrace("initializeForm");
-        trace(TraceMethodPosition.Entry);
-        
-        //Set up any async validators
-        var npiControl = new FormControl("", Validators.compose([Validators.required, Validators.maxLength(10)]));
+        if (this.validationSet) return;
+        this.setControlProperties(form, "storeNumber", "Store Number", Validators.compose([Validators.required, Validators.maxLength(10)]));
+        this.setControlProperties(form, "npi", "NPI", Validators.compose([Validators.required, Validators.maxLength(10)]));
+        this.setControlProperties(form, "storeName", "Store Name", Validators.compose([Validators.required, Validators.maxLength(64)]));
+        this.setControlProperties(form, "pharmacyType", "Pharmacy Type", Validators.compose([Validators.required]));
+        this.setControlProperties(form, "dispenserClass", "Dispenser Class", Validators.compose([Validators.required]));
+        this.setControlProperties(form, "dispenserType", "Dispenser Type", Validators.compose([Validators.required]));
+        this.setControlProperties(form, "paddress1", "Physical - Address 1", Validators.compose([Validators.required, Validators.maxLength(128)]));
+        this.setControlProperties(form, "paddress2", "Physical - Address 2", Validators.compose([Validators.maxLength(128)]));
+        this.setControlProperties(form, "paddress3", "Physical - Address 3", Validators.compose([Validators.maxLength(128)]));
+        this.setControlProperties(form, "pcity", "Physical - City", Validators.compose([Validators.maxLength(64)]));
+        this.setControlProperties(form, "pstate", "Physical - State", Validators.compose([Validators.maxLength(2)]));
+        this.setControlProperties(form, "pzipCode", "Physical - Zip Code", Validators.compose([Validators.maxLength(10)]));
+        this.setControlProperties(form, "maddress1", "Mailing - Address 1", Validators.compose([Validators.maxLength(128)]));
+        this.setControlProperties(form, "maddress2", "Mailing - Address 2", Validators.compose([Validators.maxLength(128)]));
+        this.setControlProperties(form, "maddress3", "Mailing - Address 3", Validators.compose([Validators.maxLength(128)]));
+        this.setControlProperties(form, "mcity", "Mailing - City", Validators.compose([Validators.maxLength(64)]));
+        this.setControlProperties(form, "mstate", "Mailing - State", Validators.compose([Validators.maxLength(2)]));
+        this.setControlProperties(form, "mzipCode", "Mailing - Zip Code", Validators.compose([Validators.maxLength(10)]));
+        this.setControlProperties(form, "raddress1", "Remittance - Address 1", Validators.compose([Validators.maxLength(128)]));
+        this.setControlProperties(form, "raddress2", "Remittance - Address 2", Validators.compose([Validators.maxLength(128)]));
+        this.setControlProperties(form, "raddress3", "Remittance - Address 3", Validators.compose([Validators.maxLength(128)]));
+        this.setControlProperties(form, "rcity", "Remittance - City", Validators.compose([Validators.maxLength(64)]));
+        this.setControlProperties(form, "rstate", "Remittance - State", Validators.compose([Validators.maxLength(2)]));
+        this.setControlProperties(form, "rzipCode", "Remittance - Zip Code", Validators.compose([Validators.maxLength(10)]));
+        this.setControlProperties(form, "ein", "EIN", Validators.compose([Validators.maxLength(50)]));
+        this.setControlProperties(form, "phone", "Telephone", Validators.compose([ServiceProviderValidationService.isInteger.bind(this, true),  Validators.maxLength(10)]));
+        this.setControlProperties(form, "email", "Email Address", Validators.compose([Validators.maxLength(256), ServiceProviderValidationService.isEmailValid]));
+        this.setControlProperties(form, "fax", "Fax", Validators.compose([Validators.maxLength(10), ServiceProviderValidationService.isInteger.bind(this, true)]));
+        this.setControlProperties(form, "effectiveDate", "Effective Date", Validators.compose([ServiceProviderValidationService.isDate.bind(this, false)]));
+        this.setControlProperties(form, "terminationDate", "Termination Date", Validators.compose([ServiceProviderValidationService.isDate.bind(this, true)]));        
+        var identValidator = AsyncValidator.debounceControl(form, frm => ServiceProviderValidationService.isIdentDuplicate(this.service, this.viewModel.id, frm));
 
-        //Set up controls
-        var binControl = new FormControl("", Validators.maxLength(6));
-        var buildReturn = this.validationService.buildControlGroup(builder, [
-            { controlName: "NPIControl", description: "NPI", control: npiControl},
-            { controlName: "StoreNameControl", description: "Store Name", control: new FormControl("", Validators.compose([Validators.required, Validators.maxLength(64)]))},
-            { controlName: "StoreNumberControl", description: "Store Number", control: new FormControl("", Validators.compose([Validators.required, Validators.maxLength(10)]))},
-            { controlName: "PharmacyTypeControl", description: "Pharmacy Type", control: new FormControl("", Validators.required)},
-            { controlName: "DispenserClassControl", description: "Dispenser Class", control: new FormControl("", Validators.required)},
-            { controlName: "DispenserTypeControl", description: "Dispenser Type", control: new FormControl("", Validators.required)},
-            { controlName: "EligibilityCodeControl", description: "Eligibility Code", control: new FormControl("", Validators.maxLength(1))},
-            { controlName: "PAddress1Control", description: "Physical - Address 1", control: new FormControl("", Validators.compose([Validators.required, Validators.maxLength(128)]))},
-            { controlName: "PAddress2Control", description: "Physical - Address 2", control: new FormControl("", Validators.maxLength(128))},
-            { controlName: "PAddress3Control", description: "Physical - Address 3", control: new FormControl("", Validators.maxLength(128))},
-            { controlName: "PCityControl", description: "Physical - City", control: new FormControl("", Validators.compose([Validators.maxLength(64), Validators.required]))},
-            { controlName: "PStateControl", description: "Physical - State", control: new FormControl("", Validators.compose([Validators.required, Validators.maxLength(2)]))},
-            { controlName: "PZipCodeControl", description: "Physical - Zip Code", control: new FormControl("", Validators.compose([Validators.maxLength(10), Validators.required]))},
-            { controlName: "MAddress1Control", description: "Mailing - Address 1", control: new FormControl("", Validators.maxLength(128))},
-            { controlName: "MAddress2Control", description: "Mailing - Address 2", control: new FormControl("", Validators.maxLength(128))},
-            { controlName: "MAddress3Control", description: "Mailing - Address 3", control: new FormControl("", Validators.maxLength(128))},
-            { controlName: "MCityControl", description: "Mailing - City", control: new FormControl("", Validators.maxLength(64))},
-            { controlName: "MStateControl", description: "Mailing - State", control: new FormControl("", Validators.maxLength(2))},
-            { controlName: "MZipCodeControl", description: "Mailing - Zip Code", control: new FormControl("", Validators.maxLength(10))},
-            { controlName: "EINControl", description: "EIN", control: new FormControl("", Validators.maxLength(50))},
-            { controlName: "RAddress1Control", description: "Remittance - Address 1", control: new FormControl("", Validators.maxLength(128))},
-            { controlName: "RAddress2Control", description: "Remittance - Address 2", control: new FormControl("", Validators.maxLength(128))},
-            { controlName: "RAddress3Control", description: "Remittance - Address 3", control: new FormControl("", Validators.maxLength(128))},
-            { controlName: "RCityControl", description: "Remittance - City", control: new FormControl("", Validators.maxLength(64))},
-            { controlName: "RStateControl", description: "Remittance - State", control: new FormControl("", Validators.maxLength(2))},
-            { controlName: "RZipCodeControl", description: "Remittance - Zip Code", control: new FormControl("", Validators.maxLength(10))},
-            { controlName: "TelephoneControl", description: "Phone", control: new FormControl("", Validators.compose([ServiceProviderValidationService.isInteger.bind(this, true),  Validators.maxLength(10)]))},
-            { controlName: "EmailControl", description: "Email Address", control: new FormControl("", Validators.compose([Validators.maxLength(256), ServiceProviderValidationService.isEmailValid]))},
-            { controlName: "FaxControl", description: "Email Address", control: new FormControl("", Validators.compose([Validators.maxLength(10), ServiceProviderValidationService.isInteger.bind(this, true)]))},
-
-            { controlName: "EffectiveDateControl", description: "Effective Date", control: new FormControl("", Validators.compose([ServiceProviderValidationService.isDate.bind(this, false)]))},
-            { controlName: "TerminationDateControl", description: "Termination Date", control: new FormControl("", Validators.compose([ServiceProviderValidationService.isDate.bind(this, true)]))}
-        ]);                
-        this.form = buildReturn.controlGroup;
-        this.controlDataDescriptions = buildReturn.controlDataDescriptions;
-        
-        var identValidator = AsyncValidator.debounceControl(this.form, form => ServiceProviderValidationService.isIdentDuplicate(this.service, this.viewModel.id, form));
-
-        //Initialize all validation
-        this.form.valueChanges.subscribe(form => {
-            trace(TraceMethodPosition.CallbackStart, "FormChangesEvent");
+        var executeValidation = () => {
             var flv = Validators.compose([ServiceProviderValidationService.mailingAddressCheck, ServiceProviderValidationService. remittanceAddressCheck]);
-            var flav = Validators.composeAsync([identValidator ]);
-            this.validationService.getValidationResults(this.form, this.controlDataDescriptions, flv, flav).then(results => {
+            var flav = Validators.composeAsync([identValidator]);
+            this.validationService.getValidationResults(form, flv, flav).then(results => {
                 this.validationMessages = results;
             });
-            trace(TraceMethodPosition.CallbackEnd, "FormChangesEvent");                                    
-        });
-                
-        trace(TraceMethodPosition.Exit);
-        
+        };
+
+        form.valueChanges.subscribe(executeValidation);
+
+        executeValidation();
+
+        this.validationSet = true;
     }
     
     
@@ -148,6 +135,7 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
                     this.dispenserTypes = data[1];
                     this.pharmacyTypes = data[2];
 
+                    this.initializeValidation(this.form);
                     this.EntityValuesView.load(true, this.viewModel.id, EntityType.Pharmacy, this.viewModel.name, this.viewModel.npi, this.readOnly);
                         trace(TraceMethodPosition.CallbackEnd);
 
@@ -159,7 +147,7 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
     }
     
     ngAfterViewInit() {
-        this.baseService.hubService.callbackWhenLoaded(this.getInitialData.bind(this, this.service, this.id));
+        this.baseService.hubService.callbackWhenLoaded(this.getInitialData.bind(this, this.service, this.id));        
     }
 
     ngOnInit() {        
@@ -167,7 +155,7 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
         this.activatedRoute.params.subscribe(params => {
             this.id = params["id"];
             this.npi = params["npi"];
-            this.initializeForm(this.builder);     
+            
         });
     }
 
@@ -245,4 +233,3 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
 
 
 }
-

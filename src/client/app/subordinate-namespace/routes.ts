@@ -4,8 +4,8 @@ import { NamespaceComponent } from './namespace.component';
 import { Routes } from '@angular/router';
 
 export var NamespaceRoutes: Routes =  [
-    { path: '/namespacelist', component: NamespaceListComponent },
-    { path: '/namespaces/:id', component: NamespaceComponent },
-    { path: '/newnamespace', component: NamespaceComponent }
+    { path: 'namespacelist', component: NamespaceListComponent },
+    { path: 'namespaces/:id', component: NamespaceComponent },
+    { path: 'newnamespace', component: NamespaceComponent }
 ];
 

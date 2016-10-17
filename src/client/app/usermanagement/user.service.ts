@@ -242,4 +242,3 @@ export interface IUsersFromServer extends ICollectionViewModel<IUserProfile> {
 export interface IUsersToClientFilter extends ICollectionViewModel<IUserProfileViewModel> {
     statuses: INameValue<string>[];
 }
-

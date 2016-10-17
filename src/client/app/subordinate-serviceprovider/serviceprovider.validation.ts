@@ -15,11 +15,11 @@ export class ServiceProviderValidationService extends ValidationService {
     }
     
     public static remittanceAddressCheck(form: FormGroup): IValidationResult {
-        var einControl: AbstractControl = form.controls["EINControl"];
-        var rAddress1Control: AbstractControl = form.controls["RAddress1Control"];
-        var rCityControl: AbstractControl = form.controls["RCityControl"];
-        var rStateControl: AbstractControl = form.controls["RStateControl"];
-        var rZipControl: AbstractControl = form.controls["RZipCodeControl"];
+        var einControl: AbstractControl = form.controls["ein"];
+        var rAddress1Control: AbstractControl = form.controls["raddress1"];
+        var rCityControl: AbstractControl = form.controls["rcity"];
+        var rStateControl: AbstractControl = form.controls["rstate"];
+        var rZipControl: AbstractControl = form.controls["rzipCode"];
 
         if (einControl.value && (!rAddress1Control.value || !rCityControl.value || !rStateControl.value || !rZipControl.value))
             return { [ServiceProviderValidationService.remittanceAddressRequired] : true};
@@ -28,10 +28,10 @@ export class ServiceProviderValidationService extends ValidationService {
     }
 
     public static mailingAddressCheck(form: FormGroup): IValidationResult {
-        var mAddress1Control: AbstractControl = form.controls["MAddress1Control"];
-        var mCityControl: AbstractControl = form.controls["MCityControl"];
-        var mStateControl: AbstractControl = form.controls["MStateControl"];
-        var mZipControl: AbstractControl = form.controls["MZipCodeControl"];
+        var mAddress1Control: AbstractControl = form.controls["maddress1"];
+        var mCityControl: AbstractControl = form.controls["mcity"];
+        var mStateControl: AbstractControl = form.controls["mstate"];
+        var mZipControl: AbstractControl = form.controls["mzipCode"];
         if (mAddress1Control.value &&  (!mCityControl.value || !mStateControl.value || !mZipControl.value))
             return { [ServiceProviderValidationService.mailingAddressRequired] : true};
         else 
@@ -40,8 +40,8 @@ export class ServiceProviderValidationService extends ValidationService {
 
     public static isIdentDuplicate(service: ServiceProviderService, id: string, ctl: AbstractControl): Promise<IValidationResult> {
         var form = <FormGroup>ctl;
-        var npiControl: AbstractControl = form.controls["NPIControl"];
-        var effectiveDateControl: AbstractControl = form.controls["EffectiveDateControl"];
+        var npiControl: AbstractControl = form.controls["npi"];
+        var effectiveDateControl: AbstractControl = form.controls["effectiveDate"];
         if (npiControl.value || effectiveDateControl.value) {
             var svc = service.isIdentDuplicate(id, npiControl.value, effectiveDateControl.value);                            
             var p = new Promise<IValidationResult>(resolve => {

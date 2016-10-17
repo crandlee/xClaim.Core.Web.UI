@@ -138,7 +138,7 @@ export class ValidationService {
         return ret;
     }
 
-    public getValidationResults(controlGroup: FormGroup, controlDescriptions: string[], 
+    public getValidationResults(controlGroup: FormGroup,  
         formLevelValidation?: ValidatorFn, asyncFormLevelValidation?: AsyncValidatorFn, options?: IValidationOptions): Promise<IFormValidationResult[]> {
         
         
@@ -156,7 +156,7 @@ export class ValidationService {
         //Build form validation results from control-level validation/form-level validation
         var clp = flp.then(flv => {
             return new Promise(resolve => {
-                var ret = _.map(this.processControlLevelValidation(controlGroup, controlDescriptions, dirtyOnly), ce => {
+                var ret = _.map(this.processControlLevelValidation(controlGroup, dirtyOnly), ce => {
                     var res:any = <IFormValidationResult>{ control: ce.control, message: this.getValidatorErrorMessage(ce.error), controlDescription: ce.controlDescription, 
                         type: ValidationResultType.Error, getMessage: () => { return res.controlDescription + ": " + res.message; } }; 
                     return res;   
@@ -170,14 +170,14 @@ export class ValidationService {
         
     }
     
-    private processControlLevelValidation(controlGroup: FormGroup, controlDescriptions: string[], dirtyOnly: boolean): IControlLevelErrorResult[] {
+    private processControlLevelValidation(controlGroup: FormGroup, dirtyOnly: boolean): IControlLevelErrorResult[] {
                 
         var controlErrors: IControlLevelErrorResult[] = [];
 
         _.chain(controlGroup.controls)
             .values<FormControl>()
             .map((c, idx) => {
-                return { control: c,  description: controlDescriptions[idx]}
+                return { control: c,  description: c['description']}
             })
             .filter(ctrlDesc => (!dirtyOnly || ctrlDesc.control.dirty) &&  !ctrlDesc.control.valid && !ctrlDesc.control.pending)
             .each(ctrlDesc => {
@@ -230,7 +230,6 @@ export class ValidationService {
     public buildControlGroup(builder: FormBuilder, controlDefinitions: IControlDefinition[]): { controlGroup: FormGroup, controlDataDescriptions: string[] } {
 
 
-        if (builder == null) throw new Error("Must provide a form builder");
         if (controlDefinitions == null) throw new Error("Must provide a control definition");
 
 
@@ -238,9 +237,8 @@ export class ValidationService {
         var descriptions = _.map(controlDefinitions, cd => cd.description);
         var controls = _.map(controlDefinitions, cd => cd.control);
         
-        var builderDef = _.zipObject(names, controls);
-        var form = builder.group(builderDef);                
-        
+        var builderDef = <{[key:string]: AbstractControl}>_.zipObject(names, controls);
+        var form = new FormGroup(builderDef);                
         return {
             controlGroup: form,
             controlDataDescriptions: descriptions 

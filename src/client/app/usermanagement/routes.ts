@@ -3,9 +3,9 @@ import { UserProfileComponent, UserListComponent, UserComponent } from '../userm
 import { Routes } from '@angular/router';
 
 export var UserManagementRoutes: Routes =  [
-    { path: '/userprofile', component: UserProfileComponent },
-    { path: '/userlist', component: UserListComponent },
-    { path: '/user/:id', component: UserComponent },
-    { path: '/newuser', component: UserComponent }
+    { path: 'userprofile', component: UserProfileComponent },
+    { path: 'userlist', component: UserListComponent },
+    { path: 'user/:id', component: UserComponent },
+    { path: 'newuser', component: UserComponent }
 ];
 
