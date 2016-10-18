@@ -99,7 +99,7 @@ export class NgTableComponent {
     var box = this.modal.open('sm');
     this.modal.onClose.subscribe(e => {
       this.deleteClicked.emit(row); 
-      this.modal.onClose.unsubscribe();     
+      this.modal.onClose.unsubscribe();
     });
 
   }

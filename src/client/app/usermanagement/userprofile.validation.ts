@@ -17,6 +17,7 @@ export class UserProfileValidationService extends ValidationService {
     
     public isEmailDuplicate(emailControl: AbstractControl, userService: UserService, id: string): Promise<IValidationResult> {
         
+        if (!emailControl) return Promise.resolve(null);        
         if (!id || !emailControl.value) return Promise.resolve(null);
         
         var svc = userService.isEmailDuplicate(emailControl.value, id);                            
@@ -30,9 +31,9 @@ export class UserProfileValidationService extends ValidationService {
     }
 
     public isUserNameDuplicate(userNameControl: AbstractControl, userService: UserService, id: string): Promise<IValidationResult> {
-        
+
+        if (!userNameControl) return Promise.resolve(null);        
         if (!id || !userNameControl.value) return Promise.resolve(null);
-        
         var svc = userService.isUserNameDuplicate(userNameControl.value, id);                            
         var p = new Promise<IValidationResult>(resolve => {
             svc.subscribe(isDuplicate => {
@@ -44,9 +45,10 @@ export class UserProfileValidationService extends ValidationService {
     }
     
     public static passwordCompare(form: FormGroup): IValidationResult {
-        var passwordControl: AbstractControl = form.controls["PasswordControl"];
-        var confirmPasswordControl: AbstractControl = form.controls["ConfirmPasswordControl"];
-        
+        var passwordControl: AbstractControl = form.controls["password"];
+        var confirmPasswordControl: AbstractControl = form.controls["confirmPassword"];
+        if (!passwordControl || !confirmPasswordControl) return null;
+        if (passwordControl.value === '' || confirmPasswordControl.value === '') return null;
         return { [UserProfileValidationService.passwordsDoNotMatch] : passwordControl.value !== confirmPasswordControl.value};
     }
 

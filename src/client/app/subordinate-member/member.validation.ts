@@ -15,8 +15,9 @@ export class MemberValidationService extends ValidationService {
     
     public static isIdentDuplicate(service: MemberService, id: string, ctl: AbstractControl): Promise<IValidationResult> {
         var form = <FormGroup>ctl;
-        var memberIdControl: AbstractControl = form.controls["MemberIdControl"];
-        var effectiveDateControl: AbstractControl = form.controls["EffectiveDateControl"];
+        var memberIdControl: AbstractControl = form.controls["memberId"];
+        var effectiveDateControl: AbstractControl = form.controls["effectiveDate"];
+        if (!memberIdControl || !effectiveDateControl) return Promise.resolve(null);
         if (memberIdControl.value || effectiveDateControl.value) {
             var svc = service.isIdentDuplicate(id, memberIdControl.value, effectiveDateControl.value);                            
             var p = new Promise<IValidationResult>(resolve => {

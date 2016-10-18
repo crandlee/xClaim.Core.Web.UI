@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { UserComponent, UserProfileComponent, UserListComponent, UserFilterComponent, UserClaimsComponent, 
     UserService, ClaimDefinitionsService, UserFilterService, UserProfileValidationService } from './index';
 import { AccordionModule, DatepickerModule } from 'ng2-bootstrap/ng2-bootstrap';
@@ -8,7 +8,7 @@ import { SharedModule } from '../shared/shared.module';
 
 
 @NgModule({
-  imports: [CommonModule, AccordionModule, SharedModule, DatepickerModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, AccordionModule, SharedModule, DatepickerModule, FormsModule],
   declarations: [UserComponent, UserProfileComponent, UserFilterComponent, UserListComponent, UserClaimsComponent],
   exports: [],
   providers: [UserService, UserFilterService, ClaimDefinitionsService, UserProfileValidationService]

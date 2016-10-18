@@ -3,7 +3,7 @@
         <div class="navbar navbar-inverse center">
             <h4>Namespace Information for: {{viewModel.name || "New Namespace"}}</h4>
         </div>
-        <form (ngSubmit)="onSubmit()" [formGroup]="form">
+        <form (ngSubmit)="onSubmit()" #form="ngForm">
             <div class="form-group clearfix">
                 <div class="btn-toolbar pull-right">
                     <button type="submit" class="btn btn-default" [disabled]="validationMessages.length > 0">Save</button>
@@ -12,29 +12,29 @@
             </div>    
             <div class="form-group">
                 <label for="name">Name:</label>
-                <input type="text" placeholder="Name" name="name" class="form-control" ngControl="NameControl" [(ngModel)]="viewModel.name" required />
+                <input type="text" placeholder="Name" name="name" class="form-control" [(ngModel)]="viewModel.name" />
             </div>    
             <div class="form-group">
                 <label for="description">Description:</label>
-                <input type="text" placeholder="Description" name="description" class="form-control" ngControl="DescriptionControl" [(ngModel)]="viewModel.description" />
+                <input type="text" placeholder="Description" name="description" class="form-control" [(ngModel)]="viewModel.description" />
             </div>    
             <div class="form-group">
                 <label for="valuetype">Value Type</label>
-                <select class="form-control input-sm" [(ngModel)]="viewModel.type" required>
+                <select class="form-control input-sm" name="type" [(ngModel)]="viewModel.type">
                     <option *ngFor="let val of namespaceValueTypes | orderBy : '+description'" [value]="val.id">{{val.description}}</option>
                 </select>                                
             </div>    
             <div class="form-group">
-                <label for="validationpattern">Validation Pattern</label>
-                <input type="text" placeholder="Validation Pattern" name="validationpattern" class="form-control" ngControl="ValidationPatternControl" [(ngModel)]="viewModel.validationPattern" />
+                <label for="validationPattern">Validation Pattern</label>
+                <input type="text" placeholder="Validation Pattern" name="validationPattern" class="form-control" [(ngModel)]="viewModel.validationPattern" />
             </div>    
             <div class="form-group">
                 <label for="length">Length</label>
-                <input type="text" placeholder="Length" name="length" class="form-control" ngControl="LengthControl" [(ngModel)]="viewModel.length" />
+                <input type="text" placeholder="Length" name="length" class="form-control" [(ngModel)]="viewModel.length" />
             </div>
             <div class="form-group">
                 <label for="precision">Precision</label>
-                <input type="text" placeholder="Precision" name="precision" class="form-control" ngControl="PrecisionControl" [(ngModel)]="viewModel.precision" />
+                <input type="text" placeholder="Precision" name="precision" class="form-control" [(ngModel)]="viewModel.precision" />
             </div>
             <div class="form-group">
                 <label for="enabled">Allow Null:</label>

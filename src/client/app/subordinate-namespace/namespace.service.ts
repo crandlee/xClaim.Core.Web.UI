@@ -116,19 +116,18 @@ export class NamespaceService implements IDataService<INamespace, INamespaceView
             allowNull: model.allowNull,
             tooltipMessage: `<table>
                             <tr>
-                                <td>Type:</td><td style="padding-left: 5px">${this.namespaceValueTypeToText(model.type)}</td>
+                                <td>Type:</td><td>${this.namespaceValueTypeToText(model.type)}</td>
                             </tr>   
                             <tr>
-                                <td>Length:</td><td style="padding-left: 5px">${model.length}</td>
+                                <td>Length:</td><td>${model.length}</td>
                             </tr>   
                             <tr>
-                                <td>Precision:</td><td style="padding-left: 5px">${model.precision}</td>
+                                <td>Precision:</td><td>${model.precision}</td>
                             </tr>   
                             <tr>                                        
-                                <td>Id:</td><td style="padding-left: 5px">${model.id}</td>
+                                <td>Id:</td><td>${model.id}</td>
                             </tr>
-                            </table>
-            `  
+                            </table>`  
         };            
     
         return vm;

@@ -54,8 +54,6 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
     {  
         super(baseService);
         this.initializeTrace("ServiceProviderComponent");
-        this.readOnly = (new Boolean(this.npi).valueOf());
-
         this.viewModel = this.service.getEmptyViewModel();
         this.states = this.dropdownService.getStates();
 
@@ -68,7 +66,7 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
         this.setControlProperties(form, "storeNumber", "Store Number", Validators.compose([Validators.required, Validators.maxLength(10)]));
         this.setControlProperties(form, "npi", "NPI", Validators.compose([Validators.required, Validators.maxLength(10)]));
         this.setControlProperties(form, "storeName", "Store Name", Validators.compose([Validators.required, Validators.maxLength(64)]));
-        this.setControlProperties(form, "pharmacyType", "Pharmacy Type", Validators.compose([Validators.required]));
+        this.setControlProperties(form, "pharmacyType", "Pharmacy Type", Validators.compose([ServiceProviderValidationService.isGreaterThanZero.bind(this, false)]));
         this.setControlProperties(form, "dispenserClass", "Dispenser Class", Validators.compose([Validators.required]));
         this.setControlProperties(form, "dispenserType", "Dispenser Type", Validators.compose([Validators.required]));
         this.setControlProperties(form, "paddress1", "Physical - Address 1", Validators.compose([Validators.required, Validators.maxLength(128)]));
@@ -124,18 +122,18 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
             return new Observable<IServiceProvider>();
         }).subscribe(up => {
             trace(TraceMethodPosition.CallbackStart);
+            this.initializeValidation(this.form);
             this.viewModel = this.service.toViewModel(up);
             if (!this.id && !this.npi) {
                 this.viewModel.effectiveDate = "";
             }
-            
+                        
             Observable.forkJoin(this.service.getDispenserClasses(), this.service.getDispenserTypes(), this.service.getPharmacyTypes())
                 .subscribe((data:Array<IEnumViewModel[]>) => {
                     this.dispenserClasses = data[0];
                     this.dispenserTypes = data[1];
                     this.pharmacyTypes = data[2];
 
-                    this.initializeValidation(this.form);
                     this.EntityValuesView.load(true, this.viewModel.id, EntityType.Pharmacy, this.viewModel.name, this.viewModel.npi, this.readOnly);
                         trace(TraceMethodPosition.CallbackEnd);
 
@@ -155,7 +153,7 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
         this.activatedRoute.params.subscribe(params => {
             this.id = params["id"];
             this.npi = params["npi"];
-            
+            this.readOnly = (new Boolean(this.npi).valueOf());
         });
     }
 

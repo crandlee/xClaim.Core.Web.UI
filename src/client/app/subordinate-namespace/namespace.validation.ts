@@ -15,7 +15,7 @@ export class NamespaceValidationService extends ValidationService {
     
     
     public static noSpaces(control: AbstractControl): IValidationResult {
-        
+        if (!control) return null;
         if (!control.value || control.value.indexOf(" ") === -1) {
             return null;
         } else {
@@ -26,6 +26,7 @@ export class NamespaceValidationService extends ValidationService {
 
     public isNameDuplicate(nameControl: AbstractControl, namespaceService: NamespaceService, id: string): Promise<IValidationResult> {
         
+        if (!nameControl) return Promise.resolve(null);
         if (!id || !nameControl.value) return Promise.resolve(null);
         
         var svc = namespaceService.isNameDuplicate(nameControl.value, id);                            

@@ -24,12 +24,12 @@ import { DefaultValuesComponent } from './defaultValues.component';
 export class NamespaceComponent extends XCoreBaseComponent  {
 
     public viewModel: INamespaceViewModel;
-    public form: FormGroup;
     public validationMessages: IFormValidationResult[] = [];
-    public controlDataDescriptions: string[];
     public id: string;
     public namespaceValueTypes: IEnumViewModel[] = [];
+    private validationSet: boolean = false;
 
+    @ViewChild("form") form: FormGroup;
     @ViewChild(DefaultValuesComponent) DefaultValuesView: DefaultValuesComponent;
 
     constructor(protected baseService: BaseService, private service: NamespaceService, 
@@ -43,46 +43,32 @@ export class NamespaceComponent extends XCoreBaseComponent  {
 
     }
     
-    private initializeForm(builder: FormBuilder): void {
+    public initializeValidation(form:FormGroup) {
 
-        var trace = this.classTrace("initializeForm");
-        trace(TraceMethodPosition.Entry);
-        
-        //Set up any async validators
-        var nameControl = new FormControl("", Validators.compose([Validators.required, NamespaceValidationService.noSpaces]));
-        var nameValidator = AsyncValidator.debounceControl(nameControl, control => this.validationService.isNameDuplicate(control, 
-            this.service, this.viewModel.id));
-            
-        //Set up controls            
-        var buildReturn = this.validationService.buildControlGroup(builder, [
-            { controlName: "NameControl", description: "Name", control: nameControl},
-            { controlName: "DescriptionControl", description: "Description", control: new FormControl("")},
-            { controlName: "TypeControl", description: "Type", control: new FormControl("")},
-            { controlName: "ValidationPatternControl", description: "Validation Pattern", control: new FormControl("")},
-            { controlName: "LengthControl", description: "Length", control: new FormControl("", 
-                Validators.compose([NamespaceValidationService.isGreaterThanOrEqualToZero.bind(this, false)]))},
-            { controlName: "PrecisionControl", description: "Precision", control: new FormControl("", 
-                Validators.compose([NamespaceValidationService.isGreaterThanOrEqualToZero.bind(this, false)]))},
-            { controlName: "AllowNullControl", description: "AllowNull", control: new FormControl("")}
-        ]);                
-        this.form = buildReturn.controlGroup;
-        this.controlDataDescriptions = buildReturn.controlDataDescriptions;
-        
-        //Initialize all validation
-        this.form.valueChanges.subscribe(form => {
-            trace(TraceMethodPosition.CallbackStart, "FormChangesEvent");
+        if (this.validationSet) return;
+        this.setControlProperties(form, "name", "Name", Validators.compose([Validators.required, NamespaceValidationService.noSpaces, Validators.maxLength(250)]));
+        this.setControlProperties(form, "description", "Description", Validators.compose([Validators.maxLength(256)]));
+        this.setControlProperties(form, "type", "Type");
+        this.setControlProperties(form, "validationPattern", "Validation Pattern", Validators.compose([Validators.maxLength(500)]));
+        this.setControlProperties(form, "length", "Length", Validators.compose([NamespaceValidationService.isGreaterThanOrEqualToZero.bind(this, false)]));
+        this.setControlProperties(form, "precision", "Precision", Validators.compose([NamespaceValidationService.isGreaterThanOrEqualToZero.bind(this, false)]));
+
+        var executeValidation = () => {
             var flv = Validators.compose([]);
-            var flav = Validators.composeAsync([nameValidator]);
-            this.validationService.getValidationResults(this.form, flv, flav).then(results => {
+            var flav = Validators.composeAsync([
+                AsyncValidator.debounceControl(form.controls['name'], control => this.validationService.isNameDuplicate(control, this.service, this.viewModel.id)) 
+            ]);
+            this.validationService.getValidationResults(form, flv, flav).then(results => {
                 this.validationMessages = results;
             });
-            trace(TraceMethodPosition.CallbackEnd, "FormChangesEvent");                                    
-        });
-                
-        trace(TraceMethodPosition.Exit);
-        
+        };
+
+        form.valueChanges.subscribe(executeValidation);
+
+        executeValidation();
+
+        this.validationSet = true;
     }
-    
     
     private getInitialData(service: NamespaceService, id: string): void {        
         var trace = this.classTrace("getInitialData");
@@ -97,6 +83,8 @@ export class NamespaceComponent extends XCoreBaseComponent  {
         fn().subscribe(up => {
             trace(TraceMethodPosition.CallbackStart);
             this.viewModel = this.service.toViewModel(up);
+            this.initializeValidation(this.form);
+
             //Load any subviews here
             this.DefaultValuesView.load(this.viewModel);
 
@@ -114,7 +102,7 @@ export class NamespaceComponent extends XCoreBaseComponent  {
         super.NotifyLoaded("Namespace");   
         this.activatedRoute.params.subscribe(params => {
             this.id = params["id"];
-            this.initializeForm(this.builder);     
+                 
         });
     }
 

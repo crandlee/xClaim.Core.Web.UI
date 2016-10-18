@@ -68,11 +68,11 @@ div.panel-heading {
 
 /*Edit form styles*/
 
-.ng-valid:not(form)  {
+.ng-valid:not(form):not(datepicker)  {
   border-left: 5px solid #42A948 !important; /* green */
 }
 
-.ng-invalid:not(form)  {
+.ng-invalid:not(form):not(datepicker)  {
   border-left: 5px solid #a94442 !important; /* red */
 }
 

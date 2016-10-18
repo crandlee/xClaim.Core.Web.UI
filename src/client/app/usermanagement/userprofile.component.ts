@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Validators, FormGroup, FormControl, FormBuilder } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { XCoreBaseComponent } from '../shared/component/base.component';
 import { IFormValidationResult } from '../shared/validation/validation.service';
 import { ValidationComponent } from '../shared/validation/validation.component';
@@ -17,50 +17,43 @@ export class UserProfileComponent extends XCoreBaseComponent implements OnInit  
 
     public userProfile: IUserProfileViewModel;
     public active: boolean = false;    
-    public form: FormGroup;
     public validationMessages: IFormValidationResult[] = [];
-    public controlDataDescriptions: string[];
-            
-    constructor(protected baseService: BaseService, private userService: UserService, 
-        private builder: FormBuilder, private validationService: UserProfileValidationService)     
+    private validationSet: boolean = false;
+
+
+    @ViewChild("form") form: FormGroup;
+
+    constructor(protected baseService: BaseService, private userService: UserService, private validationService: UserProfileValidationService)     
     {  
         super(baseService);
         this.initializeTrace("UserProfileComponent");        
+        this.userProfile = this.userService.getEmptyUserProfileViewModel();
     }
     
-    private initializeForm(builder: FormBuilder): void {
+    public initializeValidation(form:FormGroup) {
+        if (this.validationSet) return;
+        this.setControlProperties(form, "email", "Email Address", Validators.compose([Validators.required, UserProfileValidationService.isEmailValid, Validators.maxLength(128)]));
+        this.setControlProperties(form, "password", "Password", Validators.compose([Validators.required, UserProfileValidationService.passwordStrength]));
+        this.setControlProperties(form, "confirmPassword", "Confirm Password", Validators.compose([Validators.required]));
 
-        var trace = this.classTrace("initializeForm");
-        trace(TraceMethodPosition.Entry);
-        //Set up any async validators
-        var emailControl = new FormControl("", Validators.compose([Validators.required, UserProfileValidationService.isEmailValid]));
-        var emailAsyncValidator = AsyncValidator.debounceControl(emailControl, control => this.validationService.isEmailDuplicate(control, this.userService, this.userProfile.id));
-        
-        //Set up controls            
-        var buildReturn = this.validationService.buildControlGroup(builder, [
-            { controlName: "EMailControl", description: "EMail", control: emailControl},
-            { controlName: "PasswordControl", description: "Password", control: new FormControl("", Validators.compose([Validators.required, UserProfileValidationService.passwordStrength]))},
-            { controlName: "ConfirmPasswordControl", description: "Confirm Password", control: new FormControl("", Validators.compose([Validators.required]))}
-        ]);
-        this.form = buildReturn.controlGroup;
-        this.controlDataDescriptions = buildReturn.controlDataDescriptions;
-        
-        //Initialize all validation
-        this.form.valueChanges.subscribe(form => {
-            trace(TraceMethodPosition.CallbackStart, "FormChangesEvent");
+        var executeValidation = () => {
             var flv = Validators.compose([UserProfileValidationService.passwordCompare]);
-            var flav = Validators.composeAsync([emailAsyncValidator]);
-            this.validationService.getValidationResults(this.form, flv, flav).then(results => {
+            var flav = Validators.composeAsync([
+                AsyncValidator.debounceControl(form.controls["email"], control => this.validationService.isEmailDuplicate(control, this.userService, this.userProfile.id))
+            ]);
+            this.validationService.getValidationResults(form, flv, flav).then(results => {
                 this.validationMessages = results;
             });
-            trace(TraceMethodPosition.CallbackEnd, "FormChangesEvent");                                    
-        });
-                
-        trace(TraceMethodPosition.Exit);
-        
+        };
+
+        form.valueChanges.subscribe(executeValidation);
+
+        executeValidation();
+
+        this.validationSet = true;
     }
-    
-    
+
+        
     private getInitialData(userService: UserService): void {
         
         var trace = this.classTrace("getInitialData");
@@ -69,19 +62,19 @@ export class UserProfileComponent extends XCoreBaseComponent implements OnInit  
             trace(TraceMethodPosition.CallbackStart);
             this.userProfile = this.userService.toViewModel(up);
             this.active = true;
-            this.initializeForm(this.builder);
+            this.initializeValidation(this.form);
             trace(TraceMethodPosition.CallbackEnd);            
         }); 
         
         trace(TraceMethodPosition.Exit);
     }
     
+    ngAfterViewInit() {
+        this.baseService.hubService.callbackWhenLoaded(this.getInitialData.bind(this, this.userService, this.baseService.hubService));
+    }
+
     ngOnInit() {        
         super.NotifyLoaded("UserProfile");        
-        var trace = this.classTrace("ngOnInit");
-        trace(TraceMethodPosition.Entry);
-        this.baseService.hubService.callbackWhenLoaded(this.getInitialData.bind(this, this.userService, this.baseService.hubService));        
-        trace(TraceMethodPosition.Entry);
     }
                  
     public onSubmit(): void {

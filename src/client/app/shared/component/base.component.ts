@@ -27,7 +27,6 @@ export class XCoreBaseComponent  {
     // }
 
     protected setControlProperties(form: FormGroup, name: string, description: string, syncValidator: ValidatorFn = null, asyncValidator: AsyncValidatorFn = null) {
-        console.log(name);
         if (syncValidator !== null) form.controls[name].validator = syncValidator;
         if (asyncValidator !== null) form.controls[name].asyncValidator = asyncValidator;
         form.controls[name]['description'] = description;

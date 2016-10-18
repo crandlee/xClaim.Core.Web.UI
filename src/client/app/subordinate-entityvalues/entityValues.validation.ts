@@ -14,6 +14,7 @@ export class EntityValuesValidationService extends ValidationService {
 
     public isEntityIdValid(entityType: EntityType, ctrl: AbstractControl, service: EntityValuesService): Promise<IValidationResult> {
         
+        if (!ctrl) return Promise.resolve(null);
         if (!entityType || !ctrl.value) return Promise.resolve(null);
         
         var svc = service.isEntityIdValid(ctrl.value, entityType);                            

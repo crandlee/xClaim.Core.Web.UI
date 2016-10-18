@@ -3,26 +3,26 @@
         <div class="navbar navbar-inverse center">
             <h4>User Information for: {{userProfile.name || "New User"}}</h4>
         </div>
-        <form (ngSubmit)="onSubmit()" [formGroup]="form">
+        <form (ngSubmit)="onSubmit()" #form="ngForm">
             <div class="form-group">
-                <label for="username">User Name:</label>
-                <input type="text" placeholder="User Name" name="username" class="form-control" formControl="UserNameControl" [(ngModel)]="userProfile.name" required />
+                <label for="userName">User Name:</label>
+                <input type="text" placeholder="User Name" name="userName" class="form-control" [(ngModel)]="userProfile.name" />
             </div>    
             <div class="form-group">
-                <label for="fullname">Full Name:</label>
-                <input type="text" placeholder="Full Name" name="fullname" class="form-control" formControl="FullNameControl" [(ngModel)]="userProfile.givenName" required />
+                <label for="fullName">Full Name:</label>
+                <input type="text" placeholder="Full Name" name="fullName" class="form-control" [(ngModel)]="userProfile.givenName" />
             </div>    
             <div class="form-group">
                 <label for="email">EMail</label>
-                <input type="email" placeholder="Email" name="email" class="form-control" formControl="EMailControl" [(ngModel)]="userProfile.emailAddress" required />
+                <input type="email" placeholder="Email" name="email" class="form-control" [(ngModel)]="userProfile.emailAddress" />
             </div>    
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" placeholder="Password" name="password" class="form-control" formControl="PasswordControl" [(ngModel)]="userProfile.password" required />
+                <input type="password" placeholder="Password" name="password" class="form-control" [(ngModel)]="userProfile.password" />
             </div>    
             <div class="form-group">
                 <label for="confirmPassword">Confirm Password</label>
-                <input type="password" placeholder="Confirm Password" name="confirmPassword" class="form-control" formControl="ConfirmPasswordControl" [(ngModel)]="userProfile.confirmPassword" required />
+                <input type="password" placeholder="Confirm Password" name="confirmPassword" class="form-control" [(ngModel)]="userProfile.confirmPassword" />
             </div>
             <div class="form-group">
                 <label for="enabled">Enabled:</label>

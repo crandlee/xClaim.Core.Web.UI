@@ -244,16 +244,16 @@ export class ServiceProviderService implements IDataService<IServiceProvider, IS
             terminationDate: model.terminationDate ? moment.utc(model.terminationDate).local().format('MM/DD/YYYY hh:mm:ss a') : null,
             tooltipMessage: `<table>
                             <tr>
-                                <td>Store Number:</td><td style="padding-left: 5px">${model.storeNumber}</td>
+                                <td>Store Number:</td><td>${model.storeNumber}</td>
                             </tr>   
                             <tr>
-                                <td>Phone:</td><td style="padding-left: 5px">${model.telephone || '(None)'}</td>
+                                <td>Phone:</td><td>${model.telephone || '(None)'}</td>
                             </tr>   
                             <tr>
-                                <td>Effective Date:</td><td style="padding-left: 5px">${moment.utc(model.effectiveDate).local().format('MM/DD/YYYY hh:mm:ss a')}</td>
+                                <td>Effective Date:</td><td>${moment.utc(model.effectiveDate).local().format('MM/DD/YYYY hh:mm:ss a')}</td>
                             </tr>   
                             <tr>                                        
-                                <td>Id:</td><td style="padding-left: 5px">${model.id}</td>
+                                <td>Id:</td><td>${model.id}</td>
                             </tr>
                             </table>
             `  

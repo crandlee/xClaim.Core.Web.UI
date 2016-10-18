@@ -95,22 +95,21 @@ export class ClaimService implements IDataService<IClaim, IClaimViewModel, IClai
             correlatedPackets: (model.correlatedPackets ? model.correlatedPackets.map(cp => this.correlatedPacketToViewModel(cp)) : []),
             tooltipMessage: `<table>
                             <tr>
-                                <td>BIN:</td><td style="padding-left: 5px">${model.bin}</td>
+                                <td>BIN:</td><td>${model.bin}</td>
                             </tr>   
                             <tr>
-                                <td>PCN:</td><td style="padding-left: 5px">${model.pcn}</td>
+                                <td>PCN:</td><td>${model.pcn}</td>
                             </tr>   
                             <tr>
-                                <td>Group Id:</td><td style="padding-left: 5px">${model.groupId}</td>
+                                <td>Group Id:</td><td>${model.groupId}</td>
                             </tr>   
                             <tr>
-                                <td>Transaction Code:</td><td style="padding-left: 5px">${model.transactionCode}</td>
+                                <td>Transaction Code:</td><td>${model.transactionCode}</td>
                             </tr>   
                             <tr>                                        
-                                <td>Id:</td><td style="padding-left: 5px">${model.id}</td>
+                                <td>Id:</td><td>${model.id}</td>
                             </tr>
-                            </table>
-            `  
+                            </table>`  
         };            
         return vm;
     }

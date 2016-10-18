@@ -104,16 +104,16 @@ export class UserService implements IDataService<IUserProfile, IUserProfileViewM
                 claims: [].concat(_.map(model.claims, c => this.userClaimToViewModel(c)  )),
                 tooltipMessage: `<table>
                                 <tr>
-                                    <td>User Name:</td><td style="padding-left: 5px">${model.name}</td>
+                                    <td>User Name:</td><td>${model.name}</td>
                                 </tr>
                                 <tr>
-                                    <td>Full Name:</td><td style="padding-left: 5px">${(givenNameClaim && givenNameClaim.value) || ""}</td>
+                                    <td>Full Name:</td><td>${(givenNameClaim && givenNameClaim.value) || ""}</td>
                                 </tr>
                                 <tr>
-                                    <td>Email:</td><td style="padding-left: 5px">${(emailClaim && emailClaim.value) || ""}</td>
+                                    <td>Email:</td><td>${(emailClaim && emailClaim.value) || ""}</td>
                                 </tr>
                                 <tr>                                        
-                                    <td>Id:</td><td style="padding-left: 5px">${model.id}</td>
+                                    <td>Id:</td><td>${model.id}</td>
                                 </tr>
                                 </table>
                 `  

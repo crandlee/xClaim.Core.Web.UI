@@ -28,9 +28,7 @@ export class PlanComponent extends XCoreBaseComponent  {
 
     public loadingMessage: string = "Loading Plan";
     public viewModel: IPlanViewModel;
-    public form: FormGroup;
     public validationMessages: IFormValidationResult[] = [];
-    public controlDataDescriptions: string[];
     public id: string;
     public states: IDropdownOptionViewModel[] = [];
     public effectiveDateInvalid: boolean = true;
@@ -43,7 +41,9 @@ export class PlanComponent extends XCoreBaseComponent  {
     public bin: string;
     public pcn: string;
     public groupId: string;
+    private validationSet: boolean = false;
 
+    @ViewChild("form") form: FormGroup;
     @ViewChild(EntityValuesComponent) EntityValuesView: EntityValuesComponent;
 
     constructor(protected baseService: BaseService, private service: PlanService,
@@ -53,62 +53,53 @@ export class PlanComponent extends XCoreBaseComponent  {
         super(baseService);
 
         this.initializeTrace("PlanComponent");
-        this.readOnly = (new Boolean(this.bin).valueOf());
 
         this.viewModel = this.service.getEmptyViewModel();
         this.states = this.dropdownService.getStates();
 
     }
-    
-    private initializeForm(builder: FormBuilder): void {
 
-        var trace = this.classTrace("initializeForm");
-        trace(TraceMethodPosition.Entry);
-        
-        //Set up any async validators
-        var nameControl = new FormControl("", Validators.compose([Validators.required, Validators.maxLength(50)]));
-        var nameValidator = AsyncValidator.debounceControl(nameControl, control => this.validationService.isNameDuplicate(control, 
-            this.service, this.viewModel.id));
 
-        //Set up controls
-        var binControl = new FormControl("", Validators.maxLength(6));
-        var buildReturn = this.validationService.buildControlGroup(builder, [
-            { controlName: "NameControl", description: "Name", control: nameControl},
-            { controlName: "BinControl", description: "BIN", control: binControl},
-            { controlName: "PcnControl", description: "PCN", control: new FormControl("", Validators.maxLength(10))},
-            { controlName: "GroupIdControl", description: "Group Id", control: new FormControl("", Validators.maxLength(15))},
-            { controlName: "Address1Control", description: "Address 1", control: new FormControl("", Validators.compose([Validators.maxLength(128), Validators.required]))},
-            { controlName: "Address2Control", description: "Address 2", control: new FormControl("", Validators.maxLength(128))},
-            { controlName: "Address3Control", description: "Address 3", control: new FormControl("", Validators.maxLength(128))},
-            { controlName: "CityControl", description: "City", control: new FormControl("", Validators.compose([Validators.maxLength(64), Validators.required]))},
-            { controlName: "StateControl", description: "State", control: new FormControl("", Validators.required)},
-            { controlName: "ZipCodeControl", description: "Zip Code", control: new FormControl("", Validators.compose([Validators.maxLength(10), Validators.required]))},
-            { controlName: "PhoneControl", description: "Phone", control: new FormControl("", Validators.maxLength(15))},
-            { controlName: "FaxControl", description: "Fax", control: new FormControl("", Validators.maxLength(15))},
-            { controlName: "ContactControl", description: "Contact", control: new FormControl("", Validators.maxLength(25))},
-            { controlName: "CommentsControl", description: "Comments", control: new FormControl("", Validators.maxLength(1000))},
-            { controlName: "EffectiveDateControl", description: "Effective Date", control: new FormControl("", Validators.compose([PlanValidationService.isDate.bind(this, false)]))},
-            { controlName: "TerminationDateControl", description: "Termination Date", control: new FormControl("", Validators.compose([PlanValidationService.isDate.bind(this, true)]))}
-        ]);                
-        this.form = buildReturn.controlGroup;
-        this.controlDataDescriptions = buildReturn.controlDataDescriptions;
-        
-        var identValidator = AsyncValidator.debounceControl(this.form, form => PlanValidationService.isIdentDuplicate(this.service, this.viewModel.id, form));
+    public initializeValidation(form:FormGroup) {
 
-        //Initialize all validation
-        this.form.valueChanges.subscribe(form => {
-            trace(TraceMethodPosition.CallbackStart, "FormChangesEvent");
+        if (this.validationSet) return;
+        this.setControlProperties(form, "name", "Name",Validators.compose([Validators.required, Validators.maxLength(50)]));
+        this.setControlProperties(form, "bin", "BIN", Validators.maxLength(6));
+        this.setControlProperties(form, "pcn", "PCN", Validators.maxLength(10));
+        this.setControlProperties(form, "groupId", "Group Id", Validators.maxLength(15));
+        this.setControlProperties(form, "address1", "Address 1", Validators.compose([Validators.required, Validators.maxLength(128)]));
+        this.setControlProperties(form, "address2", "Address 2", Validators.compose([Validators.maxLength(128)]));
+        this.setControlProperties(form, "address3", "Address 3", Validators.compose([Validators.maxLength(128)]));
+        this.setControlProperties(form, "city", "City", Validators.compose([Validators.maxLength(64)]));
+        this.setControlProperties(form, "state", "State", Validators.compose([Validators.maxLength(2)]));
+        this.setControlProperties(form, "zipCode", "Zip Code", Validators.compose([Validators.maxLength(10)]));
+        this.setControlProperties(form, "phone", "Phone", Validators.compose([Validators.maxLength(15), PlanValidationService.isInteger.bind(this, true)]));
+        this.setControlProperties(form, "fax", "Fax", Validators.compose([Validators.maxLength(15), PlanValidationService.isInteger.bind(this, true)]));
+        this.setControlProperties(form, "contact", "Contact", Validators.compose([Validators.maxLength(25)]));
+        this.setControlProperties(form, "comments", "Comments", Validators.compose([Validators.maxLength(1000)]));
+        this.setControlProperties(form, "effectiveDate", "Effective Date", Validators.compose([PlanValidationService.isDate.bind(this, false)]));
+        this.setControlProperties(form, "terminationDate", "Termination Date", Validators.compose([PlanValidationService.isDate.bind(this, true)]));        
+
+        var executeValidation = () => {
             var flv = Validators.compose([PlanValidationService.identRequired]);
-            var flav = Validators.composeAsync([nameValidator, identValidator ]);
-            this.validationService.getValidationResults(this.form, flv, flav).then(results => {
+            var flav = Validators.composeAsync([
+                AsyncValidator.debounceControl(form, frm => PlanValidationService.isIdentDuplicate(this.service, this.viewModel.id, frm)),
+                AsyncValidator.debounceControl(form.controls['name'], control => this.validationService.isNameDuplicate(control, this.service, this.viewModel.id))
+            ]);
+            this.validationService.getValidationResults(form, flv, flav).then(results => {
                 this.validationMessages = results;
             });
-            trace(TraceMethodPosition.CallbackEnd, "FormChangesEvent");                                    
-        });
-                
-        trace(TraceMethodPosition.Exit);
-        
+        };
+
+        form.valueChanges.subscribe(executeValidation);
+
+        executeValidation();
+
+        this.validationSet = true;
     }
+
+    
+
     
     
     private getInitialData(service: PlanService, id: string): void {        
@@ -126,6 +117,7 @@ export class PlanComponent extends XCoreBaseComponent  {
             if (!this.id) {
                 this.viewModel.effectiveDate = "";
             }
+            this.initializeValidation(this.form);
             //Load any subviews here
             this.EntityValuesView.load(true, this.viewModel.id, EntityType.Plan, this.viewModel.name, 
                 (this.viewModel.bin || "") + "/" + (this.viewModel.pcn || "") + "/" + (this.viewModel.groupId || ""), this.readOnly);
@@ -147,8 +139,7 @@ export class PlanComponent extends XCoreBaseComponent  {
             this.bin = params["bin"];
             this.pcn = params["pcn"];
             this.groupId = params["groupId"];
-
-            this.initializeForm(this.builder);     
+            this.readOnly = (new Boolean(this.bin).valueOf());
         });
     }
 

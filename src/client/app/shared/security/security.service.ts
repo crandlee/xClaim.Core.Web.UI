@@ -154,7 +154,7 @@ export class SecurityService {
 
         var dataToken: any = this.getDataFromToken(token);
         var ret:boolean = false;
-        this.loggingService.debug('Checking for token expiration');
+        this.loggingService.trace('Checking for token expiration');
         if (!dataToken.exp || isNaN(parseInt(dataToken.exp)) || this.getUtcNowTicks() >= parseInt(dataToken.exp)) {
             this.loggingService.debug('Token is expired.  Cannot continue authorization');
             ret = true;
@@ -188,7 +188,7 @@ export class SecurityService {
         var trace = this.classTrace("isCookieTokenValid");
         trace(TraceMethodPosition.Entry);
         
-        this.loggingService.debug('Found token and id token in cookies. Continuing check');
+        this.loggingService.trace('Found token and id token in cookies. Continuing check');
         if (this.isTokenExpired(token)) {
             this.ResetAuthorizationData();
             if (!this.callingLogout) {
@@ -201,7 +201,7 @@ export class SecurityService {
             return false;
         } else {
             this.SetAuthorizationData(token, id_token);
-            this.loggingService.success('Authorization complete and valid (cookie)', { noToast:true });
+            this.loggingService.trace('Authorization complete and valid (cookie)', { noToast:true });
             trace(TraceMethodPosition.Exit);                
             return true;
         };        
@@ -271,7 +271,7 @@ export class SecurityService {
         var trace = this.classTrace("checkAuthorized");
         trace(TraceMethodPosition.Entry);
 
-        this.loggingService.debug('Checking for valid authorization');
+        this.loggingService.trace('Checking for valid authorization');
         
         //If stored in cookies then get tokens from there
         var token = this.cookieService.get("xc.authorizationData");

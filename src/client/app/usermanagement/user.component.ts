@@ -21,10 +21,10 @@ import { TraceMethodPosition } from '../shared/logging/logging.service';
 export class UserComponent extends XCoreBaseComponent  {
 
     public userProfile: IUserProfileViewModel;
-    public form: FormGroup;
     public validationMessages: IFormValidationResult[] = [];
-    public controlDataDescriptions: string[];
     public userId: string;
+    private validationSet: boolean = false;
+    @ViewChild("form") form: FormGroup;
     @ViewChild(UserClaimsComponent) ClaimsView: UserClaimsComponent;
 
     constructor(protected baseService: BaseService, private userService: UserService, 
@@ -35,44 +35,33 @@ export class UserComponent extends XCoreBaseComponent  {
         this.userProfile = this.userService.getEmptyUserProfileViewModel();
     }
     
-    private initializeForm(builder: FormBuilder): void {
+    public initializeValidation(form:FormGroup) {
 
-        var trace = this.classTrace("initializeForm");
-        trace(TraceMethodPosition.Entry);
-        
-        //Set up any async validators
-        var emailControl = new FormControl("", Validators.compose([Validators.required, UserProfileValidationService.isEmailValid]));
-        var emailAsyncValidator = AsyncValidator.debounceControl(emailControl, control => this.validationService.isEmailDuplicate(control, this.userService, this.userProfile.id));
-        var userNameControl = new FormControl("", Validators.compose([Validators.required]));
-        var userNameValidator = AsyncValidator.debounceControl(userNameControl, control => this.validationService.isUserNameDuplicate(control, this.userService, this.userProfile.id));
-            
-        //Set up controls            
-        var buildReturn = this.validationService.buildControlGroup(builder, [
-            { controlName: "UserNameControl", description: "User Name", control: userNameControl},
-            { controlName: "FullNameControl", description: "Full Name", control: new FormControl("", Validators.compose([Validators.required]))},
-            { controlName: "EMailControl", description: "EMail", control: emailControl},
-            { controlName: "PasswordControl", description: "Password", control: new FormControl("", Validators.compose([Validators.required, UserProfileValidationService.passwordStrength]))},
-            { controlName: "ConfirmPasswordControl", description: "Confirm Password", control: new FormControl("", Validators.compose([Validators.required]))},
-            { controlName: "EnabledControl", description: "Enabled", control: new FormControl("")}
-        ]);                
-        this.form = buildReturn.controlGroup;
-        this.controlDataDescriptions = buildReturn.controlDataDescriptions;
-        
-        //Initialize all validation
-        this.form.valueChanges.subscribe(form => {
-            trace(TraceMethodPosition.CallbackStart, "FormChangesEvent");
+        if (this.validationSet) return;
+        this.setControlProperties(form, "userName", "User Name", Validators.compose([Validators.required]));
+        this.setControlProperties(form, "fullName", "Full Name", Validators.compose([Validators.required, Validators.maxLength(256)]));
+        this.setControlProperties(form, "email", "Email Address", Validators.compose([Validators.required, UserProfileValidationService.isEmailValid, Validators.maxLength(128)]));
+        this.setControlProperties(form, "password", "Password", Validators.compose([Validators.required, UserProfileValidationService.passwordStrength]));
+        this.setControlProperties(form, "confirmPassword", "Confirm Password", Validators.compose([Validators.required]));
+
+        var executeValidation = () => {
             var flv = Validators.compose([UserProfileValidationService.passwordCompare]);
-            var flav = Validators.composeAsync([emailAsyncValidator, userNameValidator]);
-            this.validationService.getValidationResults(this.form, flv, flav).then(results => {
+            var flav = Validators.composeAsync([
+                AsyncValidator.debounceControl(form.controls["email"], control => this.validationService.isEmailDuplicate(control, this.userService, this.userProfile.id)), 
+                AsyncValidator.debounceControl(form.controls["userName"], control => this.validationService.isUserNameDuplicate(control, this.userService, this.userProfile.id))
+            ]);
+            this.validationService.getValidationResults(form, flv, flav).then(results => {
                 this.validationMessages = results;
             });
-            trace(TraceMethodPosition.CallbackEnd, "FormChangesEvent");                                    
-        });
-                
-        trace(TraceMethodPosition.Exit);
-        
+        };
+
+        form.valueChanges.subscribe(executeValidation);
+
+        executeValidation();
+
+        this.validationSet = true;
     }
-    
+
     
     private getInitialData(userService: UserService, userId: string): void {        
         var trace = this.classTrace("getInitialData");
@@ -89,7 +78,7 @@ export class UserComponent extends XCoreBaseComponent  {
                 this.userProfile.confirmPassword = "";
                 this.userProfile.enabled = true;
             }
-            this.initializeForm(this.builder);   
+            this.initializeValidation(this.form);   
             this.ClaimsView.load(this.userProfile);
             trace(TraceMethodPosition.CallbackEnd);            
         }); 

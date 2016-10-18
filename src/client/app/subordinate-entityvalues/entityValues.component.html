@@ -5,7 +5,7 @@
         </div>
         <ng-table [config]="tableConfig" [columns]="columns" (deleteClicked)="delete($event)"></ng-table>
         <br/>
-        <form *ngIf="form" (ngSubmit)="save()" #form="ngForm">
+        <form (ngSubmit)="save()" #form="ngForm">
             <validation *ngIf="!readOnly" [validationMessages]='validationMessages'></validation>                                
             <div class="form-group clearfix">
                 <div class="btn-toolbar">
@@ -13,59 +13,59 @@
                     <button *ngIf="!readOnly" type="button" class="btn btn-primary pull-right" (click)="newItem($event)">Add New</button>
                 </div>
             </div>            
-            <div *ngIf="!readOnly" class="form-group col-sm-12">
+            <div class="form-group col-sm-12">
                 <label for="namespaceId">Property Name:</label>
-                <select [disabled]="readOnly" name="namespaceId" class="form-control input-sm" ngControl="NamespaceControl" [(ngModel)]="viewModel.namespaceId" required>
+                <select [disabled]="readOnly" name="namespaceId" class="form-control input-sm" [(ngModel)]="viewModel.namespaceId">
                     <option *ngFor="let def of namespaceOptions | orderBy : '+description'" [value]="def.id">{{def.description}}</option>
                 </select>                
             </div>
-            <div *ngIf="!readOnly" class="form-group col-sm-12">
+            <div class="form-group col-sm-12">
                 <label for="value">Value:</label>
-                <textarea [disabled]="readOnly" placeholder="Value" name="value" class="form-control" ngControl="ValueControl" [(ngModel)]="viewModel.value" required ></textarea>
+                <textarea [disabled]="readOnly" placeholder="Value" name="value" class="form-control"[(ngModel)]="viewModel.value"></textarea>
             </div>             
-            <div *ngIf="!readOnly" class="form-group col-sm-12">
+            <div class="form-group col-sm-12">
                 <label for="index">Index:</label>
-                <input type="text" [disabled]="readOnly" placeholder="Index" name="index" class="form-control" ngControl="IndexControl" [(ngModel)]="viewModel.index" required />
+                <input type="text" [disabled]="readOnly" placeholder="Index" name="index" class="form-control" [(ngModel)]="viewModel.index" />
             </div>           
-            <div *ngIf="!readOnly" class="form-group col-sm-12">
+            <div class="form-group col-sm-12">
                 <label for="priority">Priority:</label>
-                <input type="text" [disabled]="readOnly" placeholder="Priority" name="priority" class="form-control" ngControl="PriorityControl" [(ngModel)]="viewModel.priority" required />
+                <input type="text" [disabled]="readOnly" placeholder="Priority" name="priority" class="form-control" [(ngModel)]="viewModel.priority" />
             </div>           
-            <div *ngIf="!readOnly" class="form-group  col-sm-12">
+            <div class="form-group  col-sm-12">
                 <div class="col-sm-4 form-label filter-label">Effective Date:</div>
                 <div class="col-sm-4">
-                    <input [disabled]="readOnly" name="effectiveDate" ngControl="EffectiveDateControl" class="form-control input-sm" [(ngModel)]="viewModel.effectiveDate" placeholder="Effective Date" #effectiveDateStart (blur)="effectiveDateString($event.target)" />                     
+                    <input [disabled]="readOnly" name="effectiveDate" class="form-control input-sm" [(ngModel)]="viewModel.effectiveDate" placeholder="Effective Date" (blur)="effectiveDateString($event.target)" />                     
                 </div>
                 <div *ngIf="!readOnly" class="col-sm-1">
                     <button class="btn btn-xs calendar-button" (click)="toggleEffectiveDate($event);"><span class="glyphicon glyphicon-calendar"></span></button>
-                    <datepicker class="popup" name="effectiveDatePicker" *ngIf="showEffectiveDatePicker" [showWeeks]="false" [(ngModel)]="viewModel.effectiveDate" (ngModelChange)="hideEffectiveDate()"></datepicker>
+                    <datepicker [disabled]="readOnly" class="popup" name="effectiveDatePicker" [hidden]="!showEffectiveDatePicker" [showWeeks]="false" [(ngModel)]="viewModel.effectiveDate" (ngModelChange)="hideEffectiveDate()"></datepicker>
                 </div>
             </div>                
-            <div *ngIf="!readOnly" class="form-group  col-sm-12">
+            <div class="form-group  col-sm-12">
                 <div class="col-sm-4 form-label filter-label">Termination Date:</div>
                 <div class="col-sm-4">
-                    <input [disabled]="readOnly" name="terminationDate" ngControl="TerminationDateControl"  class="form-control input-sm" [(ngModel)]="viewModel.terminationDate" placeholder="Termination Date" #terminationDateStart (blur)="terminationDateString($event.target)" />                                
+                    <input [disabled]="readOnly" name="terminationDate"  class="form-control input-sm" [(ngModel)]="viewModel.terminationDate" placeholder="Termination Date" (blur)="terminationDateString($event.target)" />                                
                 </div>
                 <div *ngIf="!readOnly" class="col-sm-1">
                     <button class="btn btn-xs calendar-button" (click)="toggleTerminationDate($event);"><span class="glyphicon glyphicon-calendar"></span></button>
-                    <datepicker class="popup" name="terminationDatePicker" *ngIf="showTerminationDatePicker" [showWeeks]="false" [(ngModel)]="viewModel.terminationDate" (ngModelChange)="hideTerminationDate()"></datepicker>
+                    <datepicker [disabled]="readOnly" class="popup" name="terminationDatePicker" [hidden]="!showTerminationDatePicker" [showWeeks]="false" [(ngModel)]="viewModel.terminationDate" (ngModelChange)="hideTerminationDate()"></datepicker>
                 </div>
             </div>    
-            <div *ngIf="!readOnly && parentEntityType !== 1" class="form-group col-sm-12">
+            <div [hidden]="readOnly || parentEntityType === 1" class="form-group col-sm-12">
                 <label for="planId">BIN/PCN/Group Id (Secondary):</label>
-                <input type="text" [disabled]="readOnly" placeholder="BIN/PCN/Group Id" name="planId" class="form-control" ngControl="PlanControl" [(ngModel)]="viewModel.planId" />
+                <input type="text" [disabled]="readOnly" placeholder="BIN/PCN/Group Id" name="planId" class="form-control" [(ngModel)]="viewModel.planId" />
             </div>            
-            <div *ngIf="!readOnly && parentEntityType !== 5" class="form-group col-sm-12">
+            <div [hidden]="readOnly || parentEntityType === 5" class="form-group col-sm-12">
                 <label for="pharmacyId">Pharmacy Id (Secondary):</label>
-                <input type="text" [disabled]="readOnly" placeholder="Pharmacy Id" name="pharmacyId" class="form-control" ngControl="PharmacyControl" [(ngModel)]="viewModel.serviceProviderId" />
+                <input type="text" [disabled]="readOnly" placeholder="Pharmacy Id" name="pharmacyId" class="form-control" [(ngModel)]="viewModel.serviceProviderId" />
             </div>            
-            <div *ngIf="!readOnly && parentEntityType !== 2" class="form-group col-sm-12">
+            <div [hidden]="readOnly || parentEntityType === 2" class="form-group col-sm-12">
                 <label for="pharmacyId">Member Id (Secondary):</label>
-                <input type="text" [disabled]="readOnly" placeholder="Member Id" name="memberId" class="form-control" ngControl="MemberControl" [(ngModel)]="viewModel.memberId" />
+                <input type="text" [disabled]="readOnly" placeholder="Member Id" name="memberId" class="form-control" [(ngModel)]="viewModel.memberId" />
             </div>            
-            <div *ngIf="!readOnly && parentEntityType !== 4" class="form-group col-sm-12">
+            <div [hidden]="readOnly || parentEntityType === 4" class="form-group col-sm-12">
                 <label for="drugId">Drug Id (NDC) (Secondary):</label>
-                <input type="text" [disabled]="readOnly" placeholder="Drug Id (NDC)" name="drugId" class="form-control" ngControl="DrugControl" [(ngModel)]="viewModel.productServiceId" />
+                <input type="text" [disabled]="readOnly" placeholder="Drug Id (NDC)" name="drugId" class="form-control" [(ngModel)]="viewModel.productServiceId" />
             </div>                       
             <br/>        
         </form>    

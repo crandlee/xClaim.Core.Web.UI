@@ -20,7 +20,7 @@ export class ServiceProviderValidationService extends ValidationService {
         var rCityControl: AbstractControl = form.controls["rcity"];
         var rStateControl: AbstractControl = form.controls["rstate"];
         var rZipControl: AbstractControl = form.controls["rzipCode"];
-
+        if (!einControl || !rAddress1Control || !rCityControl || !rStateControl || !rZipControl) return null;
         if (einControl.value && (!rAddress1Control.value || !rCityControl.value || !rStateControl.value || !rZipControl.value))
             return { [ServiceProviderValidationService.remittanceAddressRequired] : true};
         else 
@@ -32,6 +32,8 @@ export class ServiceProviderValidationService extends ValidationService {
         var mCityControl: AbstractControl = form.controls["mcity"];
         var mStateControl: AbstractControl = form.controls["mstate"];
         var mZipControl: AbstractControl = form.controls["mzipCode"];
+        if (!mAddress1Control || !mCityControl || !mStateControl || !mZipControl) return null;
+
         if (mAddress1Control.value &&  (!mCityControl.value || !mStateControl.value || !mZipControl.value))
             return { [ServiceProviderValidationService.mailingAddressRequired] : true};
         else 
@@ -42,7 +44,7 @@ export class ServiceProviderValidationService extends ValidationService {
         var form = <FormGroup>ctl;
         var npiControl: AbstractControl = form.controls["npi"];
         var effectiveDateControl: AbstractControl = form.controls["effectiveDate"];
-        if (npiControl.value || effectiveDateControl.value) {
+        if (npiControl && effectiveDateControl && (npiControl.value || effectiveDateControl.value)) {
             var svc = service.isIdentDuplicate(id, npiControl.value, effectiveDateControl.value);                            
             var p = new Promise<IValidationResult>(resolve => {
                 svc.subscribe(isDuplicate => {
@@ -51,9 +53,7 @@ export class ServiceProviderValidationService extends ValidationService {
             });  
             return p;
         } else {
-            return new Promise<IValidationResult>(resolve => {
-                resolve(null);
-            });
+            return Promise.resolve(null);
         }
     }
 

@@ -197,19 +197,18 @@ export class MemberService implements IDataService<IMember, IMemberViewModel, IM
             terminationDate: model.terminationDate ? moment.utc(model.terminationDate).local().format('MM/DD/YYYY hh:mm:ss a') : null,
             tooltipMessage: `<table>
                             <tr>
-                                <td>Date Of Birth:</td><td style="padding-left: 5px">${moment(model.dob).format('MM/DD/YYYY')}</td>
+                                <td>Date Of Birth:</td><td>${moment(model.dob).format('MM/DD/YYYY')}</td>
                             </tr>   
                             <tr>
-                                <td>Phone:</td><td style="padding-left: 5px">${model.telephone || '(None)'}</td>
+                                <td>Phone:</td><td>${model.telephone || '(None)'}</td>
                             </tr>   
                             <tr>
-                                <td>Effective Date:</td><td style="padding-left: 5px">${moment.utc(model.effectiveDate).local().format('MM/DD/YYYY hh:mm:ss a')}</td>
+                                <td>Effective Date:</td><td>${moment.utc(model.effectiveDate).local().format('MM/DD/YYYY hh:mm:ss a')}</td>
                             </tr>   
                             <tr>                                        
-                                <td>Id:</td><td style="padding-left: 5px">${model.id}</td>
+                                <td>Id:</td><td>${model.id}</td>
                             </tr>
-                            </table>
-            `  
+                            </table>`  
         };            
     
         return vm;

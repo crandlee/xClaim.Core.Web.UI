@@ -17,9 +17,9 @@ export class PlanValidationService extends ValidationService {
     
 
     public isNameDuplicate(nameControl: AbstractControl, planService: PlanService, id: string): Promise<IValidationResult> {
-        
+
+        if (!nameControl) return Promise.resolve(null);        
         if (!id || !nameControl.value) return Promise.resolve(null);
-        
         var svc = planService.isNameDuplicate(nameControl.value, id);                            
         var p = new Promise<IValidationResult>(resolve => {
             svc.subscribe(isDuplicate => {
@@ -33,10 +33,11 @@ export class PlanValidationService extends ValidationService {
     
     public static isIdentDuplicate(planService: PlanService, id: string, ctl: AbstractControl): Promise<IValidationResult> {
         var form = <FormGroup>ctl;
-        var binControl: AbstractControl = form.controls["BinControl"];
-        var pcnControl: AbstractControl = form.controls["PcnControl"];
-        var groupIdControl: AbstractControl = form.controls["GroupIdControl"];
-        var effectiveDateControl: AbstractControl = form.controls["EffectiveDateControl"];
+        var binControl: AbstractControl = form.controls["bin"];
+        var pcnControl: AbstractControl = form.controls["pcn"];
+        var groupIdControl: AbstractControl = form.controls["groupId"];
+        var effectiveDateControl: AbstractControl = form.controls["effectiveDate"];
+        if (!binControl || !pcnControl || !groupIdControl || !effectiveDateControl) return Promise.resolve(null);
         if (binControl.value || pcnControl.value || groupIdControl.value || effectiveDateControl.value) {
             var svc = planService.isIdentDuplicate(id, binControl.value, pcnControl.value, groupIdControl.value, effectiveDateControl.value);                            
             var p = new Promise<IValidationResult>(resolve => {
@@ -53,8 +54,9 @@ export class PlanValidationService extends ValidationService {
     }
 
     public static identRequired(form: FormGroup): IValidationResult {
-        var pcnControl: AbstractControl = form.controls["PcnControl"];
-        var groupIdControl: AbstractControl = form.controls["GroupIdControl"];
+        var pcnControl: AbstractControl = form.controls["pcn"];
+        var groupIdControl: AbstractControl = form.controls["groupId"];
+        if (!pcnControl || !groupIdControl) return null;
 
         if (!pcnControl.value && !groupIdControl.value) {
             return { [PlanValidationService.idsRequired]: true};        

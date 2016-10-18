@@ -44,9 +44,7 @@ export class EntityValuesComponent extends XCoreBaseComponent {
     public entityValues: IEntityValueViewModel[] = [];
     public id: string;
     public viewModel: IEntityValueViewModel;
-    public form: FormGroup;
     public validationMessages: IFormValidationResult[] = [];
-    public controlDataDescriptions: string[];
 
     public entityTypes: IEnumViewModel[] = [];
     public valueValid: boolean = false;
@@ -64,7 +62,9 @@ export class EntityValuesComponent extends XCoreBaseComponent {
     public showTerminationDatePicker: boolean = false;
 
     public readOnly: boolean = true;
+    private validationSet: boolean = false;
 
+    @ViewChild("form") form: FormGroup;
     @ViewChild(NgTableComponent) tableComponent: NgTableComponent;
 
     private get deleteSelect(): (id: string) => boolean {
@@ -86,6 +86,8 @@ export class EntityValuesComponent extends XCoreBaseComponent {
         private builder: FormBuilder, private validationService: EntityValuesValidationService) {
         super(baseService);
         this.initializeTrace("EntityValuesComponent");
+
+        this.viewModel = this.service.getEmptyViewModel();
     }
 
     private rowSelect(id: string): void {
@@ -100,54 +102,42 @@ export class EntityValuesComponent extends XCoreBaseComponent {
 
     }
 
-    private initializeForm(builder: FormBuilder): void {
+    
+    public initializeValidation(form:FormGroup) {
 
-        var trace = this.classTrace("initializeForm");
-        trace(TraceMethodPosition.Entry);
+        if (this.validationSet) return;
+        this.setControlProperties(form, "namespaceId", "Property Name", Validators.compose([Validators.required]));
+        this.setControlProperties(form, "planId", "Plan", Validators.compose([]));
+        this.setControlProperties(form, "pharmacyId", "Pharmacy", Validators.compose([]));
+        this.setControlProperties(form, "memberId", "Member", Validators.compose([]));
+        this.setControlProperties(form, "drugId", "Drug", Validators.compose([]));
+        this.setControlProperties(form, "value", "Value");
+        this.setControlProperties(form, "index", "Index", Validators.compose([EntityValuesValidationService.isGreaterThanOrEqualToZero.bind(this, false)]));
+        this.setControlProperties(form, "priority", "Priority", Validators.compose([EntityValuesValidationService.isGreaterThanZero.bind(this, false)]));
+        this.setControlProperties(form, "effectiveDate", "Effective Date", Validators.compose([EntityValuesValidationService.isDate.bind(this, false)]));
+        this.setControlProperties(form, "terminationDate", "Termination Date", Validators.compose([EntityValuesValidationService.isDate.bind(this, true)]));        
 
-        //Set up any async validators
-        //var nameControl = new Control("", Validators.compose([Validators.required, Validators.maxLength(50)]));
-        // var nameValidator = AsyncValidator.debounceControl(nameControl, control => this.validationService.isNameDuplicate(control, 
-        //     this.service, this.viewModel.id));
-        var planControl = new FormControl("");
-        var planValidator = AsyncValidator.debounceControl(planControl, control => this.validationService.isEntityIdValid(EntityType.Plan, control, this.service));
-        var pharmacyControl = new FormControl("");
-        var pharmacyValidator = AsyncValidator.debounceControl(pharmacyControl, control => this.validationService.isEntityIdValid(EntityType.Pharmacy, control, this.service));
-        var drugControl = new FormControl("");
-        var drugValidator = AsyncValidator.debounceControl(drugControl, control => this.validationService.isEntityIdValid(EntityType.Drug, control, this.service));
-        var memberControl = new FormControl("");
-        var memberValidator = AsyncValidator.debounceControl(memberControl, control => this.validationService.isEntityIdValid(EntityType.Member, control, this.service));
-        
-        //Set up controls            
-        var buildReturn = this.validationService.buildControlGroup(builder, [
-            { controlName: "NamespaceControl", description: "Property Name", control: new FormControl("", Validators.compose([Validators.required])) },
-            { controlName: "PlanControl", description: "BIN/PCN/Group Id", control: planControl },
-            { controlName: "PharmacyControl", description: "Pharmacy Id", control: pharmacyControl },
-            { controlName: "DrugControl", description: "Drug Id (NDC)", control: drugControl },
-            { controlName: "MemberControl", description: "Member Id", control: memberControl },
-            { controlName: "ValueControl", description: "Value", control: new FormControl("") },
-            { controlName: "IndexControl", description: "Index", control: new FormControl("", Validators.compose([EntityValuesValidationService.isGreaterThanOrEqualToZero.bind(this, false)])) },
-            { controlName: "PriorityControl", description: "Priority", control: new FormControl("", Validators.compose([EntityValuesValidationService.isGreaterThanZero.bind(this, false)])) },
-            { controlName: "EffectiveDateControl", description: "Effective Date", control: new FormControl("", Validators.compose([EntityValuesValidationService.isDate.bind(this, false)])) },
-            { controlName: "TerminationDateControl", description: "Termination Date", control: new FormControl("", Validators.compose([EntityValuesValidationService.isDate.bind(this, true)])) }
-        ]);
-        this.form = buildReturn.controlGroup;
-        this.controlDataDescriptions = buildReturn.controlDataDescriptions;
-
-        //Initialize all validation
-        this.form.valueChanges.subscribe(form => {
-            trace(TraceMethodPosition.CallbackStart, "FormChangesEvent");
+        var executeValidation = () => {
             var flv = Validators.compose([]);
-            var flav = Validators.composeAsync([planValidator, pharmacyValidator, drugValidator, memberValidator]);
-            this.validationService.getValidationResults(this.form, flv, flav).then(results => {
+            var flav = Validators.composeAsync([
+                AsyncValidator.debounceControl(form.controls['planId'], control => this.validationService.isEntityIdValid(EntityType.Plan, control, this.service)),
+                AsyncValidator.debounceControl(form.controls['pharmacyId'], control => this.validationService.isEntityIdValid(EntityType.Pharmacy, control, this.service)),
+                AsyncValidator.debounceControl(form.controls['drugId'], control => this.validationService.isEntityIdValid(EntityType.Drug, control, this.service)),
+                AsyncValidator.debounceControl(form.controls['memberId'], control => this.validationService.isEntityIdValid(EntityType.Member, control, this.service)) 
+            ]);
+            this.validationService.getValidationResults(form, flv, flav).then(results => {
                 this.validationMessages = results;
             });
-            trace(TraceMethodPosition.CallbackEnd, "FormChangesEvent");
-        });
+        };
 
-        trace(TraceMethodPosition.Exit);
+        form.valueChanges.subscribe(executeValidation);
 
+        executeValidation();
+
+        this.validationSet = true;
     }
+
+
 
 
     public load(initial: boolean, parentId: string, parentEntityType: EntityType, parentEntityName: string, parentEntityId: string, readOnly: boolean) {
@@ -160,11 +150,11 @@ export class EntityValuesComponent extends XCoreBaseComponent {
         this.viewModel = this.service.getEmptyViewModel();
         this.readOnly = readOnly;
 
-        if (initial) this.initializeForm(this.builder);
         this.service.get(0, 0, { entityId: parentId, entityType: parentEntityType }).subscribe(vm => {
             this.service.getNamespacesForDropdown().subscribe(opt => {
                 this.namespaceOptions = opt.rows;
                 this.entityValues = vm.rows;
+                if (initial) this.initializeValidation(this.form);
                 this.tableComponent.load(this.tableLoadFunction(this.readOnly));
                 if (vm.rows.length > 0) {
                     this.viewModel = vm.rows[0];
@@ -235,7 +225,6 @@ export class EntityValuesComponent extends XCoreBaseComponent {
                 lookup.index = vm.index;
             }
             this.newItem();
-            //this.tableComponent.load(this.tableLoadFunction());
             this.load(false, this.parentId, this.parentEntityType, this.parentEntityName, this.parentEntityId, this.readOnly);
         });
         

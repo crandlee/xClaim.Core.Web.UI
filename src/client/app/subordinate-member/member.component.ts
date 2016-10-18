@@ -28,9 +28,7 @@ export class MemberComponent extends XCoreBaseComponent  {
 
     public loadingMessage: string = "Loading Member";
     public viewModel: IMemberViewModel;
-    public form: FormGroup;
     public validationMessages: IFormValidationResult[] = [];
-    public controlDataDescriptions: string[];
     public id: string;
     public states: IDropdownOptionViewModel[] = [];
     public plans: IDropdownOptionViewModel[] = [];
@@ -47,7 +45,9 @@ export class MemberComponent extends XCoreBaseComponent  {
     public dob: Date;
     public readOnly: boolean;
     public memberId: string;
+    private validationSet: boolean = false;
 
+    @ViewChild("form") form: FormGroup;
     @ViewChild(EntityValuesComponent) EntityValuesView: EntityValuesComponent;
 
     constructor(protected baseService: BaseService, private service: MemberService,
@@ -57,62 +57,52 @@ export class MemberComponent extends XCoreBaseComponent  {
         super(baseService);
         this.initializeTrace("MemberComponent");
         this.viewModel = this.service.getEmptyViewModel();
-        this.readOnly = (new Boolean(this.memberId).valueOf());
         this.states = this.dropdownService.getStates();
 
     }
     
-    private initializeForm(builder: FormBuilder): void {
+    public initializeValidation(form:FormGroup) {
 
-        var trace = this.classTrace("initializeForm");
-        trace(TraceMethodPosition.Entry);
-        
-        //Set up any async validators
-        var memberIdControl = new FormControl("", Validators.compose([Validators.required, Validators.maxLength(20)]));
+        if (this.validationSet) return;
+        this.setControlProperties(form, "memberId", "Member Id", Validators.compose([Validators.required, Validators.maxLength(20)]));
+        this.setControlProperties(form, "plan", "Plan", Validators.required);
+        this.setControlProperties(form, "dateOfBirth", "Date Of Birth", Validators.compose([MemberValidationService.isDate.bind(this, false)]));
+        this.setControlProperties(form, "personCode", "Person Code", Validators.compose([Validators.required, MemberValidationService.isGreaterThanOrEqualToZero.bind(this, false)]));
+        this.setControlProperties(form, "eligibilityCode", "Eligibility Code", Validators.compose([Validators.maxLength(1)]));
+        this.setControlProperties(form, "relationshipCode", "Relationship Code", Validators.compose([Validators.required]));
+        this.setControlProperties(form, "gender", "Gender", Validators.compose([]));
+        this.setControlProperties(form, "firstName", "First Name", Validators.compose([Validators.maxLength(50)]));
+        this.setControlProperties(form, "middleName", "Middle Name", Validators.compose([Validators.maxLength(50)]));
+        this.setControlProperties(form, "lastName", "Last Name", Validators.compose([Validators.maxLength(50)]));
+        this.setControlProperties(form, "location", "Location", Validators.compose([Validators.maxLength(50)]));
+        this.setControlProperties(form, "address1", "Address 1", Validators.compose([Validators.required, Validators.maxLength(128)]));
+        this.setControlProperties(form, "address2", "Address 2", Validators.compose([Validators.maxLength(128)]));
+        this.setControlProperties(form, "address3", "Address 3", Validators.compose([Validators.maxLength(128)]));
+        this.setControlProperties(form, "city", "City", Validators.compose([Validators.maxLength(64)]));
+        this.setControlProperties(form, "state", "State", Validators.compose([Validators.maxLength(2)]));
+        this.setControlProperties(form, "zipCode", "Zip Code", Validators.compose([Validators.maxLength(10)]));
+        this.setControlProperties(form, "phone", "Phone", Validators.compose([Validators.maxLength(15), MemberValidationService.isInteger.bind(this, true)]));
+        this.setControlProperties(form, "email", "Email Address", Validators.compose([Validators.maxLength(256), MemberValidationService.isEmailValid]));
+        this.setControlProperties(form, "effectiveDate", "Effective Date", Validators.compose([MemberValidationService.isDate.bind(this, false)]));
+        this.setControlProperties(form, "terminationDate", "Termination Date", Validators.compose([MemberValidationService.isDate.bind(this, true)]));        
 
-        //Set up controls
-        var binControl = new FormControl("", Validators.maxLength(6));
-        var buildReturn = this.validationService.buildControlGroup(builder, [
-            { controlName: "MemberIdControl", description: "Member Id", control: memberIdControl},
-            { controlName: "PlanControl", description: "Plan", control: new FormControl("", Validators.required)},
-            { controlName: "DateOfBirthControl", description: "Date Of Birth", control: new FormControl("", Validators.compose([MemberValidationService.isDate.bind(this, false)]))},
-            { controlName: "PersonCodeControl", description: "Person Code", control: new FormControl("", Validators.compose([Validators.required, MemberValidationService.isGreaterThanOrEqualToZero.bind(this, false)]))},
-            { controlName: "EligibilityCodeControl", description: "Eligibility Code", control: new FormControl("", Validators.maxLength(1))},
-            { controlName: "FirstNameControl", description: "First Name", control: new FormControl("", Validators.maxLength(50))},
-            { controlName: "MiddleNameControl", description: "Middle Name", control: new FormControl("", Validators.maxLength(50))},
-            { controlName: "LastNameControl", description: "Last Name", control: new FormControl("", Validators.maxLength(50))},
-            { controlName: "LocationControl", description: "Location", control: new FormControl("", Validators.maxLength(50))},
-            { controlName: "Address1Control", description: "Address 1", control: new FormControl("", Validators.compose([Validators.required, Validators.maxLength(128)]))},
-            { controlName: "Address2Control", description: "Address 2", control: new FormControl("", Validators.maxLength(128))},
-            { controlName: "Address3Control", description: "Address 3", control: new FormControl("", Validators.maxLength(128))},
-            { controlName: "CityControl", description: "City", control: new FormControl("", Validators.compose([Validators.maxLength(64), Validators.required]))},
-            { controlName: "StateControl", description: "State", control: new FormControl("", Validators.compose([Validators.required, Validators.maxLength(2)]))},
-            { controlName: "ZipCodeControl", description: "Zip Code", control: new FormControl("", Validators.compose([Validators.maxLength(10), Validators.required]))},
-            { controlName: "PhoneControl", description: "Phone", control: new FormControl("", Validators.maxLength(15))},
-            { controlName: "EmailControl", description: "Email Address", control: new FormControl("", Validators.compose([Validators.maxLength(256), MemberValidationService.isEmailValid]))},
-            { controlName: "EffectiveDateControl", description: "Effective Date", control: new FormControl("", Validators.compose([MemberValidationService.isDate.bind(this, false)]))},
-            { controlName: "TerminationDateControl", description: "Termination Date", control: new FormControl("", Validators.compose([MemberValidationService.isDate.bind(this, true)]))}
-        ]);                
-        this.form = buildReturn.controlGroup;
-        this.controlDataDescriptions = buildReturn.controlDataDescriptions;
-        
-        var identValidator = AsyncValidator.debounceControl(this.form, form => MemberValidationService.isIdentDuplicate(this.service, this.viewModel.id, form));
-
-        //Initialize all validation
-        this.form.valueChanges.subscribe(form => {
-            trace(TraceMethodPosition.CallbackStart, "FormChangesEvent");
+        var executeValidation = () => {
             var flv = Validators.compose([]);
-            var flav = Validators.composeAsync([identValidator ]);
-            this.validationService.getValidationResults(this.form, flv, flav).then(results => {
+            var flav = Validators.composeAsync([
+                AsyncValidator.debounceControl(form, frm => MemberValidationService.isIdentDuplicate(this.service, this.viewModel.id, frm))
+            ]);
+            this.validationService.getValidationResults(form, flv, flav).then(results => {
                 this.validationMessages = results;
             });
-            trace(TraceMethodPosition.CallbackEnd, "FormChangesEvent");                                    
-        });
-                
-        trace(TraceMethodPosition.Exit);
-        
+        };
+
+        form.valueChanges.subscribe(executeValidation);
+
+        executeValidation();
+
+        this.validationSet = true;
     }
-    
+
     
     private getInitialData(service: MemberService, id: string): void {        
         var trace = this.classTrace("getInitialData");
@@ -140,7 +130,8 @@ export class MemberComponent extends XCoreBaseComponent  {
 
                     this.service.getPlans().subscribe(plans => {
                         this.plans = plans;
-
+                        
+                        this.initializeValidation(this.form);
 
                         //Load any subviews here
                         this.EntityValuesView.load(true, this.viewModel.id, EntityType.Member, this.viewModel.lastName + ", " + this.viewModel.firstName
@@ -167,7 +158,7 @@ export class MemberComponent extends XCoreBaseComponent  {
         this.activatedRoute.params.subscribe(params => {
             this.id = params["id"];
             this.memberId = params["memberid"];
-            this.initializeForm(this.builder);     
+            this.readOnly = (new Boolean(this.memberId).valueOf());
         });
 
     }

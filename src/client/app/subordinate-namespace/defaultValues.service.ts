@@ -41,7 +41,6 @@ export class DefaultValuesService implements IDataService<IDefaultValueModel, ID
     private entityTypeToViewModel(entityType: number): string {
         if (entityType === 1) return "Plan";
         if (entityType === 2) return "Member";
-        if (entityType === 3) return "Group";
         if (entityType === 4) return "Drug";
         if (entityType === 5) return "Pharmacy";
         if (entityType === 6) return "Chain";

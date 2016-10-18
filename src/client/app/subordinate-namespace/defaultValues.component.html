@@ -28,7 +28,7 @@
             </div>
             <div class="col-sm-1">
                 <button class="btn btn-xs calendar-button" (click)="toggleEffectiveDate();"><span class="glyphicon glyphicon-calendar"></span></button>
-                <datepicker class="popup" *ngIf="showEffectiveDatePicker" [showWeeks]="false" [(ngModel)]="effectiveDate" (ngModelChange)="hideEffectiveDate()"></datepicker>
+                <datepicker class="popup" [hidden]="!showEffectiveDatePicker" [showWeeks]="false" [(ngModel)]="effectiveDate" (ngModelChange)="hideEffectiveDate()"></datepicker>
             </div>
         </div>                
         <div class="row">
@@ -38,7 +38,7 @@
             </div>
             <div class="col-sm-1">
                 <button class="btn btn-xs calendar-button" (click)="toggleTerminationDate();"><span class="glyphicon glyphicon-calendar"></span></button>
-                <datepicker class="popup" *ngIf="showTerminationDatePicker" [showWeeks]="false" [(ngModel)]="terminationDate" (ngModelChange)="hideTerminationDate()"></datepicker>
+                <datepicker class="popup" [hidden]="!showTerminationDatePicker" [showWeeks]="false" [(ngModel)]="terminationDate" (ngModelChange)="hideTerminationDate()"></datepicker>
             </div>
         </div>
     </div>
