@@ -12,7 +12,7 @@ import { TraceMethodPosition } from '../shared/logging/logging.service';
 import { INgTableColumn, INgTableConfig, INgTableRow, INgTableChangeMessage, NgTableComponent } from '../shared/table/table.component';
 import { OrderByPipe } from '../shared/pipe/orderby.pipe';
 import { IEnumViewModel } from '../shared/service/base.service';
-import { IFormValidationResult } from '../shared/validation/validation.service';
+import { IFormValidationResult, ValidationService } from '../shared/validation/validation.service';
 import { ValidationComponent } from '../shared/validation/validation.component';
 import { AsyncValidator } from '../shared/validation/async-validator.service';
 
@@ -62,7 +62,7 @@ export class DefaultValuesComponent extends XCoreBaseComponent {
         };
     }
     constructor(protected baseService: BaseService, private service: NamespaceService, 
-        private builder: FormBuilder, private defaultValuesService: DefaultValuesService)     
+        private builder: FormBuilder, private defaultValuesService: DefaultValuesService )     
     {  
         super(baseService);
         
@@ -111,29 +111,33 @@ export class DefaultValuesComponent extends XCoreBaseComponent {
             terminationDate: this.terminationDate && this.terminationDate.toString(), entityType: this.entityType, value: this.value};
         this.defaultValuesService.saveDefaultValue(vm).subscribe(vm => {
             this.baseService.loggingService.success(`Successfully saved the default value for ${vm.entityTypeDescription}`);
-            if (lookup == null) 
+            if (lookup == null) {
                 this.defaultValues.push(vm);
-            else {
+            } else {
                 lookup.value = vm.value;
                 lookup.effectiveDate = vm.effectiveDate;
                 lookup.terminationDate = vm.terminationDate;
             }
-            this.tableComponent.load(this.tableLoadFunction());
             this.clear();
+            this.tableComponent.load(this.tableLoadFunction());
         });
         trace(TraceMethodPosition.Exit);
     }
 
     private clear(): void {
         this.entityType = null;
-        this.id == null;
-        this.effectiveDate == null;
-        this.terminationDate == null;
+        this.id = null;
+        this.value = null;
+        this.effectiveDate = null;
+        this.terminationDate = null;
+        this.effectiveDateInvalid = true;
+        this.valueValid = false;
+
     }
 
     public isValid(): boolean {
-        return this.entityType !== undefined 
-            && this.effectiveDate !== undefined
+        return this.entityType !== null 
+            && this.effectiveDate !== null
             && (!this.effectiveDateInvalid && !this.terminationDateInvalid)
             && this.valueValid;
     }
@@ -144,34 +148,23 @@ export class DefaultValuesComponent extends XCoreBaseComponent {
     }
 
 
-    get EffectiveDateString(): string {
-        if (this.effectiveDate)
-            return moment(this.effectiveDate).format("MM/DD/YYYY hh:mm:ss a");
-        return null;
-    }
-
     private effectiveDateString(targetInput:any): void {
         this.effectiveDateInvalid = true;
         if (!targetInput.value) return;
-        if (this.isDate(targetInput.value)) {
+        if (ValidationService.isValidDate(targetInput.value)) {
             this.effectiveDateInvalid = false;
-            this.effectiveDate = new Date(targetInput.value);            
+            this.effectiveDate = targetInput.value;            
         }             
         else {
             this.effectiveDateInvalid = true;
         }
     }
 
-    get TerminationDateString(): string {
-        if (this.terminationDate)
-            return moment(this.terminationDate).format("MM/DD/YYYY hh:mm:ss a");
-        return null;
-    }
     private terminationDateString(targetInput:any): void {
         this.terminationDateInvalid = false;
         if (!targetInput.value) return;
-        if (this.isDate(targetInput.value)) 
-            this.terminationDate = new Date(targetInput.value);
+        if (ValidationService.isValidDate(targetInput.value)) 
+            this.terminationDate = targetInput.value;
         else {
             this.terminationDateInvalid = true;
         }
@@ -184,7 +177,7 @@ export class DefaultValuesComponent extends XCoreBaseComponent {
     }
 
     public hideEffectiveDate(): void {
-        this.effectiveDateString({value:this.effectiveDate});
+        this.effectiveDateString({value:this.effectiveDate ? moment.utc(this.effectiveDate).local().format('MM/DD/YYYY hh:mm:ss a'): null});
         this.showEffectiveDatePicker = false;
     }
 
@@ -194,13 +187,14 @@ export class DefaultValuesComponent extends XCoreBaseComponent {
     }
 
     public hideTerminationDate(): void {
-        this.terminationDateString({value:this.terminationDate});
+        this.terminationDateString({value:this.terminationDate ? moment.utc(this.terminationDate).local().format('MM/DD/YYYY hh:mm:ss a'): null});
         this.showTerminationDatePicker = false;
     }
 
 
     public validateDefaultValue(): void {
-        this.defaultValuesService.isDefaultValueValid(this.parentVm.type, this.parentVm.validationPattern, this.value, this.parentVm.allowNull, this.parentVm.precision, this.parentVm.length)            
+        this.defaultValuesService.isDefaultValueValid(this.parentVm.type, this.parentVm.validationPattern, this.value, this.parentVm.allowNull, this.parentVm.precision, this.parentVm.length)
+            .debounceTime(1000)            
             .subscribe(valid => {
                 this.valueValid = valid;
             });

@@ -40,8 +40,8 @@ export class MemberComponent extends XCoreBaseComponent  {
     public showEffectiveDatePicker: boolean = false;
     public showTerminationDatePicker: boolean = false;
     public showDateOfBirthPicker: boolean = false;
-    public effectiveDate: Date;
-    public terminationDate: Date;
+    public effectiveDate: Date = null;
+    public terminationDate: Date = null;
     public dob: Date;
     public readOnly: boolean;
     public memberId: string;
@@ -86,19 +86,18 @@ export class MemberComponent extends XCoreBaseComponent  {
         this.setControlProperties(form, "effectiveDate", "Effective Date", Validators.compose([MemberValidationService.isDate.bind(this, false)]));
         this.setControlProperties(form, "terminationDate", "Termination Date", Validators.compose([MemberValidationService.isDate.bind(this, true)]));        
 
+        var flv = Validators.compose([]);
+        var flav = Validators.composeAsync([
+            AsyncValidator.debounceControl(form, frm => MemberValidationService.isIdentDuplicate(this.service, this.viewModel.id, frm))
+        ]);
+
         var executeValidation = () => {
-            var flv = Validators.compose([]);
-            var flav = Validators.composeAsync([
-                AsyncValidator.debounceControl(form, frm => MemberValidationService.isIdentDuplicate(this.service, this.viewModel.id, frm))
-            ]);
             this.validationService.getValidationResults(form, flv, flav).then(results => {
                 this.validationMessages = results;
             });
         };
 
-        form.valueChanges.subscribe(executeValidation);
-
-        executeValidation();
+        form.valueChanges.debounceTime(1000).distinctUntilChanged(null, (x) => x).subscribe(executeValidation);
 
         this.validationSet = true;
     }
@@ -122,6 +121,8 @@ export class MemberComponent extends XCoreBaseComponent  {
                 this.viewModel.planId = null;
             }
             
+            this.initializeValidation(this.form);
+            
             this.service.getGenderCodes().subscribe(gc => {
                 this.genderCodes = gc;
 
@@ -131,8 +132,6 @@ export class MemberComponent extends XCoreBaseComponent  {
                     this.service.getPlans().subscribe(plans => {
                         this.plans = plans;
                         
-                        this.initializeValidation(this.form);
-
                         //Load any subviews here
                         this.EntityValuesView.load(true, this.viewModel.id, EntityType.Member, this.viewModel.lastName + ", " + this.viewModel.firstName
                             , this.viewModel.memberId, this.readOnly);
@@ -173,7 +172,12 @@ export class MemberComponent extends XCoreBaseComponent  {
             trace(TraceMethodPosition.Callback);
             this.viewModel = vm;
             this.baseService.loggingService.success("Member successfully saved");
-            this.baseService.router.navigate([`/members/${this.viewModel.id}`]);
+            this.location.replaceState(`/members/${this.viewModel.id}`);
+            this.id = this.viewModel.id;
+            this.memberId = this.viewModel.memberId;
+            this.readOnly = (new Boolean(this.memberId).valueOf());
+            this.baseService.hubService.callbackWhenLoaded(this.getInitialData.bind(this, this.service, this.id));
+
         });
         
         trace(TraceMethodPosition.Exit);

@@ -64,7 +64,7 @@ export class PlanComponent extends XCoreBaseComponent  {
 
         if (this.validationSet) return;
         this.setControlProperties(form, "name", "Name",Validators.compose([Validators.required, Validators.maxLength(50)]));
-        this.setControlProperties(form, "bin", "BIN", Validators.maxLength(6));
+        this.setControlProperties(form, "bin", "BIN", Validators.compose([Validators.maxLength(6), Validators.required]));
         this.setControlProperties(form, "pcn", "PCN", Validators.maxLength(10));
         this.setControlProperties(form, "groupId", "Group Id", Validators.maxLength(15));
         this.setControlProperties(form, "address1", "Address 1", Validators.compose([Validators.required, Validators.maxLength(128)]));
@@ -83,7 +83,7 @@ export class PlanComponent extends XCoreBaseComponent  {
         var executeValidation = () => {
             var flv = Validators.compose([PlanValidationService.identRequired]);
             var flav = Validators.composeAsync([
-                AsyncValidator.debounceControl(form, frm => PlanValidationService.isIdentDuplicate(this.service, this.viewModel.id, frm)),
+                AsyncValidator.debounceForm(frm => PlanValidationService.isIdentDuplicate(this.service, this.viewModel.id, frm)),
                 AsyncValidator.debounceControl(form.controls['name'], control => this.validationService.isNameDuplicate(control, this.service, this.viewModel.id))
             ]);
             this.validationService.getValidationResults(form, flv, flav).then(results => {
@@ -91,9 +91,8 @@ export class PlanComponent extends XCoreBaseComponent  {
             });
         };
 
-        form.valueChanges.subscribe(executeValidation);
+        form.valueChanges.debounceTime(1000).distinctUntilChanged(null, (x) => x).subscribe(executeValidation);
 
-        executeValidation();
 
         this.validationSet = true;
     }
@@ -153,7 +152,14 @@ export class PlanComponent extends XCoreBaseComponent  {
             trace(TraceMethodPosition.Callback);
             this.viewModel = vm;
             this.baseService.loggingService.success("Plan successfully saved");
-            this.baseService.router.navigate([`/plans/${this.viewModel.id}`]);
+            this.location.replaceState(`/plans/${this.viewModel.id}`);
+            this.id = this.viewModel.id;
+            this.bin = this.viewModel.bin;
+            this.pcn = this.viewModel.pcn;
+            this.groupId = this.viewModel.groupId;
+            this.readOnly = (new Boolean(this.bin).valueOf());
+            this.baseService.hubService.callbackWhenLoaded(this.getInitialData.bind(this, this.service, this.id));
+
         });
         
         trace(TraceMethodPosition.Exit);

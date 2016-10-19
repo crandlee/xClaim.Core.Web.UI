@@ -63,9 +63,7 @@ export class NamespaceComponent extends XCoreBaseComponent  {
             });
         };
 
-        form.valueChanges.subscribe(executeValidation);
-
-        executeValidation();
+        form.valueChanges.debounceTime(1000).distinctUntilChanged(null, (x) => x).subscribe(executeValidation);
 
         this.validationSet = true;
     }
@@ -101,19 +99,20 @@ export class NamespaceComponent extends XCoreBaseComponent  {
     ngOnInit() {        
         super.NotifyLoaded("Namespace");   
         this.activatedRoute.params.subscribe(params => {
-            this.id = params["id"];
-                 
+            this.id = params["id"];                 
         });
     }
-
+    
     public onSubmit() {
         var trace = this.classTrace("onSubmit");
         trace(TraceMethodPosition.Entry);
         this.service.save(this.viewModel).subscribe(vm => {
             trace(TraceMethodPosition.Callback);
             this.viewModel = vm;
+            this.id = this.viewModel.id;
             this.baseService.loggingService.success("Namespace successfully saved");
-            this.baseService.router.navigate([`/namespaces/${this.viewModel.id}`]);
+            this.location.replaceState(`/namespaces/${this.viewModel.id}`);
+            this.baseService.hubService.callbackWhenLoaded(this.getInitialData.bind(this, this.service, this.id));
         });
         
         trace(TraceMethodPosition.Exit);

@@ -11,6 +11,7 @@ export class EntityValuesValidationService extends ValidationService {
     }
     
     private static idIsNotValid: string = "idIsNotValid";
+    private static valueIsNotValid: string = "valueIsNotValid";
 
     public isEntityIdValid(entityType: EntityType, ctrl: AbstractControl, service: EntityValuesService): Promise<IValidationResult> {
         
@@ -27,9 +28,28 @@ export class EntityValuesValidationService extends ValidationService {
         return p;
     }
 
+
+    public isValueValid(namespaceControl: AbstractControl, valueControl: AbstractControl, service: EntityValuesService): Promise<IValidationResult> {
+        
+        if (!valueControl || !namespaceControl) return Promise.resolve(null);
+
+        if (!namespaceControl.value) return Promise.resolve(null);
+
+        var svc = service.isEntityValueValid(namespaceControl.value, valueControl.value);                            
+        var p = new Promise<IValidationResult>(resolve => {
+            svc.subscribe(isValid => {
+                resolve(!isValid ? {[EntityValuesValidationService.valueIsNotValid] : true}: null);                                
+            });            
+        });  
+        
+        return p;
+    }
+    
+
     public getValidatorErrorMessage(code: string): string {
         let config: any = {
             [EntityValuesValidationService.idIsNotValid]: "The id does not exist",
+            [EntityValuesValidationService.valueIsNotValid]: "The value is invalid based on the type of property",
         };
         return config[code] ||  super.getValidatorErrorMessage(code);
     }

@@ -137,7 +137,11 @@ export class EntityValuesService implements IDataService<IEntityValueModel, IEnt
         var trace = this.baseService.classTrace("getNamespaceValueTypes");
         trace(TraceMethodPosition.Entry);
         var obs = this.baseService.getObjectData<ICollectionViewModel<INamespaceOption>>(this.baseService.getOptions(this.baseService.hubService,
-            this.endpointKey, "There was an error retrieving the value types"), `namespaces`);
+            this.endpointKey, "There was an error retrieving the value types"), `namespaces`).map(coll => {
+                
+                coll.rows = _.map(coll.rows, ns => { ns.description = ns.description || ns.name; return ns; });
+                return coll;
+            });
         trace(TraceMethodPosition.Exit);
         return obs;
     }
@@ -145,10 +149,7 @@ export class EntityValuesService implements IDataService<IEntityValueModel, IEnt
     public isEntityValueValid(namespaceId: string, value:string): Observable<boolean> {
         var trace = this.baseService.classTrace("isEntityValueValid");
         trace(TraceMethodPosition.Entry);
-        // var obs: Observable<boolean> = Observable.create((observer: Observer<boolean>) => {
-        //    observer.next(true);
-        //});
-        var obs = this.baseService.postData<IValidateEntityValueStruct, boolean>({ value: value, namespaceId: namespaceId }, this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error validating the entity value"), `entityvalues/validate`);
+        var obs = this.baseService.postData<IValidateEntityValueStruct, boolean>({ value: value, namespaceId: namespaceId }, this.baseService.getOptions(this.baseService.hubService, this.endpointKey, "There was an error validating the entity value"), `namespacevalues/validate`);
         trace(TraceMethodPosition.Exit)
         return obs;
     }

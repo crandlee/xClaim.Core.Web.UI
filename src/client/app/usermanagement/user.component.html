@@ -1,42 +1,42 @@
 <div class="container">
-    <div [hidden]="!userProfile || !userProfile.id" class="edit-panel" >
+    <div [hidden]="!userProfile || !userProfile.id" class="edit-panel-detail" >
         <div class="navbar navbar-inverse center">
             <h4>User Information for: {{userProfile.name || "New User"}}</h4>
         </div>
         <form (ngSubmit)="onSubmit()" #form="ngForm">
-            <div class="form-group">
+            <div class="form-group clearfix">
+                <div class="btn-toolbar pull-right">
+                    <button type="submit" class="btn btn-default" [disabled]="validationMessages.length > 0">Save</button>
+                    <button type="button" class="btn btn-primary" (click)="cancel()">Return</button>
+                </div>
+            </div>                
+            <div class="form-group col-sm-12">
                 <label for="userName">User Name:</label>
                 <input type="text" placeholder="User Name" name="userName" class="form-control" [(ngModel)]="userProfile.name" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="fullName">Full Name:</label>
                 <input type="text" placeholder="Full Name" name="fullName" class="form-control" [(ngModel)]="userProfile.givenName" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="email">EMail</label>
                 <input type="email" placeholder="Email" name="email" class="form-control" [(ngModel)]="userProfile.emailAddress" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="password">Password</label>
                 <input type="password" placeholder="Password" name="password" class="form-control" [(ngModel)]="userProfile.password" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="confirmPassword">Confirm Password</label>
                 <input type="password" placeholder="Confirm Password" name="confirmPassword" class="form-control" [(ngModel)]="userProfile.confirmPassword" />
             </div>
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="enabled">Enabled:</label>
                 <div>
                     <ui-switch name="enabled" (change)="userProfile.enabled = $event" [checked]="userProfile.enabled"></ui-switch>
                 </div>
             </div>    
             <validation [validationMessages]='validationMessages'></validation>
-            <div class="form-group clearfix">
-                <div class="btn-toolbar pull-right">
-                    <button type="submit" class="btn btn-default" [disabled]="validationMessages.length > 0">Save</button>
-                    <button type="button" class="btn btn-primary" (click)="cancel()">User List</button>
-                </div>
-            </div>    
         </form>    
     </div>
     <div [hidden]="userProfile && userProfile.id" class="loading-message">

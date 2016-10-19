@@ -22,8 +22,20 @@ export class NgTableComponent {
   private _columns: INgTableColumn[] = [];
   public rowSelected: { [key:string]: boolean } = {};
   public modalMessage: string;
+  public toDeleteRow: INgTableRow;
 
   constructor(viewContainer: ViewContainerRef, private domSanitizer: DomSanitizer) {
+
+
+  }
+
+  ngAfterViewInit() {
+
+    //Set up the delete handler for the modal
+    this.modal.onClose.subscribe(e => {
+      this.deleteClicked.emit(this.toDeleteRow); 
+    });
+
   }
 
   // Table values
@@ -95,12 +107,8 @@ export class NgTableComponent {
     if (column.deleteMessage) msg = column.deleteMessage;
     //var box = this.modal.confirm().isBlocking(true).size('sm').message(msg).open();
     this.modalMessage = msg;
-
+    this.toDeleteRow = row;    
     var box = this.modal.open('sm');
-    this.modal.onClose.subscribe(e => {
-      this.deleteClicked.emit(row); 
-      this.modal.onClose.unsubscribe();
-    });
 
   }
 

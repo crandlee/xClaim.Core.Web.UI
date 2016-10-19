@@ -24,7 +24,7 @@
         <div class="row">
             <div class="col-sm-4 form-label filter-label">Effective Date:</div>
             <div class="col-sm-4">
-                <input [ngClass]="{valid: !effectiveDateInvalid, invalid: effectiveDateInvalid}" class="form-control input-sm" placeholder="Effective Date" #effectiveDateStart (blur)="effectiveDateString($event.target)" [value]="EffectiveDateString" />                                
+                <input [ngClass]="{valid: !effectiveDateInvalid, invalid: effectiveDateInvalid}" class="form-control input-sm" placeholder="Effective Date" (blur)="effectiveDateString($event.target)" [(ngModel)]="effectiveDate" />                                
             </div>
             <div class="col-sm-1">
                 <button class="btn btn-xs calendar-button" (click)="toggleEffectiveDate();"><span class="glyphicon glyphicon-calendar"></span></button>
@@ -34,7 +34,7 @@
         <div class="row">
             <div class="col-sm-4 form-label filter-label">Termination Date:</div>
             <div class="col-sm-4">
-                <input [ngClass]="{valid: !terminationDateInvalid,invalid: terminationDateInvalid}" class="form-control input-sm" placeholder="Termination Date" #terminationDateStart (blur)="terminationDateString($event.target)" [value]="TerminationDateString" />                                
+                <input [ngClass]="{valid: !terminationDateInvalid,invalid: terminationDateInvalid}" class="form-control input-sm" placeholder="Termination Date" (blur)="terminationDateString($event.target)" [(ngModel)]="terminationDate" />                                
             </div>
             <div class="col-sm-1">
                 <button class="btn btn-xs calendar-button" (click)="toggleTerminationDate();"><span class="glyphicon glyphicon-calendar"></span></button>

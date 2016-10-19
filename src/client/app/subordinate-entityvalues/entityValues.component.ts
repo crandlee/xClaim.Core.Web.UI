@@ -94,7 +94,7 @@ export class EntityValuesComponent extends XCoreBaseComponent {
 
         this.service.getSingle(id, this.parentId, this.parentEntityType).subscribe(vm => {
             this.tableComponent.unhighlight(this.viewModel.id);
-            this.viewModel = vm;
+            this.viewModel = _.cloneDeep(vm);
             //Go ahead and set priority to 1 when a default row (with priority zero) is clicked
             if (this.viewModel.priority === 0) this.viewModel.priority = 1;
             
@@ -123,16 +123,15 @@ export class EntityValuesComponent extends XCoreBaseComponent {
                 AsyncValidator.debounceControl(form.controls['planId'], control => this.validationService.isEntityIdValid(EntityType.Plan, control, this.service)),
                 AsyncValidator.debounceControl(form.controls['pharmacyId'], control => this.validationService.isEntityIdValid(EntityType.Pharmacy, control, this.service)),
                 AsyncValidator.debounceControl(form.controls['drugId'], control => this.validationService.isEntityIdValid(EntityType.Drug, control, this.service)),
-                AsyncValidator.debounceControl(form.controls['memberId'], control => this.validationService.isEntityIdValid(EntityType.Member, control, this.service)) 
+                AsyncValidator.debounceControl(form.controls['memberId'], control => this.validationService.isEntityIdValid(EntityType.Member, control, this.service)),
+                AsyncValidator.debounceControl(form, frm => this.validationService.isValueValid((<FormGroup>frm).controls['namespaceId'], (<FormGroup>frm).controls['value'], this.service)) 
             ]);
             this.validationService.getValidationResults(form, flv, flav).then(results => {
                 this.validationMessages = results;
             });
         };
 
-        form.valueChanges.subscribe(executeValidation);
-
-        executeValidation();
+        form.valueChanges.debounceTime(1000).distinctUntilChanged(null, (x) => x).subscribe(executeValidation);
 
         this.validationSet = true;
     }
@@ -142,7 +141,8 @@ export class EntityValuesComponent extends XCoreBaseComponent {
 
     public load(initial: boolean, parentId: string, parentEntityType: EntityType, parentEntityName: string, parentEntityId: string, readOnly: boolean) {
 
-        this.parentId = parentId;
+        this.parentId = null;
+        if (parentId !== this.baseService.appSettings.EmptyGuid) this.parentId = parentId;
         this.parentEntityType = parentEntityType;
         this.parentEntityName = parentEntityName;
         this.parentEntityTypeDesc = this.getEntityTypeName();
@@ -157,7 +157,7 @@ export class EntityValuesComponent extends XCoreBaseComponent {
                 if (initial) this.initializeValidation(this.form);
                 this.tableComponent.load(this.tableLoadFunction(this.readOnly));
                 if (vm.rows.length > 0) {
-                    this.viewModel = vm.rows[0];
+                    this.viewModel = _.cloneDeep(vm.rows[0]);
                     if (this.viewModel.priority === 0) this.viewModel.priority = 1;
                     this.tableComponent.highlight(vm.rows[0].id);
                 }
@@ -292,6 +292,7 @@ export class EntityValuesComponent extends XCoreBaseComponent {
     public validateEntityValue(): void {
         if (this.viewModel)
             this.service.isEntityValueValid(this.viewModel.namespaceId, this.viewModel.value)
+                .debounceTime(1000)
                 .subscribe(valid => {
                     this.valueValid = valid;
                 });

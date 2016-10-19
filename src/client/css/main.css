@@ -65,6 +65,14 @@ div.panel-heading {
     padding: 10px;
 }
 
+.edit-panel-detail {
+    background: #ecf0f1;
+    color: #206c7f;
+    min-height: 200px;
+    padding: 10px;
+    float:left;
+}
+
 
 /*Edit form styles*/
 
@@ -74,6 +82,10 @@ div.panel-heading {
 
 .ng-invalid:not(form):not(datepicker)  {
   border-left: 5px solid #a94442 !important; /* red */
+}
+
+form.ng-invalid  {
+  background-color: #ed6663 !important; /* red */
 }
 
 /* List styles */

@@ -46,9 +46,7 @@ export class UserProfileComponent extends XCoreBaseComponent implements OnInit  
             });
         };
 
-        form.valueChanges.subscribe(executeValidation);
-
-        executeValidation();
+        form.valueChanges.debounceTime(1000).distinctUntilChanged(null, (x) => x).subscribe(executeValidation);
 
         this.validationSet = true;
     }

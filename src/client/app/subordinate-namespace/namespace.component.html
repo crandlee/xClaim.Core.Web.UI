@@ -10,33 +10,33 @@
                     <button type="button" class="btn btn-primary" (click)="return()">Return</button>
                 </div>
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="name">Name:</label>
                 <input type="text" placeholder="Name" name="name" class="form-control" [(ngModel)]="viewModel.name" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="description">Description:</label>
                 <input type="text" placeholder="Description" name="description" class="form-control" [(ngModel)]="viewModel.description" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="valuetype">Value Type</label>
                 <select class="form-control input-sm" name="type" [(ngModel)]="viewModel.type">
                     <option *ngFor="let val of namespaceValueTypes | orderBy : '+description'" [value]="val.id">{{val.description}}</option>
                 </select>                                
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="validationPattern">Validation Pattern</label>
                 <input type="text" placeholder="Validation Pattern" name="validationPattern" class="form-control" [(ngModel)]="viewModel.validationPattern" />
             </div>    
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="length">Length</label>
                 <input type="text" placeholder="Length" name="length" class="form-control" [(ngModel)]="viewModel.length" />
             </div>
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="precision">Precision</label>
                 <input type="text" placeholder="Precision" name="precision" class="form-control" [(ngModel)]="viewModel.precision" />
             </div>
-            <div class="form-group">
+            <div class="form-group col-sm-12">
                 <label for="enabled">Allow Null:</label>
                 <div>
                     <ui-switch name="allowNull" (change)="viewModel.allowNull = $event" [checked]="viewModel.allowNull"></ui-switch>

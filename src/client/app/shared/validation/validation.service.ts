@@ -64,19 +64,21 @@ export class ValidationService {
 
 
     public static isDate(canBeEmpty: boolean = false, control: AbstractControl): IValidationResult {
+        console.log(control);
         if (canBeEmpty && (!control || !control.value)) return null;
+        var ret = null;
         if (ValidationService.isValidDate(control.value)) {
-            return null;
+            ret =  null;
         } else {
-            return { [ValidationService.notDate]: true };
+            ret = { [ValidationService.notDate]: true };
         }
-        
+        return ret;
     }
 
     public static isValidDate(str: string): boolean {
+        if (str == null) return false;
         var d = moment(str,'M/D/YYYY');
         if(d == null || !d.isValid()) return false;
-
         return str.indexOf(d.format('M/D/YYYY')) >= 0 
             || str.indexOf(d.format('MM/DD/YYYY')) >= 0
             || str.indexOf(d.format('M/D/YY')) >= 0 

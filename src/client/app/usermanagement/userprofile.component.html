@@ -1,28 +1,28 @@
 <div class="container">
-    <div [hidden]="!active" class="edit-panel" >
+    <div [hidden]="!active" class="edit-panel-detail" >
         <div class="navbar navbar-inverse center">
             <h4>User Information for: {{userProfile.name}}</h4>
         </div>
         <form (ngSubmit)="onSubmit()" #form="ngForm">
-            <div class="form-group">
-                <label for="email">EMail</label>
-                <input type="email" placeholder="Email" name="email" class="form-control" [(ngModel)]="userProfile.emailAddress" />
-            </div>    
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" placeholder="Password" name="password" class="form-control" [(ngModel)]="userProfile.password" />
-            </div>    
-            <div class="form-group">
-                <label for="confirmPassword">Confirm Password</label>
-                <input type="password" placeholder="Confirm Password" name="confirmPassword" class="form-control" [(ngModel)]="userProfile.confirmPassword" />
-            </div>
-            <validation [validationMessages]='validationMessages'></validation>
             <div class="form-group clearfix">
                 <div class="btn-toolbar">
                     <button type="button" class="btn btn-default pull-right" (click)="cancel()">Cancel</button>
                     <button type="submit" class="btn btn-primary pull-right" [disabled]="validationMessages.length > 0">Save</button>
                 </div>
             </div>    
+            <div class="form-group col-sm-12">
+                <label for="email">EMail</label>
+                <input type="email" placeholder="Email" name="email" class="form-control" [(ngModel)]="userProfile.emailAddress" />
+            </div>    
+            <div class="form-group col-sm-12">
+                <label for="password">Password</label>
+                <input type="password" placeholder="Password" name="password" class="form-control" [(ngModel)]="userProfile.password" />
+            </div>    
+            <div class="form-group col-sm-12">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" placeholder="Confirm Password" name="confirmPassword" class="form-control" [(ngModel)]="userProfile.confirmPassword" />
+            </div>
+            <validation [validationMessages]='validationMessages'></validation>
         </form>            
     </div>
     <div *ngIf="!active" class="loading-message">

@@ -103,9 +103,7 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
             });
         };
 
-        form.valueChanges.subscribe(executeValidation);
-
-        executeValidation();
+        form.valueChanges.debounceTime(1000).distinctUntilChanged(null, (x) => x).subscribe(executeValidation);
 
         this.validationSet = true;
     }
@@ -173,7 +171,11 @@ export class ServiceProviderComponent extends XCoreBaseComponent  {
             trace(TraceMethodPosition.Callback);
             this.viewModel = vm;
             this.baseService.loggingService.success("Pharmacy successfully saved");
-            this.baseService.router.navigate([`/serviceproviders/${this.viewModel.id}`]);
+            this.location.replaceState(`/serviceproviders/${this.viewModel.id}`);
+            this.id = this.viewModel.id;
+            this.npi = this.viewModel.npi;
+            this.readOnly = (new Boolean(this.npi).valueOf());
+            this.baseService.hubService.callbackWhenLoaded(this.getInitialData.bind(this, this.service, this.id));
         });
         
         trace(TraceMethodPosition.Exit);

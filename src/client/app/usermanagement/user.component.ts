@@ -13,6 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { UserClaimsComponent } from './user.claims.component';
 import { TraceMethodPosition } from '../shared/logging/logging.service';
+import { Location } from '@angular/common';
 
 @Component({
     moduleId: module.id,
@@ -28,7 +29,7 @@ export class UserComponent extends XCoreBaseComponent  {
     @ViewChild(UserClaimsComponent) ClaimsView: UserClaimsComponent;
 
     constructor(protected baseService: BaseService, private userService: UserService, 
-        private builder: FormBuilder, private validationService: UserProfileValidationService, private activatedRoute: ActivatedRoute)     
+        private builder: FormBuilder, private validationService: UserProfileValidationService, private activatedRoute: ActivatedRoute, private location: Location)     
     {  
         super(baseService);
         this.initializeTrace("UserComponent");
@@ -55,9 +56,7 @@ export class UserComponent extends XCoreBaseComponent  {
             });
         };
 
-        form.valueChanges.subscribe(executeValidation);
-
-        executeValidation();
+        form.valueChanges.debounceTime(1000).distinctUntilChanged(null, (x) => x).subscribe(executeValidation);
 
         this.validationSet = true;
     }
@@ -107,13 +106,16 @@ export class UserComponent extends XCoreBaseComponent  {
             trace(TraceMethodPosition.Callback);
             this.userProfile = up;
             this.baseService.loggingService.success("User successfully saved");
-            this.baseService.router.navigate([`/user/${this.userProfile.id}`]);
+            this.location.replaceState(`/user/${this.userProfile.id}`);
+            this.userId = this.userProfile.id;
+            this.baseService.hubService.callbackWhenLoaded(this.getInitialData.bind(this, this.userService, this.userId));
+
         });
         
         trace(TraceMethodPosition.Exit);
     }
     
     public cancel(): void {
-        this.baseService.router.navigate(["/userlist"]);
+        this.location.back();
     }
 }

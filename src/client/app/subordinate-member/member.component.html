@@ -1,7 +1,7 @@
 <div class="container">
     <div [hidden]="!viewModel || !viewModel.id" class="edit-panel" >
         <div class="navbar navbar-inverse center">
-            <h4>Member Information for: {{viewModel.lastName + ", " + viewModel.firstName || "New Member"}}</h4>
+            <h4>Member Information for: {{viewModel.lastName && (viewModel.lastName + ", " + viewModel.firstName) || "New Member"}}</h4>
         </div>
         <form (ngSubmit)="onSubmit()" #form="ngForm">
             <div class="form-group clearfix">
