@@ -31,8 +31,6 @@ export class PlanComponent extends XCoreBaseComponent  {
     public validationMessages: IFormValidationResult[] = [];
     public id: string;
     public states: IDropdownOptionViewModel[] = [];
-    public effectiveDateInvalid: boolean = true;
-    public terminationDateInvalid: boolean = false;
     public showEffectiveDatePicker: boolean = false;
     public showTerminationDatePicker: boolean = false;
     public effectiveDate: Date;
@@ -114,7 +112,7 @@ export class PlanComponent extends XCoreBaseComponent  {
             trace(TraceMethodPosition.CallbackStart);
             this.viewModel = this.service.toViewModel(up);
             if (!this.id) {
-                this.viewModel.effectiveDate = "";
+                this.viewModel.effectiveDate = null;
             }
             this.initializeValidation(this.form);
             //Load any subviews here
@@ -178,26 +176,17 @@ export class PlanComponent extends XCoreBaseComponent  {
 
 
     private effectiveDateString(targetInput:any): void {
-        this.effectiveDateInvalid = true;
         if (!targetInput.value) return;
         if (PlanValidationService.isValidDate(targetInput.value)) {
-            this.effectiveDateInvalid = false;
             this.viewModel.effectiveDate = targetInput.value;            
         }             
-        else {
-            this.effectiveDateInvalid = true;
-        }
     }
 
     private terminationDateString(targetInput:any): void {
-        this.terminationDateInvalid = false;
         if (!targetInput.value) return;
-        if (PlanValidationService.isValidDate(targetInput.value)) 
+        if (PlanValidationService.isValidDate(targetInput.value)) { 
             this.viewModel.terminationDate = targetInput.value;
-        else {
-            this.terminationDateInvalid = true;
-        }
-            
+        }   
     }
 
     public toggleEffectiveDate(event: any): void {

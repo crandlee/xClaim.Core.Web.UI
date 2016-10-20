@@ -56,8 +56,6 @@ export class EntityValuesComponent extends XCoreBaseComponent {
     public parentEntityTypeDesc: string;
     public parentEntityId: string;
 
-    public effectiveDateInvalid: boolean = true;
-    public terminationDateInvalid: boolean = false;
     public showEffectiveDatePicker: boolean = false;
     public showTerminationDatePicker: boolean = false;
 
@@ -245,25 +243,16 @@ export class EntityValuesComponent extends XCoreBaseComponent {
 
 
     private effectiveDateString(targetInput: any): void {
-        this.effectiveDateInvalid = true;
         if (!targetInput.value) return;
         if (EntityValuesValidationService.isValidDate(targetInput.value)) {
-            this.effectiveDateInvalid = false;
             this.viewModel.effectiveDate = targetInput.value;
-        }
-        else {
-            this.effectiveDateInvalid = true;
         }
     }
 
     private terminationDateString(targetInput: any): void {
-        this.terminationDateInvalid = false;
         if (!targetInput.value) return;
         if (EntityValuesValidationService.isValidDate(targetInput.value))
             this.viewModel.terminationDate = targetInput.value;
-        else {
-            this.terminationDateInvalid = true;
-        }
 
     }
 

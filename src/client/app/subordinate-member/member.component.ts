@@ -34,9 +34,6 @@ export class MemberComponent extends XCoreBaseComponent  {
     public plans: IDropdownOptionViewModel[] = [];
     public genderCodes: IEnumViewModel[] = [];
     public relationshipCodes: IEnumViewModel[] = [];
-    public effectiveDateInvalid: boolean = true;
-    public terminationDateInvalid: boolean = false;
-    public dateOfBirthInvalid: boolean = true;
     public showEffectiveDatePicker: boolean = false;
     public showTerminationDatePicker: boolean = false;
     public showDateOfBirthPicker: boolean = false;
@@ -116,8 +113,8 @@ export class MemberComponent extends XCoreBaseComponent  {
             trace(TraceMethodPosition.CallbackStart);
             this.viewModel = this.service.toViewModel(up);
             if (!this.id && !this.memberId) {
-                this.viewModel.dateOfBirth = "";
-                this.viewModel.effectiveDate = "";
+                this.viewModel.dateOfBirth = null;
+                this.viewModel.effectiveDate = null;
                 this.viewModel.planId = null;
             }
             
@@ -195,38 +192,25 @@ export class MemberComponent extends XCoreBaseComponent  {
 
 
     private effectiveDateString(targetInput:any): void {
-        this.effectiveDateInvalid = true;
         if (!targetInput.value) return;
         if (MemberValidationService.isValidDate(targetInput.value)) {
-            this.effectiveDateInvalid = false;
             this.viewModel.effectiveDate = targetInput.value;            
         }             
-        else {
-            this.effectiveDateInvalid = true;
-        }
     }
 
     private terminationDateString(targetInput:any): void {
-        this.terminationDateInvalid = false;
         if (!targetInput.value) return;
-        if (MemberValidationService.isValidDate(targetInput.value)) 
+        if (MemberValidationService.isValidDate(targetInput.value)) { 
             this.viewModel.terminationDate = targetInput.value;
-        else {
-            this.terminationDateInvalid = true;
         }
             
     }
 
     private dateOfBirthString(targetInput:any): void {
-        this.dateOfBirthInvalid = true;
         if (!targetInput.value) return;
         if (MemberValidationService.isValidDate(targetInput.value)) {
-            this.dateOfBirthInvalid = false;
             this.viewModel.dateOfBirth = targetInput.value;            
         }             
-        else {
-            this.dateOfBirthInvalid = true;
-        }
     }
 
     public toggleEffectiveDate(event: any): void {

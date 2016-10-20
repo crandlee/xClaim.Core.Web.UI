@@ -64,7 +64,6 @@ export class ValidationService {
 
 
     public static isDate(canBeEmpty: boolean = false, control: AbstractControl): IValidationResult {
-        console.log(control);
         if (canBeEmpty && (!control || !control.value)) return null;
         var ret = null;
         if (ValidationService.isValidDate(control.value)) {
